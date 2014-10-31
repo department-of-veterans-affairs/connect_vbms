@@ -1,0 +1,60 @@
+require 'byebug'
+require 'pry'
+require 'savon'
+require 'tempfile'
+require 'time'
+require 'xml'
+
+def sh(cmd)
+  puts cmd
+  out = `#{cmd}`
+  if $? != 0
+    puts xml
+    puts out
+    raise "command failure, exited"
+  end
+end
+
+x = XML::Parser.string(File.read('template.xml')).parse
+
+# insert the time
+ns = "wsu:http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+t = Time.now
+# five minutes from now
+f = Time.now + 300
+x.find_first("//wsu:Created", ns).content = t.utc.iso8601
+x.find_first("//wsu:Expires", ns).content = f.utc.iso8601
+
+# clear out the DigestValues
+ds = "ds:http://www.w3.org/2000/09/xmldsig#"
+x.find("//ds:DigestValue", ds).each { |dv| dv.content="" }
+x.find("//ds:SignatureValue", ds).each { |sv| sv.content="" }
+
+# remove the saml header
+ss = "saml2:urn:oasis:names:tc:SAML:2.0:assertion"
+x.find_first("//saml2:Assertion", ss).remove!
+
+x.save("signature_template.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
+
+# sign the doc
+sh "xmlsec1 --sign --privkey-pem cui-tst-client.key --pwd importkey --output signed.xml --id-attr:Id Body --id-attr:Id Timestamp signature_template.xml"
+
+x = XML::Parser.file("signed.xml").parse
+
+# clear out the CipherValues
+xenc = "xenc:http://www.w3.org/2001/04/xmlenc#"
+x.find("//xenc:CipherValue", xenc).each { |cv| cv.content="" }
+
+# encrypt the file
+x.save("signed.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
+sh "xmlsec1 encrypt --pubkey-cert-pem vbms.cms.test.vbms.aide.oit.va.gov.crt --pwd importkey --session-key des-192 --xml-data signed.xml  --output encrypted.xml --node-xpath /soapenv:Envelope/soapenv:Body/* session-key-template.xml"
+
+x = XML::Parser.file("encrypted.xml").parse
+
+url = "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4?WSDL"
+client = Savon.client(wsdl: url, ssl_verify_mode: :none)#, ssl_cert_file: "vbms_test_public_key.crt")
+begin
+  puts client.call(:get_document_types, xml: x.to_s)
+rescue Exception => e
+  puts e
+end
