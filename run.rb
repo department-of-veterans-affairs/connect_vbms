@@ -34,10 +34,10 @@ doc.find("//ds:SignatureValue", ds).each { |sv| sv.content="" }
 ss = "saml2:urn:oasis:names:tc:SAML:2.0:assertion"
 doc.find_first("//saml2:Assertion", ss).remove!
 
-doc.save("signature_template.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
+doc.save("intermediate_files/signature_template.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
 
 # sign the doc
-sh "xmlsec1 --sign --privkey-pem cui-tst-client.key --pwd importkey --output intermediate_files/signed.xml --id-attr:Id Body --id-attr:Id Timestamp signature_template.xml"
+sh "xmlsec1 --sign --privkey-pem cui-tst-client.key --pwd importkey --output intermediate_files/signed.xml --id-attr:Id Body --id-attr:Id Timestamp intermediate_files/signature_template.xml"
 doc = XML::Parser.file("intermediate_files/signed.xml").parse
 
 # clear out the CipherValues
@@ -63,4 +63,5 @@ begin
   puts client.call(:get_document_types, xml: doc.to_s)
 rescue Exception => e
   puts e
+  puts "intermediate_files/encrypted_saml.xml contains the message that just failed"
 end
