@@ -1,7 +1,6 @@
 require 'byebug'
 require 'pry'
 require 'savon'
-require 'tempfile'
 require 'time'
 require 'xml'
 
@@ -43,10 +42,10 @@ doc = XML::Parser.file("intermediate_files/signed.xml").parse
 # clear out the CipherValues
 xenc = "xenc:http://www.w3.org/2001/04/xmlenc#"
 doc.find("//xenc:CipherValue", xenc).each { |cv| cv.content="" }
+doc.save("intermediate_files/signed_emptied.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
 
 # encrypt the file
-doc.save("signed.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
-sh "xmlsec1 encrypt --pubkey-cert-pem vbms.cms.test.vbms.aide.oit.va.gov.crt --pwd importkey --session-key des-192 --xml-data signed.xml  --output intermediate_files/encrypted.xml --node-xpath /soapenv:Envelope/soapenv:Body/* session-key-template.xml"
+sh "xmlsec1 encrypt --pubkey-cert-pem vbms.cms.test.vbms.aide.oit.va.gov.crt --pwd importkey --session-key des-192 --xml-data intermediate_files/signed_emptied.xml --output intermediate_files/encrypted.xml --node-xpath /soapenv:Envelope/soapenv:Body/* session-key-template.xml"
 doc = XML::Parser.file("intermediate_files/encrypted.xml").parse
 
 # inject the saml token
