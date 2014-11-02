@@ -37,13 +37,11 @@ public class SendGetDocumentTypes
       }
       
       document = addTimestamp(document);
-      System.out.println(document);
       document = addSignature(document);
-      System.out.println(document);
       document = addEncryption(document);
       //document = addSAMLToken(document);
       
-      //System.out.println(document);
+      System.out.println(document);
     }
     catch (Exception e)
     {
