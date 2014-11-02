@@ -12,8 +12,11 @@ doc = XML::Parser.string(STDIN.read).parse
 saml = doc.import(XML::Parser.file("samlToken-cui-tst.xml").parse.root)
 wsse = "wsse:http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
 doc.find_first("//wsse:Security", wsse) << saml
-doc.save("intermediate_files/encrypted_saml.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
 
+# remove mustUnderstand attr
+doc.find_first("//wsse:Security", wsse).attributes.get_attribute("mustUnderstand").remove!
+
+doc.save("intermediate_files/encrypted_saml.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
 xml = doc.to_s
 puts xml
 
