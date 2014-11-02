@@ -21,7 +21,12 @@ xml = doc.to_s
 puts xml
 
 begin
-  puts client.call(:get_document_types, xml: xml)
+  puts "============= message =============="
+  response = client.call(:get_document_types, xml: xml)
+  raw = response.to_xml
+  File.open("intermediate_files/raw_response.xml", 'w').write(raw)
+  respxml = XML::Parser.string(raw).parse
+  respxml.save("intermediate_files/response.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
 rescue Exception => e
   puts e
   puts "intermediate_files/encrypted_saml.xml contains the message that just failed"
