@@ -8,29 +8,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class SendGetDocumentTypes 
 {
-  
-  public static final String SAMPLE_SOAP_MSG =
-          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-          + "<SOAP-ENV:Envelope "
-          +   "xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" "
-          +   "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-          +   "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-          +   "<SOAP-ENV:Body>"
-          +       "<add xmlns=\"http://ws.apache.org/counter/counter_port_type\">"
-          +           "<value xmlns=\"\">15</value>"
-          +       "</add>"
-          +   "</SOAP-ENV:Body>"
-          + "</SOAP-ENV:Envelope>";
-          
+            
   public static void main(String[] args)
   {
     try 
     {
-      //Document doc = SOAPUtil.toSOAPPart(WSSecurityUtil.SAMPLE_SOAP_MSG);
-      InputStream in = new ByteArrayInputStream(SAMPLE_SOAP_MSG.getBytes());
+      InputStream in = new ByteArrayInputStream(Files.readAllBytes(Paths.get("getDocumentTypes.xml")));
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setNamespaceAware(true);
       DocumentBuilder builder = factory.newDocumentBuilder();
