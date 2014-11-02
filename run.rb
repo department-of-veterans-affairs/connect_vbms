@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 require 'byebug'
 require 'pry'
 require 'savon'
