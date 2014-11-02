@@ -1,7 +1,7 @@
-SOAPUI=/Applications/SoapUI-5.0.0.app/Contents/java/app/lib
-
+.PHONY: build
 build:
-	javac -classpath ./lib/wss4j-1.6.7.jar SendGetDocumentTypes.java
+	javac -classpath './lib/*' SendGetDocumentTypes.java
 
+.PHONY: run
 run:
-	java -cp .:$(SOAPUI)/* SendGetDocumentTypes
+	java -classpath '.:./lib/*' SendGetDocumentTypes
