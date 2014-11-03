@@ -1,6 +1,5 @@
-.PHONY: build
 build:
-	javac -classpath './lib/*' src/SendGetDocumentTypes.java
+	make -C src build
 
 .PHONY: run
 run:
