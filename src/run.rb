@@ -64,8 +64,7 @@ curl -H 'Content-Type: multipart/related; boundary=boundary_1234'
   puts "============= request over =============="
   raw = response
   File.open("intermediate_files/raw_response.txt", 'w').write(raw)
-  respxml = XML::Parser.string(raw).parse
-  respxml.save("intermediate_files/response.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
+  puts raw
 rescue Exception => e
   puts e
   puts "intermediate_files/encrypted_saml.xml contains the message that just failed"
