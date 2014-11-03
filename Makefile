@@ -1,10 +1,11 @@
 .PHONY: build
 build:
-	javac -classpath './lib/*' SendGetDocumentTypes.java
+	javac -classpath './lib/*' -d build src/SendGetDocumentTypes.java
+	cp src/run.rb build/
 
 .PHONY: run
 run:
-	java -classpath '.:./lib/*' SendGetDocumentTypes | ./run.rb
+	make -C src run
 
 .PHONY: update
 update:
