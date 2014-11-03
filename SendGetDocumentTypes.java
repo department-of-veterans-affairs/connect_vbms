@@ -22,12 +22,12 @@ import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSConstants;
 
 
-public class SendGetDocumentTypes 
+public class SendGetDocumentTypes
 {
-            
+
   public static void main(String[] args)
   {
-    try 
+    try
     {
       List<String> lines = Files.readAllLines(Paths.get("getDocumentTypes.xml"), Charset.defaultCharset());
       String document = "";
@@ -35,12 +35,13 @@ public class SendGetDocumentTypes
       {
         document += line;
       }
-      
+
       document = addTimestamp(document);
       document = addSignature(document);
       document = addEncryption(document);
+      // done in run.rb
       //document = addSAMLToken(document);
-      
+
       System.out.println(document);
     }
     catch (Exception e)
@@ -48,7 +49,7 @@ public class SendGetDocumentTypes
       e.printStackTrace();
     }
   }
-  
+
   public static Document getSOAPDoc(String document) throws Exception
   {
     InputStream in = new ByteArrayInputStream(document.getBytes());
@@ -58,7 +59,7 @@ public class SendGetDocumentTypes
     Document doc = builder.parse(in);
     return doc;
   }
-  
+
   public static String addTimestamp(String document) throws Exception
   {
     Document doc = getSOAPDoc(document);
@@ -70,7 +71,7 @@ public class SendGetDocumentTypes
     String outputString = XMLUtils.PrettyDocumentToString(createdDoc);
     return outputString;
   }
-  
+
   public static String addSignature(String document) throws Exception
   {
     Crypto crypto = CryptoFactory.getInstance();
@@ -92,7 +93,7 @@ public class SendGetDocumentTypes
     String outputString = XMLUtils.PrettyDocumentToString(signedDoc);
     return outputString;
   }
-  
+
   public static String addEncryption(String document) throws Exception
   {
     Crypto crypto = CryptoFactory.getInstance();
@@ -105,7 +106,7 @@ public class SendGetDocumentTypes
     String outputString = XMLUtils.PrettyDocumentToString(encryptedDoc);
     return outputString;
   }
-  
+
   /*public static String addSAMLToken(String document) throws Exception
   {
     WSSecSAMLToken wsSign = new WSSecSAMLToken();
@@ -114,7 +115,7 @@ public class SendGetDocumentTypes
     secHeader.insertSecurityHeader(doc);
     Document tokenedDoc = wsSign.build(doc, samlAssertion, secHeader);
     String outputString = XMLUtils.PrettyDocumentToString(tokenedDoc);
-    return outputString;    
-  } 
-    */   
+    return outputString;
+  }
+    */
 }
