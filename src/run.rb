@@ -37,13 +37,13 @@ pdf = File.open("smallest.pdf").read()
 
 request = <<-REQ
 --boundary_1234\r
-Content-Type: application/xop+xml; type="text/xml"; charset=utf-8\r
+Content-Type: application/xop+xml; type="application/soap+xml"; charset=utf-8\r
 \r
 #{xml}
 \r
 \r
 --boundary_1234\r
-Content-Type: image/jpeg\r
+Content-Type: application/octet-stream\r
 Content-ID: <5aeaa450-17f0-4484-b845-a8480c363444>\r
 \r
 #{pdf}
@@ -54,7 +54,7 @@ File.open("intermediate_files/request_curl.txt", 'w').write(request)
 begin
   puts "============= beginning request =============="
   cmd = <<-CMD
-curl -H 'Content-Type: multipart/related; boundary=boundary_1234'
+curl -H 'Content-Type: multipart/related; type=application/xop+xml; startinfo=application/soap+xml; boundary=boundary_1234'
   --data-binary @intermediate_files/request_curl.txt
   -i -k --trace-ascii out.txt
   -X POST https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4
