@@ -57,7 +57,7 @@ begin
   cmd = <<-CMD
 curl -H 'Content-Type: Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"'
   --data-binary @intermediate_files/request_curl.txt
-  -i -k --trace-ascii out.txt
+  -i -k --trace-ascii intermediate_files/curl_trace.txt
   -X POST https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4
   CMD
   response = sh(cmd)
