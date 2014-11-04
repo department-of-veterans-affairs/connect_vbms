@@ -12,8 +12,7 @@ build: SendGetDocumentTypes.class UploadDocumentWithAssociations.class decrypt.c
 
 .PHONY:run
 run:
-	#java -classpath '.:../lib/*' SendGetDocumentTypes | ./run.rb
-	#java -classpath '.:../lib/*' UploadDocumentWithAssociations | ./run.rb
+	java -classpath '.:../lib/*' UploadDocumentWithAssociations | ./run.rb
 
 .PHONY:decrypt
 decrypt: decrypt.class
