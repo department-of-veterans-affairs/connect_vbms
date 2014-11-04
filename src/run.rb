@@ -18,7 +18,7 @@ def sh(cmd)
   out
 end
 
-url = "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4?WSDL"
+url = "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4"
 client = Savon.client(wsdl: url, ssl_verify_mode: :none)#, ssl_cert_file: "vbms_test_public_key.crt")
 doc = XML::Parser.string(STDIN.read).parse
 
@@ -32,7 +32,6 @@ doc.find_first("//wsse:Security", wsse).attributes.get_attribute("mustUnderstand
 
 doc.save("intermediate_files/encrypted_saml.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
 xml = doc.to_s
-#puts xml
 pdf = IO.read("smallest.pdf")
 
 request = <<-REQ
@@ -62,7 +61,6 @@ curl -H 'Content-Type: Multipart/Related; type="application/xop+xml"; start-info
   -X POST https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4
   CMD
   response = sh(cmd)
-  #response = client.call(:upload_document_with_associations, xml: xml)
   puts "============= request over =============="
   raw = response
   File.open("intermediate_files/raw_response.txt", 'w').write(raw)
