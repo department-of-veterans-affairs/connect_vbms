@@ -33,7 +33,7 @@ doc.find_first("//wsse:Security", wsse).attributes.get_attribute("mustUnderstand
 doc.save("intermediate_files/encrypted_saml.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
 xml = doc.to_s
 #puts xml
-pdf = File.open("smallest.pdf").read()
+pdf = IO.read("smallest.pdf")
 
 request = <<-REQ
 --boundary_1234\r
@@ -44,9 +44,11 @@ Content-Type: application/xop+xml; type="application/soap+xml"; charset=utf-8\r
 \r
 --boundary_1234\r
 Content-Type: application/octet-stream\r
-Content-ID: <5aeaa450-17f0-4484-b845-a8480c363444>\r
+Content-ID: smallest.pdf\r
 \r
 #{pdf}
+\r
+--boundary_1234\r
 REQ
 
 File.open("intermediate_files/request_curl.txt", 'w').write(request)
@@ -54,7 +56,7 @@ File.open("intermediate_files/request_curl.txt", 'w').write(request)
 begin
   puts "============= beginning request =============="
   cmd = <<-CMD
-curl -H 'Content-Type: multipart/related; type=application/xop+xml; startinfo=application/soap+xml; boundary=boundary_1234'
+curl -H 'Content-Type: Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"'
   --data-binary @intermediate_files/request_curl.txt
   -i -k --trace-ascii out.txt
   -X POST https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4
