@@ -62,11 +62,14 @@ curl -H 'Content-Type: Multipart/Related; type="application/xop+xml"; start-info
   CMD
   response = sh(cmd)
   puts "============= request over =============="
-  raw = response
-  File.open("intermediate_files/raw_response.txt", 'w').write(raw)
-  puts raw
+  File.open("intermediate_files/raw_response.txt", 'w').write(response)
+  puts response
 rescue Exception => e
   puts e
   puts "intermediate_files/encrypted_saml.xml contains the message that just failed"
   raise
 end
+
+# Now grab the meat of the returned message
+xml = XML::Parser.string(response.match(/<soap:envelope.*?<\/soap:envelope>/im)[0]).parse
+xml.save("intermediate_files/raw_response.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
