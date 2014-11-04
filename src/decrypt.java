@@ -23,7 +23,7 @@ public class decrypt
   {
     try 
     {
-      List<String> lines = Files.readAllLines(Paths.get("getencrypted_xmlTypes.xml"), Charset.defaultCharset());
+      List<String> lines = Files.readAllLines(Paths.get("intermediate_files/raw_response.xml"), Charset.defaultCharset());
       String encrypted_xml = "";
       for (String line : lines)
       {
