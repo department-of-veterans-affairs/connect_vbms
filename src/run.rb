@@ -32,7 +32,7 @@ doc.find_first("//wsse:Security", wsse).attributes.get_attribute("mustUnderstand
 
 doc.save("intermediate_files/encrypted_saml.xml", :indent => true, :encoding => XML::Encoding::UTF_8)
 xml = doc.to_s
-pdf = IO.read("smallest.pdf")
+pdf = IO.read("cui-test.pdf")
 
 request = <<-REQ
 --boundary_1234\r
@@ -43,7 +43,7 @@ Content-Type: application/xop+xml; type="application/soap+xml"; charset=utf-8\r
 \r
 --boundary_1234\r
 Content-Type: application/octet-stream\r
-Content-ID: smallest.pdf\r
+Content-ID: cui-test.pdf\r
 \r
 #{pdf}
 \r

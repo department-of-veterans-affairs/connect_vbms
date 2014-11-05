@@ -4,11 +4,11 @@ SendGetDocumentTypes.class:
 UploadDocumentWithAssociations.class:
 	javac -classpath '../lib/*' UploadDocumentWithAssociations.java
 
-decrypt.class: decrypt.java
-	javac -classpath '../lib/*' decrypt.java
+DecryptMessage.class: DecryptMessage.java
+	javac -classpath '../lib/*' DecryptMessage.java
 
 .PHONY: build
-build: SendGetDocumentTypes.class UploadDocumentWithAssociations.class decrypt.class
+build: SendGetDocumentTypes.class UploadDocumentWithAssociations.class DecryptMessage.class
 
 .PHONY:run
 run:
@@ -16,4 +16,4 @@ run:
 
 .PHONY:decrypt
 decrypt: decrypt.class
-	java -classpath '.:../lib/*' decrypt
+	java -classpath '.:../lib/*' DecryptMessage

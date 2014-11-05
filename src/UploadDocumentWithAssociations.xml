@@ -8,7 +8,7 @@
          </v4:documentAssociations>
          <v4:documentContent>
             <doc:data>
-               <xop:Include href="smallest.pdf" />
+               <xop:Include href="cui-test.pdf" />
             </doc:data>
          </v4:documentContent>
       </v4:uploadDocumentWithAssociations>

@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Paths;
 
 // API docs at https://ws.apache.org/wss4j/apidocs/
-public class decrypt
+public class DecryptMessage
 {
   public static void main(String[] args)
   {
@@ -35,7 +35,6 @@ public class decrypt
       }
 
       String document = decrypt(encrypted_xml);
-
       System.out.println(document);
     }
     catch (Exception e)
@@ -58,10 +57,8 @@ public class decrypt
     Crypto crypto = CryptoFactory.getInstance();
     CallbackHandler handler = new WSSCallbackHandler();
     WSSecurityEngine secEngine = new WSSecurityEngine();
-
     Document doc = getSOAPDoc(encryptedXml);
-
-    java.util.List<WSSecurityEngineResult> results = secEngine.processSecurityHeader(doc, null, handler, null, crypto);
+    java.util.List<WSSecurityEngineResult> results = secEngine.processSecurityHeader(doc, null, handler, crypto);
     return XMLUtils.PrettyDocumentToString(doc);
   }
 
@@ -83,5 +80,3 @@ public class decrypt
     }
   }
 }
-
-
