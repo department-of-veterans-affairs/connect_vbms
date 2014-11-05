@@ -15,5 +15,5 @@ run:
 	java -classpath '.:../lib/*' UploadDocumentWithAssociations | ./run.rb
 
 .PHONY:decrypt
-decrypt: decrypt.class
+decrypt: DecryptMessage.class
 	java -classpath '.:../lib/*' DecryptMessage

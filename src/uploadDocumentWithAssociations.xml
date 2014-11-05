@@ -3,8 +3,9 @@
    <soapenv:Header/>
    <soapenv:Body>
       <v4:uploadDocumentWithAssociations>
-         <v4:document externalId="123" fileNumber="501258463" filename="vaildRequiredFields3.pdf" docType="546" subject="validRequiredFields3"/>
-         <v4:documentAssociations associationType="CLAIM"><doc:associationValue>9806855</doc:associationValue>
+         <v4:document externalId="123" fileNumber="784449089" filename="cui-test.pdf" docType="546" subject="cui-test"/>
+         <v4:documentAssociations associationType="CLAIM">
+           <doc:associationValue>600012987</doc:associationValue>
          </v4:documentAssociations>
          <v4:documentContent>
             <doc:data>

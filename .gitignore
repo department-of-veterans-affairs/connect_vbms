@@ -2,3 +2,4 @@
 *.class
 src/intermediate_files/*
 src/out.txt
+src/*.log

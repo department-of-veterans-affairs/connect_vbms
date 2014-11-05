@@ -69,10 +69,13 @@ public class DecryptMessage
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
       for (Callback callback : callbacks) {
         if (callback instanceof WSPasswordCallback) {
+          System.out.println("PASSWORD CALLBACK");
           WSPasswordCallback cb = (WSPasswordCallback) callback;
           cb.setPassword("importkey");
-
+          System.out.println(cb.getUsage());
           if (cb.getUsage() == WSPasswordCallback.ENCRYPTED_KEY_TOKEN) {
+            System.out.println("ENCRYPTED_KEY_TOKEN");
+            System.out.println(cb.getIdentifier());
             byte[] str = Base64.decodeBase64(cb.getIdentifier().getBytes());
           }
         }
