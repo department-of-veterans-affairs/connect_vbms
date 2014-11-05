@@ -1,5 +1,5 @@
-SendGetDocumentTypes.class:
-	javac -classpath '../lib/*' SendGetDocumentTypes.java
+GetDocumentTypes.class:
+	javac -classpath '../lib/*' GetDocumentTypes.java
 
 UploadDocumentWithAssociations.class:
 	javac -classpath '../lib/*' UploadDocumentWithAssociations.java
@@ -8,7 +8,7 @@ DecryptMessage.class: DecryptMessage.java
 	javac -classpath '../lib/*' DecryptMessage.java
 
 .PHONY: build
-build: SendGetDocumentTypes.class UploadDocumentWithAssociations.class DecryptMessage.class
+build: GetDocumentTypes.class UploadDocumentWithAssociations.class DecryptMessage.class
 
 .PHONY:run
 run:

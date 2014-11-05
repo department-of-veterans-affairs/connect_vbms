@@ -22,7 +22,7 @@ import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSConstants;
 
 
-public class SendGetDocumentTypes
+public class GetDocumentTypes
 {
 
   public static void main(String[] args)
