@@ -26,7 +26,7 @@
    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
      <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
      <param name="File" value="soapui.log"/>
-     <param name="Threshold" value="INFO"/>
+     <param name="Threshold" value="DEBUG"/>
      <param name="Append" value="false"/>
      <param name="MaxFileSize" value="5000KB"/>
      <param name="MaxBackupIndex" value="50"/>
@@ -50,10 +50,19 @@
    <!-- =============== -->
    <!-- Loggers         -->
    <!-- =============== -->
+   <logger name="UploadDocumentWithAssociations">
+     <level value="ERROR"/>
+     <appender-ref ref="FILE"/>
+   </logger>
+   
+   <logger name="DecryptMessage">
+     <level value="DEBUG"/>
+     <appender-ref ref="CONSOLE"/>
+   </logger>
    
    <root>
   	  <priority value="DEBUG" />
-  	  <appender-ref ref="CONSOLE"/>
+  	  <appender-ref ref="FILE"/>
    </root>
    
 </log4j:configuration>
