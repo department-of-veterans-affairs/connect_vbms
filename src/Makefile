@@ -16,4 +16,6 @@ run:
 
 .PHONY:decrypt
 decrypt: DecryptMessage.class
-	java -classpath '.:../lib/*' DecryptMessage
+	# Decrypt fails... but run decrypt_hack to pull the message out of the log
+	-java -classpath '.:../lib/*' DecryptMessage
+	./decrypt_hack.rb
