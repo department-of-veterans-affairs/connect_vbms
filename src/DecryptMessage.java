@@ -58,7 +58,7 @@ public class DecryptMessage
     CallbackHandler handler = new WSSCallbackHandler();
     WSSecurityEngine secEngine = new WSSecurityEngine();
     Document doc = getSOAPDoc(encryptedXml);
-    java.util.List<WSSecurityEngineResult> results = secEngine.processSecurityHeader(doc, null, handler, crypto);
+    java.util.List<WSSecurityEngineResult> results = secEngine.processSecurityHeader(doc, null, handler, crypto, crypto);
     return XMLUtils.PrettyDocumentToString(doc);
   }
 
