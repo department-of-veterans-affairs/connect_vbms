@@ -4,6 +4,20 @@ require 'xml'
 require 'optparse'
 require 'tempfile'
 
+def sh(cmd)
+  # http://sgros.blogspot.com/2013/01/signing-xml-document-using-xmlsec1.html
+  # explains how this works
+  cmd.gsub! "\n", " \\\n"
+  puts cmd
+  out = `#{cmd}`
+  if $? != 0
+    puts out
+    puts cmd
+    raise "command failed"
+  end
+  out
+end
+
 # prepare XML for document upload
 # call UploadDocumentWithAssociations
 # return decrypted message
@@ -32,8 +46,8 @@ def prepare_xml(pdf, claim_number)
 end
 
 def call_upload(xml)
-  #TODO
-  keyfile = 1/0
+  keyfile = "client3.jks"
+
   sh "java -classpath '.:../lib/*' UploadDocumentWithAssociations #{xml.path} #{keyfile}"
 end
 
