@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v4="http://vbms.vba.va.gov/external/eDocumentService/v4" xmlns:doc="http://vbms.vba.va.gov/cdm/document/v4" xmlns:cdm="http://vbms.vba.va.gov/cdm" xmlns:xop="http://www.w3.org/2004/08/xop/include">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v4:uploadDocumentWithAssociations>
+        <v4:document externalId="<%= externalId %>" fileNumber="<%= fileNumber %>" filename="<%= filename %>" docType="<%= docType %>" subject="<%= subject %>"/>
+         <v4:documentAssociations associationType="CLAIM">
+           <doc:associationValue><%= claim_number %></doc:associationValue>
+         </v4:documentAssociations>
+         <v4:documentContent>
+            <doc:data>
+              <xop:Include href="<%= pdf %>" />
+            </doc:data>
+         </v4:documentContent>
+      </v4:uploadDocumentWithAssociations>
+   </soapenv:Body>
+</soapenv:Envelope>
