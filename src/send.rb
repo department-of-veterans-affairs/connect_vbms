@@ -7,8 +7,9 @@ require 'tempfile'
 
 ENVS = {
   "test" => {
-    "url" => "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
-    "keyfile" => "client3.jks"
+    :url => "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
+    :keyfile => "client3.jks",
+    :saml => "samlToken-cui-tst.xml"
   }
 }
 
@@ -28,17 +29,33 @@ end
 
 # prepare XML for document upload
 # call UploadDocumentWithAssociations
+# send XML, get response
+# decrypt response
 # return decrypted message
 def upload_doc(options)
   begin
     file = prepare_xml(options[:pdf], options[:claim_number])
-    file.close
-    xml = call_upload(file)
-    puts xml
+    encrypted_xml = prepare_upload(file, options[:env])
+    puts send_document(encrypted_xml, options[:env], options[:pdf])
   ensure
     file.close
     file.unlink
   end
+end
+
+def write_tempfile(data, name="temp")
+  file = Tempfile.new(name)
+  file.write(data)
+  file.close
+  file
+end
+
+def get_tempname(name="temp")
+  file = Tempfile.new(name)
+  path = file.path
+  file.close
+  file.unlink
+  path
 end
 
 def prepare_xml(pdf, claim_number)
@@ -50,15 +67,43 @@ def prepare_xml(pdf, claim_number)
   subject = "cui-test"
 
   template = File.open("upload_document_xml_template.xml.erb", 'r').read
-  xmlfile = Tempfile.new('xml')
-  xmlfile.write(ERB.new(template).result(binding))
-  xmlfile
+  write_tempfile(ERB.new(template).result(binding))
 end
 
-def call_upload(xml)
-  keyfile = "client3.jks"
+def prepare_upload(xmlfile, env)
+  sh "java -classpath '.:../lib/*' UploadDocumentWithAssociations #{xmlfile.path} #{env[:keyfile]}"
+end
 
-  sh "java -classpath '.:../lib/*' UploadDocumentWithAssociations #{xml.path} #{keyfile}"
+def inject_saml(doc, env)
+  puts "parsing #{env[:saml]}"
+  saml = doc.import(XML::Parser.file(env[:saml]).parse.root)
+  wsse = "wsse:http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+  doc.find_first("//wsse:Security", wsse) << saml
+end
+
+def remove_mustUnderstand(doc)
+  wsse = "wsse:http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+  doc.find_first("//wsse:Security", wsse).attributes.get_attribute("mustUnderstand").remove!
+end
+
+def send_document(xml, env, pdf)
+  # inject SAML header
+  doc = XML::Parser.string(xml).parse
+  inject_saml(doc, env)
+  remove_mustUnderstand(doc)
+  xml = doc.to_s
+  pdf = IO.read(pdf)
+  req = ERB.new(File.open("mtom_request.erb").read).result(binding)
+  reqfile = write_tempfile(req)
+  logfilename = get_tempname("curl_trace")
+  headers = 'Content-Type: Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"'
+
+  sh <<-CMD
+curl -H '#{headers}'
+  --data-binary @#{reqfile.path}
+  -i -k --trace-ascii #{logfilename}
+  -X POST #{env[:url]}
+  CMD
 end
 
 def parse(args)
