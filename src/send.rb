@@ -2,12 +2,19 @@
 require 'erb'
 require 'xml'
 require 'optparse'
+require 'tempfile'
 
 # prepare XML for document upload
 # call UploadDocumentWithAssociations
 # return decrypted message
 def upload_doc(options)
-  puts prepare_xml(options[:pdf], options[:claim_number])
+  begin
+    file = prepare_xml(options[:pdf], options[:claim_number])
+    call_upload(file)
+  ensure
+    file.close
+    file.unlink
+  end
 end
 
 def prepare_xml(pdf, claim_number)
@@ -19,9 +26,16 @@ def prepare_xml(pdf, claim_number)
   subject = "cui-test"
 
   template = File.open("upload_document_xml_template.xml.erb", 'r').read
-  ERB.new(template).result(binding)
+  xmlfile = Tempfile.new('xml')
+  xmlfile.write(ERB.new(template).result(binding))
+  xmlfile
 end
 
+def call_upload(xml)
+  #TODO
+  keyfile = 1/0
+  sh "java -classpath '.:../lib/*' UploadDocumentWithAssociations #{xml.path} #{keyfile}"
+end
 
 def parse(args)
   usage = "Usage: upload_doc.rb --pdf <filename> --claim_number <n> --env <env>"
