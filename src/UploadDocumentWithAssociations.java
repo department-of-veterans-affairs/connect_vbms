@@ -22,11 +22,11 @@ import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSConstants;
 
 
-public class UploadDocumentWithAssociations 
-{       
+public class UploadDocumentWithAssociations
+{
   public static void main(String[] args)
   {
-    try 
+    try
     {
       List<String> lines = Files.readAllLines(Paths.get("uploadDocumentWithAssociations.xml"), Charset.defaultCharset());
       String document = "";
@@ -34,10 +34,10 @@ public class UploadDocumentWithAssociations
       {
         document += line;
       }
-      
+
       document = addTimestamp(document);
       document = addSignature(document);
-      document = addEncryption(document);      
+      document = addEncryption(document);
       System.out.println(document);
     }
     catch (Exception e)
@@ -45,7 +45,7 @@ public class UploadDocumentWithAssociations
       e.printStackTrace();
     }
   }
-  
+
   public static Document getSOAPDoc(String document) throws Exception
   {
     InputStream in = new ByteArrayInputStream(document.getBytes());
@@ -55,7 +55,7 @@ public class UploadDocumentWithAssociations
     Document doc = builder.parse(in);
     return doc;
   }
-  
+
   public static String addTimestamp(String document) throws Exception
   {
     Document doc = getSOAPDoc(document);
@@ -67,7 +67,7 @@ public class UploadDocumentWithAssociations
     String outputString = XMLUtils.PrettyDocumentToString(createdDoc);
     return outputString;
   }
-  
+
   public static String addSignature(String document) throws Exception
   {
     Crypto crypto = CryptoFactory.getInstance();
@@ -90,7 +90,7 @@ public class UploadDocumentWithAssociations
     String outputString = XMLUtils.PrettyDocumentToString(signedDoc);
     return outputString;
   }
-  
+
   public static String addEncryption(String document) throws Exception
   {
     Crypto crypto = CryptoFactory.getInstance();
