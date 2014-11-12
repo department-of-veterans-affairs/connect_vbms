@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Properties;
 import java.nio.charset.Charset;
 import org.apache.ws.security.WSEncryptionPart;
 import java.util.ArrayList;
@@ -26,18 +27,26 @@ public class UploadDocumentWithAssociations
 {
   public static void main(String[] args)
   {
+    Properties properties = new Properties();
+    properties.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", args[1]);
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "importkey");
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.private.password", "importkey");
+
     try
     {
-      List<String> lines = Files.readAllLines(Paths.get("uploadDocumentWithAssociations.xml"), Charset.defaultCharset());
+      List<String> lines = Files.readAllLines(Paths.get(args[0]), Charset.defaultCharset());
       String document = "";
       for (String line : lines)
       {
         document += line;
       }
 
+      Crypto crypto = CryptoFactory.getInstance(properties);
+
       document = addTimestamp(document);
-      document = addSignature(document);
-      document = addEncryption(document);
+      document = addSignature(document, crypto);
+      document = addEncryption(document, crypto);
       System.out.println(document);
     }
     catch (Exception e)
@@ -68,9 +77,8 @@ public class UploadDocumentWithAssociations
     return outputString;
   }
 
-  public static String addSignature(String document) throws Exception
+  public static String addSignature(String document, Crypto crypto) throws Exception
   {
-    Crypto crypto = CryptoFactory.getInstance();
     WSSecSignature builder = new WSSecSignature();
     builder.setUserInfo("importkey", "importkey");
     Document doc = getSOAPDoc(document);
@@ -91,9 +99,8 @@ public class UploadDocumentWithAssociations
     return outputString;
   }
 
-  public static String addEncryption(String document) throws Exception
+  public static String addEncryption(String document, Crypto crypto) throws Exception
   {
-    Crypto crypto = CryptoFactory.getInstance();
     WSSecEncrypt builder = new WSSecEncrypt();
     builder.setUserInfo("vbms_server_key", "importkey");
     Document doc = getSOAPDoc(document);
