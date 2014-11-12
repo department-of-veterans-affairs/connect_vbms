@@ -2,7 +2,15 @@
 require 'erb'
 require 'xml'
 require 'optparse'
+require 'savon'
 require 'tempfile'
+
+ENVS = {
+  "test" => {
+    "url" => "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
+    "keyfile" => "client3.jks"
+  }
+}
 
 def sh(cmd)
   # http://sgros.blogspot.com/2013/01/signing-xml-document-using-xmlsec1.html
@@ -24,7 +32,9 @@ end
 def upload_doc(options)
   begin
     file = prepare_xml(options[:pdf], options[:claim_number])
-    call_upload(file)
+    file.close
+    xml = call_upload(file)
+    puts xml
   ensure
     file.close
     file.unlink
@@ -67,7 +77,7 @@ def parse(args)
     end
 
     opts.on("--env [env]", "Environment to use: test, UAT, ...") do |v|
-      options[:env] = v
+      options[:env] = ENVS[v]
     end
   end.parse!
 
