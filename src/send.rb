@@ -2,7 +2,6 @@
 require 'erb'
 require 'xml'
 require 'optparse'
-require 'savon'
 require 'tempfile'
 
 ENVS = {
