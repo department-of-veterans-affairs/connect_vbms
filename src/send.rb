@@ -21,11 +21,20 @@ def log(msg)
   log.write("\n")
 end
 
-def sh(cmd)
+def rel(name)
+  File.join(File.dirname(File.expand_path(__FILE__)), name)
+end
+
+# return open file relative to this file's current directory
+def openrel(name, mode='r')
+  File.open(rel(name), mode)
+end
+
+def sh(cmd, ignore_errors=false)
   cmd.gsub! "\n", " \\\n"
   log(cmd)
   out = `#{cmd}`
-  if $? != 0
+  if $? != 0 && !ignore_errors
     puts out
     puts cmd
     raise "command failed"
@@ -36,13 +45,20 @@ end
 # prepare XML for document upload
 # call UploadDocumentWithAssociations
 # send XML, get response
+# check response for error
 # decrypt response
 # return decrypted message
 def upload_doc(options)
   begin
+    # Because I don't know how to run a java file from another directory, we
+    # have to actually change directory into the directory containing this
+    # file. FML
+    Dir.chdir(File.dirname(File.expand_path(__FILE__)))
     file = prepare_xml(options[:pdf], options[:claim_number])
     encrypted_xml = prepare_upload(file, options[:env])
-    puts send_document(encrypted_xml, options[:env], options[:pdf])
+    response = send_document(encrypted_xml, options[:env], options[:pdf])
+    puts response
+    #handle_response(response)
   rescue Exception => e
     puts e.backtrace
     puts e.message
@@ -75,7 +91,7 @@ def prepare_xml(pdf, claim_number)
   docType = "546"
   subject = "cui-test"
 
-  template = File.open("upload_document_xml_template.xml.erb", 'r').read
+  template = openrel("upload_document_xml_template.xml.erb").read
   xml = ERB.new(template).result(binding)
   log("Unencrypted XML:\n#{xml}")
 
@@ -105,7 +121,7 @@ def send_document(xml, env, pdf)
   remove_mustUnderstand(doc)
   xml = doc.to_s
   pdf = IO.read(pdf)
-  req = ERB.new(File.open("mtom_request.erb").read).result(binding)
+  req = ERB.new(openrel("mtom_request.erb").read).result(binding)
   reqfile = write_tempfile(req)
   logfilename = get_tempname("curl_trace")
   headers = 'Content-Type: Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"'
@@ -116,6 +132,30 @@ curl -H '#{headers}'
   -i -k --trace-ascii #{logfilename}
   -X POST #{env[:url]}
   CMD
+end
+
+def get_soap(txt)
+  soap = txt.match(/<soap:envelope.*?<\/soap:envelope>/im)[0]
+  XML::Parser.string(soap).parse
+end
+
+def handle_response(response)
+  doc = get_soap(response)
+  log("Response from VBMS:\n#{doc.to_s}")
+
+  soap = "http://schemas.xmlsoap.org/soap/envelope/"
+  if doc.find_first("//soap:Fault", soap)
+    $stderr.write("Received error from VBMS:\n#{soap.to_s}\nCheck logfile in #{$logfile}")
+    exit
+  end
+
+  file = write_tempfile(soap.to_s)
+
+  # now here's the hackiest thing in the world. This command is going to fail,
+  # because we can't get the signatures to properly get decrypted. So run the
+  # command, handle the error, and pull the message out of the file >:|
+  sh "java -classpath '.:../lib/*' DecryptMessage", true
+
 end
 
 def parse(args)
