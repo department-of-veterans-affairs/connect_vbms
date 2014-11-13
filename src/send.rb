@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 require 'erb'
-require 'xml'
 require 'optparse'
 require 'tempfile'
+require 'time'
+require 'xml'
 
 ENVS = {
   "test" => {
@@ -91,6 +92,14 @@ def prepare_xml(pdf, claim_number)
   filename = File.split(pdf)[1]
   docType = "546"
   subject = filename
+
+  # There is no docs on the time format. Guessing based on examples from the
+  # soapui project that it's GMT, 24 hour clock YYYY-MM-DD-HH:MM. Discovered
+  # through trial and error that it doesn't allow a 24 hour clock, so the time
+  # of day field is utterly useless. Insane.
+  #
+  # TODO: accept this on the command line
+  receivedDt = Time.now.utc.strftime "%Y-%m-%d-%I:%M"
 
   puts rel("test")
   template = openrel("upload_document_xml_template.xml.erb").read

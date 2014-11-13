@@ -3,7 +3,9 @@
    <soapenv:Header/>
    <soapenv:Body>
       <v4:uploadDocumentWithAssociations>
-        <v4:document externalId="<%= externalId %>" fileNumber="<%= fileNumber %>" filename="<%= filename %>" docType="<%= docType %>" subject="<%= subject %>"/>
+        <v4:document externalId="<%= externalId %>" fileNumber="<%= fileNumber %>" filename="<%= filename %>" docType="<%= docType %>" subject="<%= subject %>">
+          <doc:receivedDt><%= receivedDt %></doc:receivedDt>
+         </v4:document>
          <v4:documentAssociations associationType="CLAIM">
            <doc:associationValue><%= claim_number %></doc:associationValue>
          </v4:documentAssociations>
