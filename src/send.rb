@@ -13,11 +13,17 @@ ENVS = {
   }
 }
 
+# global log function
+$logfile = "/usr/local/var/log/connect_vbms.log"
+def log(msg)
+  log = File.open($logfile, 'a')
+  log.write(msg)
+  log.write("\n")
+end
+
 def sh(cmd)
-  # http://sgros.blogspot.com/2013/01/signing-xml-document-using-xmlsec1.html
-  # explains how this works
   cmd.gsub! "\n", " \\\n"
-  puts cmd
+  log(cmd)
   out = `#{cmd}`
   if $? != 0
     puts out
@@ -37,6 +43,9 @@ def upload_doc(options)
     file = prepare_xml(options[:pdf], options[:claim_number])
     encrypted_xml = prepare_upload(file, options[:env])
     puts send_document(encrypted_xml, options[:env], options[:pdf])
+  rescue Exception => e
+    puts e.backtrace
+    puts e.message
   ensure
     file.close
     file.unlink
@@ -67,7 +76,10 @@ def prepare_xml(pdf, claim_number)
   subject = "cui-test"
 
   template = File.open("upload_document_xml_template.xml.erb", 'r').read
-  write_tempfile(ERB.new(template).result(binding))
+  xml = ERB.new(template).result(binding)
+  log("Unencrypted XML:\n#{xml}")
+
+  write_tempfile(xml)
 end
 
 def prepare_upload(xmlfile, env)
@@ -107,7 +119,7 @@ curl -H '#{headers}'
 end
 
 def parse(args)
-  usage = "Usage: upload_doc.rb --pdf <filename> --claim_number <n> --env <env>"
+  usage = "Usage: upload_doc.rb --pdf <filename> --claim_number <n> --env <env> --logfile <file>"
   options = {}
 
   OptionParser.new do |opts|
@@ -124,6 +136,12 @@ def parse(args)
     opts.on("--env [env]", "Environment to use: test, UAT, ...") do |v|
       options[:env] = ENVS[v]
     end
+
+    opts.on("--logfile [logfile]", "Logfile to use") do |v|
+      $logfile = v
+    end
+
+    # TODO: add -v option for verboseness
   end.parse!
 
   required_options = [:env, :claim_number, :pdf]
