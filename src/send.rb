@@ -106,7 +106,7 @@ def prepare_xml(pdf, claim_number)
 
   veteranFirstName="CUI"
   veteranMiddleName=""
-  veteranLastName="TersterOne"
+  veteranLastName="TesterOne"
 
   # TODO: true if the claim associated with this evaluation is still pending,
   # false otherwise
