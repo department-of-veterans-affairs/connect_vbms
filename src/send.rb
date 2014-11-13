@@ -20,8 +20,10 @@ def log(msg)
   log.write("\n")
 end
 
+# needs to happen before we change directories
+$filedir = File.dirname(File.absolute_path(__FILE__))
 def rel(name)
-  File.join(File.dirname(File.expand_path(__FILE__)), name)
+  File.join($filedir, name)
 end
 
 # return open file relative to this file's current directory
@@ -86,10 +88,11 @@ def prepare_xml(pdf, claim_number)
   #what ought to go in these variables?
   externalId = "123"
   fileNumber = "784449089"
-  filename = "cui-test.pdf"
+  filename = File.split(pdf)[1]
   docType = "546"
-  subject = "cui-test"
+  subject = filename
 
+  puts rel("test")
   template = openrel("upload_document_xml_template.xml.erb").read
   xml = ERB.new(template).result(binding)
   log("Unencrypted XML:\n#{xml}")
@@ -119,7 +122,9 @@ def send_document(xml, env, pdf)
   inject_saml(doc, env)
   remove_mustUnderstand(doc)
   xml = doc.to_s
+  filename = File.split(pdf)[1]
   pdf = IO.read(pdf)
+
   req = ERB.new(openrel("mtom_request.erb").read).result(binding)
   reqfile = write_tempfile(req)
   logfilename = get_tempname("curl_trace")
