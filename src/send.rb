@@ -101,6 +101,17 @@ def prepare_xml(pdf, claim_number)
   # TODO: accept this on the command line
   receivedDt = Time.now.utc.strftime "%Y-%m-%d-%I:%M"
 
+  # TODO is this our "VBMS-assigned name for document uploading institution"
+  source = "cui"
+
+  veteranFirstName="CUI"
+  veteranMiddleName=""
+  veteranLastName="TersterOne"
+
+  # TODO: true if the claim associated with this evaluation is still pending,
+  # false otherwise
+  newMail = "true"
+
   puts rel("test")
   template = openrel("upload_document_xml_template.xml.erb").read
   xml = ERB.new(template).result(binding)

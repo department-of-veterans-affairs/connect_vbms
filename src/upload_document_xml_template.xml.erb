@@ -3,7 +3,17 @@
    <soapenv:Header/>
    <soapenv:Body>
       <v4:uploadDocumentWithAssociations>
-        <v4:document externalId="<%= externalId %>" fileNumber="<%= fileNumber %>" filename="<%= filename %>" docType="<%= docType %>" subject="<%= subject %>">
+        <v4:document externalId="<%= externalId %>"
+          fileNumber="<%= fileNumber %>"
+          filename="<%= filename %>"
+          docType="<%= docType %>"
+          subject="<%= subject %>"
+          veteranFirstName="<%= veteranFirstName %>"
+          veteranMiddleName="<%= veteranMiddleName %>"
+          veteranLastName="<%= veteranLastName %>"
+          newMail="<%= newMail %>"
+          source="<%= source %>"
+          >
           <doc:receivedDt><%= receivedDt %></doc:receivedDt>
          </v4:document>
          <v4:documentAssociations associationType="CLAIM">
