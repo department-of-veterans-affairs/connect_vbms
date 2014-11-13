@@ -27,7 +27,7 @@ public class DecryptMessage
   {
     try 
     {
-      List<String> lines = Files.readAllLines(Paths.get("intermediate_files/raw_response.xml"), Charset.defaultCharset());
+      List<String> lines = Files.readAllLines(Paths.get(args[0]), Charset.defaultCharset());
       String encrypted_xml = "";
       for (String line : lines)
       {
