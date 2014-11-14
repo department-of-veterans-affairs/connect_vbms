@@ -206,6 +206,8 @@ def parse(args)
     end
 
     # TODO: add -v option for verboseness
+    # TODO: how to get optparse to display our options in the help? The docs
+    #       for optparse are awful.
   end.parse!
 
   required_options = [:env, :claim_number, :pdf]
