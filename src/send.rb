@@ -10,7 +10,7 @@ ENVS = {
   "test" => {
     :url => "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
     :keyfile => "../envs/test/client3.jks",
-    :saml => "../envs/test/samlToken-cui-tst.xml"
+    :saml => "../envs/test/samlToken-cui-tst.xml",
     :keypass => "importkey",
   },
   "uat" => {
