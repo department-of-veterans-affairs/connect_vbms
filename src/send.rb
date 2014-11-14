@@ -8,8 +8,13 @@ require 'xml'
 ENVS = {
   "test" => {
     :url => "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
-    :keyfile => "client3.jks",
-    :saml => "samlToken-cui-tst.xml"
+    :keyfile => "../envs/test/client3.jks",
+    :saml => "../envs/test/samlToken-cui-tst.xml"
+  },
+  "uat" => {
+    :url => "https://filenet.uat.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
+    :keyfile => "",
+    :saml => "",
   }
 }
 
