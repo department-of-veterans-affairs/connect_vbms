@@ -45,7 +45,7 @@ public class UploadDocumentWithAssociations
       Crypto crypto = CryptoFactory.getInstance(properties);
 
       document = addTimestamp(document);
-      document = addSignature(document, crypto);
+      document = addSignature(document, crypto, args[2]);
       document = addEncryption(document, crypto);
       System.out.println(document);
     }
@@ -77,10 +77,10 @@ public class UploadDocumentWithAssociations
     return outputString;
   }
 
-  public static String addSignature(String document, Crypto crypto) throws Exception
+  public static String addSignature(String document, Crypto crypto, String keypass) throws Exception
   {
     WSSecSignature builder = new WSSecSignature();
-    builder.setUserInfo("importkey", "importkey");
+    builder.setUserInfo("importkey", keypass);
     Document doc = getSOAPDoc(document);
     SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(doc.getDocumentElement());
     WSSecHeader secHeader = new WSSecHeader();
