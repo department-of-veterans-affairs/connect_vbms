@@ -17,7 +17,9 @@ ENVS = {
     :url => "https://filenet.uat.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
     :keyfile => "../envs/uat/uat-w-key3.jks",
     :saml => "../envs/uat/samlTokenCUI-UAT.xml",
+    :certpkcs => "../envs/uat/CUI-UAT-Client.p12",
     :keypass => "Password123.",
+    :cacert => "../envs/uat/ca2.crt",
   }
 }
 
@@ -72,6 +74,7 @@ def upload_doc(options)
   rescue Exception => e
     puts e.backtrace
     puts e.message
+    File.open("/tmp/signed.xml", 'w').write(encrypted_xml)
   ensure
     file.close
     file.unlink
@@ -158,10 +161,21 @@ def send_document(xml, env, pdf)
   logfilename = get_tempname("curl_trace")
   headers = 'Content-Type: Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"'
 
+  # for test, no certs
+  certs = "--insecure"
+  # for the rest, grab the cert and ca
+  if env.has_key? :cacert
+    certs = <<-CERTS
+  --cert #{env[:certpkcs]}:#{env[:keypass]}
+  --cacert #{env[:cacert]}
+    CERTS
+  end
+
   sh <<-CMD
 curl -H '#{headers}'
   --data-binary @#{reqfile.path}
-  -i -k --trace-ascii #{logfilename}
+#{certs}
+  -i --trace-ascii #{logfilename}
   -X POST #{env[:url]}
   CMD
 end
