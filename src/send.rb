@@ -5,16 +5,19 @@ require 'tempfile'
 require 'time'
 require 'xml'
 
+#TODO: abstract out the ../envs/<env>/ dir structure
 ENVS = {
   "test" => {
     :url => "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
     :keyfile => "../envs/test/client3.jks",
     :saml => "../envs/test/samlToken-cui-tst.xml"
+    :keypass => "importkey",
   },
   "uat" => {
     :url => "https://filenet.uat.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
-    :keyfile => "",
-    :saml => "",
+    :keyfile => "../envs/uat/uat-w-key2.jks",
+    :saml => "../envs/uat/samlTokenCUI-UAT.xml",
+    :keypass => "Password123.",
   }
 }
 
@@ -126,7 +129,7 @@ def prepare_xml(pdf, claim_number)
 end
 
 def prepare_upload(xmlfile, env)
-  sh "java -classpath '.:../lib/*' UploadDocumentWithAssociations #{xmlfile.path} #{env[:keyfile]}"
+  sh "java -classpath '.:../lib/*' UploadDocumentWithAssociations #{xmlfile.path} #{env[:keyfile]} #{env[:keypass]}"
 end
 
 def inject_saml(doc, env)
