@@ -15,7 +15,7 @@ ENVS = {
   },
   "uat" => {
     :url => "https://filenet.uat.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
-    :keyfile => "../envs/uat/uat-w-key2.jks",
+    :keyfile => "../envs/uat/uat-w-key3.jks",
     :saml => "../envs/uat/samlTokenCUI-UAT.xml",
     :keypass => "Password123.",
   }
