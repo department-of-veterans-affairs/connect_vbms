@@ -66,7 +66,7 @@ def upload_doc(options)
     # have to actually change directory into the directory containing this
     # file. FML
     Dir.chdir(File.dirname(File.expand_path(__FILE__)))
-    file = prepare_xml(options[:pdf], options[:claim_number], options[:file_number], options[:received_dt], options[:first_name], options[:last_name])
+    file = prepare_xml(options[:pdf], options[:claim_number], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name])
     encrypted_xml = prepare_upload(file, options[:env])
     response = send_document(encrypted_xml, options[:env], options[:pdf])
     puts response
