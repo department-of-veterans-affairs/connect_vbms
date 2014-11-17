@@ -66,7 +66,7 @@ def upload_doc(options)
     # have to actually change directory into the directory containing this
     # file. FML
     Dir.chdir(File.dirname(File.expand_path(__FILE__)))
-    file = prepare_xml(options[:pdf], options[:claim_number], options[:file_number])
+    file = prepare_xml(options[:pdf], options[:claim_number], options[:file_number], options[:received_dt], options[:first_name], options[:last_name])
     encrypted_xml = prepare_upload(file, options[:env])
     response = send_document(encrypted_xml, options[:env], options[:pdf])
     puts response
@@ -96,27 +96,24 @@ def get_tempname(name="temp")
   path
 end
 
-def prepare_xml(pdf, claim_number, file_number)
+def prepare_xml(pdf, claim_number, file_number, received_dt, first_name, middle_name, last_name)
   #what ought to go in these variables?
   externalId = "123"
   filename = File.split(pdf)[1]
+
+  # TODO: this comes from the getDocTypes call. Is this the proper docType?
   docType = "546"
   subject = filename
 
   # There is no docs on the time format. Guessing based on examples from the
   # soapui project that it's GMT, 24 hour clock YYYY-MM-DD-HH:MM. Discovered
   # through trial and error that it doesn't allow a 24 hour clock, so the time
-  # of day field is utterly useless. Insane.
-  #
-  # TODO: accept this on the command line
-  receivedDt = Time.now.utc.strftime "%Y-%m-%d-%I:%M"
+  # of day field is utterly useless. Insane. Is it actually supposed to be
+  # GMT: who knows?
+  time = Time.iso8601(received_dt)
+  receivedDt = time.strftime "%Y-%m-%d-%I:%M"
 
-  # TODO is this our "VBMS-assigned name for document uploading institution"
   source = "cui"
-
-  veteranFirstName="CUI"
-  veteranMiddleName=""
-  veteranLastName="TesterOne"
 
   # TODO: true if the claim associated with this evaluation is still pending,
   # false otherwise
@@ -215,12 +212,28 @@ def parse(args)
       options[:pdf] = v
     end
 
-    opts.on("--claim_number [n]", "Claim number") do |v|
+    opts.on("--claim_number n", "Claim number") do |v|
       options[:claim_number] = v
     end
 
-    opts.on("--file_number [n]", "File number") do |v|
+    opts.on("--file_number n", "File number") do |v|
       options[:file_number] = v
+    end
+
+    opts.on("--received_dt t", "Time in iso8601 GMT") do |t|
+      options[:received_dt] = t
+    end
+
+    opts.on("--first_name name", "Veteran first name") do |n|
+      options[:first_name] = n
+    end
+
+    opts.on("--middle_name [name]", "Veteran middle name") do |n|
+      options["middle_name"] = n
+    end
+
+    opts.on("--last_name name", "Veteran last name") do |n|
+      options["last_name"] = n
     end
 
     opts.on("--env [env]", "Environment to use: test, UAT, ...") do |v|
@@ -236,7 +249,7 @@ def parse(args)
     #       for optparse are awful.
   end.parse!
 
-  required_options = [:env, :claim_number, :file_number, :pdf]
+  required_options = [:env, :claim_number, :file_number, :pdf, :received_dt, :first_name, :last_name]
   if !required_options.map{|opt| options.has_key? opt}.all?
     puts usage
     exit
