@@ -70,6 +70,7 @@ def upload_doc(options)
     encrypted_xml = prepare_upload(file, options[:env])
     response = send_document(encrypted_xml, options[:env], options[:pdf])
     puts response
+    log("-----------VBMS response-----------\n#{response}\n-------------VBMS Response----------")
     #handle_response(response)
   rescue Exception => e
     puts e.backtrace
