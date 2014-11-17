@@ -205,7 +205,7 @@ def parse(args)
   usage = "Usage: send.rb --pdf <filename> --env <env> --claim_number <n> --file_number <n> --received_dt <dt> --first_name <name> --middle_name [<name>] --last_name <name> --logfile [<file>] "
   options = {}
 
-  OptionParser.new do |opts|
+  parser = OptionParser.new do |opts|
     opts.banner = usage
 
     opts.on("--pdf [filename]", "PDF file to upload") do |v|
@@ -247,12 +247,14 @@ def parse(args)
     # TODO: add -v option for verboseness
     # TODO: how to get optparse to display our options in the help? The docs
     #       for optparse are awful.
-  end.parse!
+  end
+
+  parser.parse!
 
   required_options = [:env, :claim_number, :file_number, :pdf, :received_dt, :first_name, :last_name]
   if !required_options.map{|opt| options.has_key? opt}.all?
     puts "missing keys #{required_options.select{|opt| !options.has_key? opt}}"
-    puts usage
+    puts parser.help
     exit
   end
 
