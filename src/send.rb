@@ -229,11 +229,11 @@ def parse(args)
     end
 
     opts.on("--middle_name [name]", "Veteran middle name") do |n|
-      options["middle_name"] = n
+      options[:middle_name] = n
     end
 
     opts.on("--last_name name", "Veteran last name") do |n|
-      options["last_name"] = n
+      options[:last_name] = n
     end
 
     opts.on("--env [env]", "Environment to use: test, UAT, ...") do |v|
@@ -251,6 +251,7 @@ def parse(args)
 
   required_options = [:env, :claim_number, :file_number, :pdf, :received_dt, :first_name, :last_name]
   if !required_options.map{|opt| options.has_key? opt}.all?
+    puts "missing keys #{required_options.select{|opt| !options.has_key? opt}}"
     puts usage
     exit
   end
