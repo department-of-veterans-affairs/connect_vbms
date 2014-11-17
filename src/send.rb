@@ -252,7 +252,7 @@ def parse(args)
 
   parser.parse!
 
-  required_options = [:env, :claim_number, :file_number, :pdf, :received_dt, :first_name, :last_name]
+  required_options = [:env, :file_number, :pdf, :received_dt, :first_name, :last_name]
   if !required_options.map{|opt| options.has_key? opt}.all?
     puts "missing keys #{required_options.select{|opt| !options.has_key? opt}}"
     puts parser.help
