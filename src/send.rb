@@ -202,7 +202,7 @@ def handle_response(response)
 end
 
 def parse(args)
-  usage = "Usage: send.rb --pdf <filename> --claim_number <n> --env <env> --logfile <file>"
+  usage = "Usage: send.rb --pdf <filename> --env <env> --claim_number <n> --file_number <n> --received_dt <dt> --first_name <name> --middle_name [<name>] --last_name <name> --logfile [<file>] "
   options = {}
 
   OptionParser.new do |opts|
@@ -240,7 +240,7 @@ def parse(args)
       options[:env] = ENVS[v]
     end
 
-    opts.on("--logfile [logfile]", "Logfile to use") do |v|
+    opts.on("--logfile [logfile]", "Logfile to use. Defaults to /usr/local/var/log/connect_vbms.log") do |v|
       $logfile = v
     end
 
