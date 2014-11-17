@@ -66,7 +66,7 @@ def upload_doc(options)
     # have to actually change directory into the directory containing this
     # file. FML
     Dir.chdir(File.dirname(File.expand_path(__FILE__)))
-    file = prepare_xml(options[:pdf], options[:claim_number])
+    file = prepare_xml(options[:pdf], options[:claim_number], options[:file_number])
     encrypted_xml = prepare_upload(file, options[:env])
     response = send_document(encrypted_xml, options[:env], options[:pdf])
     puts response
@@ -96,10 +96,9 @@ def get_tempname(name="temp")
   path
 end
 
-def prepare_xml(pdf, claim_number)
+def prepare_xml(pdf, claim_number, file_number)
   #what ought to go in these variables?
   externalId = "123"
-  fileNumber = "784449089"
   filename = File.split(pdf)[1]
   docType = "546"
   subject = filename
@@ -153,6 +152,7 @@ def send_document(xml, env, pdf)
   inject_saml(doc, env)
   remove_mustUnderstand(doc)
   xml = doc.to_s
+  File.open("/tmp/final.xml", 'w').write(xml)
   filename = File.split(pdf)[1]
   pdf = IO.read(pdf)
 
@@ -205,7 +205,7 @@ def handle_response(response)
 end
 
 def parse(args)
-  usage = "Usage: upload_doc.rb --pdf <filename> --claim_number <n> --env <env> --logfile <file>"
+  usage = "Usage: send.rb --pdf <filename> --claim_number <n> --env <env> --logfile <file>"
   options = {}
 
   OptionParser.new do |opts|
@@ -217,6 +217,10 @@ def parse(args)
 
     opts.on("--claim_number [n]", "Claim number") do |v|
       options[:claim_number] = v
+    end
+
+    opts.on("--file_number [n]", "File number") do |v|
+      options[:file_number] = v
     end
 
     opts.on("--env [env]", "Environment to use: test, UAT, ...") do |v|
@@ -232,7 +236,7 @@ def parse(args)
     #       for optparse are awful.
   end.parse!
 
-  required_options = [:env, :claim_number, :pdf]
+  required_options = [:env, :claim_number, :file_number, :pdf]
   if !required_options.map{|opt| options.has_key? opt}.all?
     puts usage
     exit
