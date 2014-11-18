@@ -66,7 +66,7 @@ def upload_doc(options)
     # have to actually change directory into the directory containing this
     # file. FML
     Dir.chdir(File.dirname(File.expand_path(__FILE__)))
-    file = prepare_xml(options[:pdf], options[:claim_number], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name])
+    file = prepare_xml(options[:pdf], options[:claim_number], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name], options[:exam_name])
     encrypted_xml = prepare_upload(file, options[:env])
     response = send_document(encrypted_xml, options[:env], options[:pdf])
     puts response
@@ -97,14 +97,14 @@ def get_tempname(name="temp")
   path
 end
 
-def prepare_xml(pdf, claim_number, file_number, received_dt, first_name, middle_name, last_name)
+def prepare_xml(pdf, claim_number, file_number, received_dt, first_name, middle_name, last_name, subject)
   #what ought to go in these variables?
   externalId = "123"
   filename = File.split(pdf)[1]
 
-  # TODO: this comes from the getDocTypes call. Is this the proper docType?
-  docType = "546"
-  subject = filename
+  # Mary Kate Alber told us via email that the doctype should be "C&P Exam",
+  # and a getDocumentTypes call shows this as the proper docType
+  docType = "356"
 
   # There is no docs on the time format. Guessing based on examples from the
   # soapui project that it's GMT, 24 hour clock YYYY-MM-DD-HH:MM. Discovered
@@ -213,28 +213,32 @@ def parse(args)
       options[:pdf] = v
     end
 
-    opts.on("--claim_number n", "Claim number") do |v|
+    opts.on("--claim_number <n>", "Claim number") do |v|
       options[:claim_number] = v
     end
 
-    opts.on("--file_number n", "File number") do |v|
+    opts.on("--file_number <n>", "File number") do |v|
       options[:file_number] = v
     end
 
-    opts.on("--received_dt t", "Time in iso8601 GMT") do |t|
+    opts.on("--received_dt <dt>", "Time in iso8601 GMT") do |t|
       options[:received_dt] = t
     end
 
-    opts.on("--first_name name", "Veteran first name") do |n|
+    opts.on("--first_name <name>", "Veteran first name") do |n|
       options[:first_name] = n
     end
 
-    opts.on("--middle_name [name]", "Veteran middle name") do |n|
+    opts.on("--middle_name [<name>]", "Veteran middle name") do |n|
       options[:middle_name] = n
     end
 
-    opts.on("--last_name name", "Veteran last name") do |n|
+    opts.on("--last_name <name>", "Veteran last name") do |n|
       options[:last_name] = n
+    end
+
+    opts.on("--exam_name name", "Name of the exam being sent") do |n|
+      options[:exam_name] = n
     end
 
     opts.on("--env [env]", "Environment to use: test, UAT, ...") do |v|
