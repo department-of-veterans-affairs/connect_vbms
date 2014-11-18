@@ -237,7 +237,7 @@ def parse(args)
       options[:last_name] = n
     end
 
-    opts.on("--exam_name name", "Name of the exam being sent") do |n|
+    opts.on("--exam_name <name>", "Name of the exam being sent") do |n|
       options[:exam_name] = n
     end
 
@@ -256,7 +256,7 @@ def parse(args)
 
   parser.parse!
 
-  required_options = [:env, :file_number, :pdf, :received_dt, :first_name, :last_name]
+  required_options = [:env, :file_number, :pdf, :received_dt, :first_name, :last_name, :exam_name]
   if !required_options.map{|opt| options.has_key? opt}.all?
     puts "missing keys #{required_options.select{|opt| !options.has_key? opt}}"
     puts parser.help
