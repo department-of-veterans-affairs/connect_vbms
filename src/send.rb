@@ -114,7 +114,7 @@ def prepare_xml(pdf, claim_number, file_number, received_dt, first_name, middle_
   time = Time.iso8601(received_dt)
   receivedDt = time.strftime "%Y-%m-%d-%I:%M"
 
-  source = "cui"
+  source = "VHA_CUI"
 
   # TODO: true if the claim associated with this evaluation is still pending,
   # false otherwise
