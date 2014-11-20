@@ -20,7 +20,15 @@ ENVS = {
     :certpkcs => "../envs/uat/CUI-UAT-Client.p12",
     :keypass => "Password123.",
     :cacert => "../envs/uat/ca2.crt",
-  }
+  },
+  "uat" => {
+    :url => "https://filenet.pdt.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
+    :keyfile => "../envs/pdt/pdt.jks",
+    :saml => "../envs/pdt/SamlTokenCUI-pdt.xml",
+    :certpkcs => "../envs/pdt/CUI-pdt-Client.p12",
+    :keypass => "Password123.",
+    :cacert => "../envs/pdt/ca2.crt",
+  },
 }
 
 # global log function
