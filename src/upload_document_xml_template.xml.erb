@@ -16,11 +16,6 @@
           >
           <doc:receivedDt><%= receivedDt %></doc:receivedDt>
          </v4:document>
-         <% if claim_number %>
-           <v4:documentAssociations associationType="CLAIM">
-             <doc:associationValue><%= claim_number %></doc:associationValue>
-           </v4:documentAssociations>
-         <% end %>
          <v4:documentContent>
             <doc:data>
               <xop:Include href="<%= filename %>" />
