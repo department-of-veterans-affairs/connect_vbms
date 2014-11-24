@@ -74,7 +74,7 @@ def upload_doc(options)
     # have to actually change directory into the directory containing this
     # file. FML
     Dir.chdir(File.dirname(File.expand_path(__FILE__)))
-    file = prepare_xml(options[:pdf], options[:claim_number], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name], options[:exam_name])
+    file = prepare_xml(options[:pdf], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name], options[:exam_name])
     encrypted_xml = prepare_upload(file, options[:env])
     response = send_document(encrypted_xml, options[:env], options[:pdf])
     puts response
@@ -105,7 +105,7 @@ def get_tempname(name="temp")
   path
 end
 
-def prepare_xml(pdf, claim_number, file_number, received_dt, first_name, middle_name, last_name, subject)
+def prepare_xml(pdf, file_number, received_dt, first_name, middle_name, last_name, subject)
   #what ought to go in these variables?
   externalId = "123"
   filename = File.split(pdf)[1]
@@ -211,18 +211,14 @@ def handle_response(response)
 end
 
 def parse(args)
-  usage = "Usage: send.rb --pdf <filename> --env <env> --claim_number <n> --file_number <n> --received_dt <dt> --first_name <name> --middle_name [<name>] --last_name <name> --logfile [<file>] "
+  usage = "Usage: send.rb --pdf <filename> --env <env> --file_number <n> --received_dt <dt> --first_name <name> --middle_name [<name>] --last_name <name> --logfile [<file>] "
   options = {}
 
   parser = OptionParser.new do |opts|
     opts.banner = usage
 
-    opts.on("--pdf [filename]", "PDF file to upload") do |v|
+    opts.on("--pdf <filename>", "PDF file to upload") do |v|
       options[:pdf] = v
-    end
-
-    opts.on("--claim_number <n>", "Claim number") do |v|
-      options[:claim_number] = v
     end
 
     opts.on("--file_number <n>", "File number") do |v|
@@ -256,10 +252,6 @@ def parse(args)
     opts.on("--logfile [logfile]", "Logfile to use. Defaults to /usr/local/var/log/connect_vbms.log") do |v|
       $logfile = v
     end
-
-    # TODO: add -v option for verboseness
-    # TODO: how to get optparse to display our options in the help? The docs
-    #       for optparse are awful.
   end
 
   parser.parse!
