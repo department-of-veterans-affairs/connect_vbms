@@ -57,6 +57,7 @@ def sh(cmd, ignore_errors=false)
   if $? != 0 && !ignore_errors
     puts out
     puts cmd
+    log("*** command failed: #{out}")
     raise "command failed"
   end
   out
