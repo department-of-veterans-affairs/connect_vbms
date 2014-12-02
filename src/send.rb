@@ -35,7 +35,7 @@ ENVS = {
 $logfile = "/usr/local/var/log/connect_vbms.log"
 def log(msg)
   log = File.open($logfile, 'a')
-  log.write(msg)
+  log.write("#{Time.now.utc.iso8601}: #{msg}")
   log.write("\n")
 end
 
