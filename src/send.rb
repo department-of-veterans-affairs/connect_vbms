@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'erb'
+require 'httpi'
 require 'optparse'
 require 'tempfile'
 require 'time'
@@ -17,16 +18,18 @@ ENVS = {
     :url => "https://filenet.uat.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
     :keyfile => "../envs/uat/uat-w-key3.jks",
     :saml => "../envs/uat/SamlTokenCUI-UAT.xml",
-    :certpkcs => "../envs/uat/CUI-UAT-Client.p12",
+    :key => "../envs/uat/CUI-UAT-Client.key",
     :keypass => "Password123.",
+    :cert => "../envs/uat/CUI-UAT-Client.crt",
     :cacert => "../envs/uat/ca2.crt",
   },
   "pdt" => {
     :url => "https://filenet.pdt.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
     :keyfile => "../envs/pdt/pdt.jks",
     :saml => "../envs/pdt/SamlTokenCUI-pdt.xml",
-    :certpkcs => "../envs/pdt/CUI-pdt-Client.p12",
+    :key => "../envs/pdt/CUI-PDT-Client.key",
     :keypass => "Password123.",
+    :cert => "../envs/pdt/CUI-PDT-Client.crt",
     :cacert => "../envs/pdt/ca2.crt",
   },
 }
@@ -78,8 +81,6 @@ def upload_doc(options)
     file = prepare_xml(options[:pdf], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name], options[:exam_name])
     encrypted_xml = prepare_upload(file, options[:env])
     response = send_document(encrypted_xml, options[:env], options[:pdf])
-    puts response
-    log("-----------VBMS response-----------\n#{response}\n-------------VBMS Response----------")
     #handle_response(response)
   rescue Exception => e
     puts e.backtrace
@@ -142,7 +143,7 @@ def prepare_upload(xmlfile, env)
 end
 
 def inject_saml(doc, env)
-  puts "parsing #{env[:saml]}"
+  log("parsing #{env[:saml]}")
   saml = doc.import(XML::Parser.file(env[:saml]).parse.root)
   wsse = "wsse:http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
   doc.find_first("//wsse:Security", wsse) << saml
@@ -151,6 +152,27 @@ end
 def remove_mustUnderstand(doc)
   wsse = "wsse:http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
   doc.find_first("//wsse:Security", wsse).attributes.get_attribute("mustUnderstand").remove!
+end
+
+def build_request(url, data, headers, key: nil, keypass: nil, cert: nil, cacert: nil)
+  request = HTTPI::Request.new(url)
+
+  if key
+    log("Auth\nkey: #{key}\ncert: #{cert}\nca_cert: #{cacert}")
+    request.auth.ssl.cert_key_file     = key
+    request.auth.ssl.cert_key_password = keypass
+    request.auth.ssl.cert_file         = cert
+    request.auth.ssl.ca_cert_file      = cacert
+    request.auth.ssl.verify_mode       = :peer
+  else
+    log("No Auth")
+    request.auth.ssl.verify_mode = :none
+  end
+
+  request.body = data
+
+  request.headers = headers
+  request
 end
 
 def send_document(xml, env, pdf)
@@ -164,27 +186,27 @@ def send_document(xml, env, pdf)
   pdf = IO.read(pdf)
 
   req = ERB.new(openrel("mtom_request.erb").read).result(binding)
-  reqfile = write_tempfile(req)
-  logfilename = get_tempname("curl_trace")
-  headers = 'Content-Type: Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"'
+  headers = {
+    'Content-Type' => 'Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"'
+  }
 
-  # for test, no certs
-  certs = "--insecure"
   # for the rest, grab the cert and ca
   if env.has_key? :cacert
-    certs = <<-CERTS
-  --cert #{env[:certpkcs]}:#{env[:keypass]}
-  --cacert #{env[:cacert]}
-    CERTS
+    key = File.absolute_path(env[:key])
+    keypass = env[:keypass]
+    cert = File.absolute_path(env[:cert])
+    cacert = File.absolute_path(env[:cacert])
+  else
+    key = keypass = cert = cacert = nil
   end
 
-  sh <<-CMD
-curl -H '#{headers}'
-  --data-binary @#{reqfile.path}
-#{certs}
-  -i --trace-ascii #{logfilename}
-  -X POST #{env[:url]}
-  CMD
+  request = build_request(env[:url], req, headers, key: key, keypass: keypass, cert: cert, cacert: cacert)
+  response = HTTPI.post(request)
+  log("response code: #{response.code}")
+  log("response headers: #{response.headers}")
+  log("response body: #{response.body}")
+
+  response.body
 end
 
 def get_soap(txt)
