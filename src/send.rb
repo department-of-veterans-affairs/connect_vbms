@@ -57,7 +57,6 @@ def getenv(envname)
     env[k] = File.absolute_path(File.join(envdir, env[k])) if env[k]
   end
 
-  puts env
   env
 end
 
