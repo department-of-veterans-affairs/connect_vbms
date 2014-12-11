@@ -6,34 +6,6 @@ require 'tempfile'
 require 'time'
 require 'xml'
 
-#TODO: abstract out the ../envs/<env>/ dir structure
-ENVS = {
-  "test" => {
-    :url => "https://filenet.test.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
-    :keyfile => "../envs/test/client3.jks",
-    :saml => "../envs/test/samlToken-cui-tst.xml",
-    :keypass => "importkey",
-  },
-  "uat" => {
-    :url => "https://filenet.uat.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
-    :keyfile => "../envs/uat/uat-w-key3.jks",
-    :saml => "../envs/uat/SamlTokenCUI-UAT.xml",
-    :key => "../envs/uat/CUI-UAT-Client.key",
-    :keypass => "Password123.",
-    :cert => "../envs/uat/CUI-UAT-Client.crt",
-    :cacert => "../envs/uat/ca2.crt",
-  },
-  "pdt" => {
-    :url => "https://filenet.pdt.vbms.aide.oit.va.gov/vbmsp2-cms/streaming/eDocumentService-v4",
-    :keyfile => "../envs/pdt/pdt.jks",
-    :saml => "../envs/pdt/SamlTokenCUI-pdt.xml",
-    :key => "../envs/pdt/CUI-PDT-Client.key",
-    :keypass => "Password123.",
-    :cert => "../envs/pdt/CUI-PDT-Client.crt",
-    :cacert => "../envs/pdt/ca2.crt",
-  },
-}
-
 # global log function
 $logfile = "/usr/local/var/log/connect_vbms.log"
 def log(msg)
@@ -56,6 +28,7 @@ end
 def sh(cmd, ignore_errors=false)
   cmd.gsub! "\n", " \\\n"
   log(cmd)
+  puts cmd
   out = `#{cmd}`
   if $? != 0 && !ignore_errors
     puts out
@@ -64,6 +37,28 @@ def sh(cmd, ignore_errors=false)
     raise "command failed"
   end
   out
+end
+
+# Given an env name (like "test", "uat", "pre") go get the appropriate environment
+# variables and make them relative to this file. Return an env hash.
+def getenv(envname)
+  envdir = File.join(ENV["CONNECT_VBMS_ENV_DIR"], envname)
+
+  env = {}
+  env[:url] = ENV.fetch("CONNECT_VBMS_URL", nil)
+  env[:keyfile] = ENV.fetch("CONNECT_VBMS_KEYFILE", nil)
+  env[:saml] = ENV.fetch("CONNECT_VBMS_SAML", nil)
+  env[:key] = ENV.fetch("CONNECT_VBMS_KEY", nil)
+  env[:keypass] = ENV.fetch("CONNECT_VBMS_KEYPASS", nil)
+  env[:cacert] = ENV.fetch("CONNECT_VBMS_CACERT", nil)
+  env[:cert] = ENV.fetch("CONNECT_VBMS_CERT", nil)
+
+  [:keyfile, :saml, :key, :cacert, :cert].each do |k|
+    env[k] = File.absolute_path(File.join(envdir, env[k])) if env[k]
+  end
+
+  puts env
+  env
 end
 
 # prepare XML for document upload
@@ -78,13 +73,17 @@ def upload_doc(options)
     # have to actually change directory into the directory containing this
     # file. FML
     Dir.chdir(File.dirname(File.expand_path(__FILE__)))
+    env = getenv(options[:env])
+    log("Connecting with env: #{env}")
     file = prepare_xml(options[:pdf], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name], options[:exam_name])
-    encrypted_xml = prepare_upload(file, options[:env])
-    response = send_document(encrypted_xml, options[:env], options[:pdf])
+    encrypted_xml = prepare_upload(file, env)
+    response = send_document(encrypted_xml, env, options[:pdf])
     #handle_response(response)
   rescue Exception => e
     puts e.backtrace
+    log(e.backtrace)
     puts e.message
+    log(e.message)
     File.open("/tmp/signed.xml", 'w').write(encrypted_xml)
   ensure
     file.close
@@ -130,7 +129,6 @@ def prepare_xml(pdf, file_number, received_dt, first_name, middle_name, last_nam
   # false otherwise
   newMail = "true"
 
-  puts rel("test")
   template = openrel("upload_document_xml_template.xml.erb").read
   xml = ERB.new(template).result(binding)
   log("Unencrypted XML:\n#{xml}")
@@ -191,11 +189,11 @@ def send_document(xml, env, pdf)
   }
 
   # for the rest, grab the cert and ca
-  if env.has_key? :cacert
-    key = File.absolute_path(env[:key])
+  if env[:cacert]
+    key = env[:key]
     keypass = env[:keypass]
-    cert = File.absolute_path(env[:cert])
-    cacert = File.absolute_path(env[:cacert])
+    cert = env[:cert]
+    cacert = env[:cacert]
   else
     key = keypass = cert = cacert = nil
   end
@@ -269,7 +267,7 @@ def parse(args)
     end
 
     opts.on("--env [env]", "Environment to use: test, UAT, ...") do |v|
-      options[:env] = ENVS[v]
+      options[:env] = v
     end
 
     opts.on("--logfile [logfile]", "Logfile to use. Defaults to /usr/local/var/log/connect_vbms.log") do |v|

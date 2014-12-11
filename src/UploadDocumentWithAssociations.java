@@ -52,6 +52,7 @@ public class UploadDocumentWithAssociations
     catch (Exception e)
     {
       e.printStackTrace();
+      System.exit(255);
     }
   }
 
@@ -91,8 +92,6 @@ public class UploadDocumentWithAssociations
     String vbmsNamespace = new String("http://vbms.vba.va.gov/external/eDocumentService/v4");
     WSEncryptionPart documentPart = new WSEncryptionPart("document", vbmsNamespace, "Element");
     references.add(documentPart);
-    //WSEncryptionPart documentAssociationsPart = new WSEncryptionPart("documentAssociations", vbmsNamespace, "Element");
-    //references.add(documentAssociationsPart);
     builder.setParts(references);
     Document signedDoc = builder.build(doc, crypto, secHeader);
     String outputString = XMLUtils.PrettyDocumentToString(signedDoc);
@@ -110,8 +109,6 @@ public class UploadDocumentWithAssociations
     String vbmsNamespace = new String("http://vbms.vba.va.gov/external/eDocumentService/v4");
     WSEncryptionPart documentPart = new WSEncryptionPart("document", vbmsNamespace, "Element");
     references.add(documentPart);
-    //WSEncryptionPart documentAssociationsPart = new WSEncryptionPart("documentAssociations", vbmsNamespace, "Element");
-    //references.add(documentAssociationsPart);
     builder.setParts(references);
     Document encryptedDoc = builder.build(doc, crypto, secHeader);
     String outputString = XMLUtils.PrettyDocumentToString(encryptedDoc);

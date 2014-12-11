@@ -1,5 +1,6 @@
-.env
+*.env
 *.class
 src/intermediate_files/*
 src/out.txt
 src/*.log
+envs
