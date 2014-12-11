@@ -120,7 +120,7 @@ def prepare_xml(pdf, file_number, received_dt, first_name, middle_name, last_nam
   # of day field is utterly useless. Insane. Is it actually supposed to be
   # GMT: who knows?
   time = Time.iso8601(received_dt)
-  receivedDt = time.strftime "%Y-%m-%d-%I:%M"
+  receivedDt = time.strftime "%Y-%m-%dZ"
 
   source = "VHA_CUI"
 
@@ -198,7 +198,11 @@ def send_document(xml, env, pdf)
   end
 
   request = build_request(env[:url], req, headers, key: key, keypass: keypass, cert: cert, cacert: cacert)
-  response = HTTPI.post(request)
+  begin
+    response = HTTPI.post(request)
+  rescue => e
+    puts e.class
+  end
   log("response code: #{response.code}")
   log("response headers: #{response.headers}")
   log("response body: #{response.body}")
