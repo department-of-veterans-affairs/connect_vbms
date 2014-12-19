@@ -4,3 +4,5 @@ src/intermediate_files/*
 src/out.txt
 src/*.log
 envs
+.ruby-version
+.ruby-gemset
