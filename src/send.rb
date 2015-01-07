@@ -120,7 +120,7 @@ def prepare_xml(pdf, file_number, received_dt, first_name, middle_name, last_nam
   # of day field is utterly useless. Insane. Is it actually supposed to be
   # GMT: who knows?
   time = Time.iso8601(received_dt)
-  receivedDt = time.strftime "%Y-%m-%dZ"
+  receivedDt = time.getlocal("-05:00").strftime "%Y-%m-%d-05:00"
 
   source = "VHA_CUI"
 
