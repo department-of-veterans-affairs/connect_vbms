@@ -1,18 +1,18 @@
-UploadDocumentWithAssociations.class: UploadDocumentWithAssociations.java
-	javac -classpath '../lib/*' UploadDocumentWithAssociations.java
+UploadDocumentWithAssociations.class: main/java/UploadDocumentWithAssociations.java
+	javac -classpath '../lib/*' -d ../classes main/java/UploadDocumentWithAssociations.java
 
-DecryptMessage.class: DecryptMessage.java
-	javac -classpath '../lib/*' DecryptMessage.java
+DecryptMessage.class: main/java/DecryptMessage.java
+	javac -classpath '../lib/*' -d ../classes main/java/DecryptMessage.java
 
 .PHONY: build
 build: UploadDocumentWithAssociations.class DecryptMessage.class
 
 .PHONY:run
 run:
-	java -classpath '.:../lib/*' UploadDocumentWithAssociations | ./run.rb
+	java -classpath '../classes:../lib/*:../lib' UploadDocumentWithAssociations
 
 .PHONY:decrypt
 decrypt: DecryptMessage.class
 	# Decrypt fails... but run decrypt_hack to pull the message out of the log
-	-java -classpath '.:../lib/*' DecryptMessage
+	java -classpath '../classes:../lib/*:../lib' DecryptMessage
 	./decrypt_hack.rb

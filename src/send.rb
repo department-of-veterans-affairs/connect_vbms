@@ -7,11 +7,12 @@ require 'time'
 require 'xml'
 
 # global log function
-$logfile = "/usr/local/var/log/connect_vbms.log"
+$logfile = "../log/connect_vbms.log"
 def log(msg)
-  log = File.open($logfile, 'a')
+  log = open_relative($logfile, 'a')
   log.write("#{Time.now.utc.iso8601}: #{msg}")
   log.write("\n")
+  log.write msg
 end
 
 # needs to happen before we change directories
@@ -21,7 +22,7 @@ def rel(name)
 end
 
 # return open file relative to this file's current directory
-def openrel(name, mode='r')
+def open_relative(name, mode='r')
   File.open(rel(name), mode)
 end
 
@@ -41,10 +42,9 @@ end
 
 # Given an env name (like "test", "uat", "pre") go get the appropriate environment
 # variables and make them relative to this file. Return an env hash.
-def getenv(envname)
-  envdir = File.join(ENV["CONNECT_VBMS_ENV_DIR"], envname)
-
+def getenv(environment_name)
   env = {}
+  environment_directory = File.join(ENV["CONNECT_VBMS_ENV_DIR"], environment_name)
   env[:url] = ENV.fetch("CONNECT_VBMS_URL", nil)
   env[:keyfile] = ENV.fetch("CONNECT_VBMS_KEYFILE", nil)
   env[:saml] = ENV.fetch("CONNECT_VBMS_SAML", nil)
@@ -52,11 +52,9 @@ def getenv(envname)
   env[:keypass] = ENV.fetch("CONNECT_VBMS_KEYPASS", nil)
   env[:cacert] = ENV.fetch("CONNECT_VBMS_CACERT", nil)
   env[:cert] = ENV.fetch("CONNECT_VBMS_CERT", nil)
-
   [:keyfile, :saml, :key, :cacert, :cert].each do |k|
-    env[k] = File.absolute_path(File.join(envdir, env[k])) if env[k]
+    env[k] = File.absolute_path(File.join(environment_directory, env[k])) if env[k]
   end
-
   env
 end
 
@@ -76,14 +74,14 @@ def upload_doc(options)
     log("Connecting with env: #{env}")
     file = prepare_xml(options[:pdf], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name], options[:exam_name])
     encrypted_xml = prepare_upload(file, env)
-    response = send_document(encrypted_xml, env, options[:pdf])
+    response = send_document(encrypted_xml, env, options)
     #handle_response(response)
   rescue Exception => e
     puts e.backtrace
     log(e.backtrace)
     puts e.message
     log(e.message)
-    File.open("/tmp/signed.xml", 'w').write(encrypted_xml)
+    open_relative("../log/#{options[:file_number]}-signed.xml.log", 'a').write(encrypted_xml)
   ensure
     file.close
     file.unlink
@@ -127,16 +125,14 @@ def prepare_xml(pdf, file_number, received_dt, first_name, middle_name, last_nam
   # TODO: true if the claim associated with this evaluation is still pending,
   # false otherwise
   newMail = "true"
-
-  template = openrel("upload_document_xml_template.xml.erb").read
+  template = open_relative("templates/upload_document_xml_template.xml.erb").read
   xml = ERB.new(template).result(binding)
   log("Unencrypted XML:\n#{xml}")
-
   write_tempfile(xml)
 end
 
 def prepare_upload(xmlfile, env)
-  sh "java -classpath '.:../lib/*' UploadDocumentWithAssociations #{xmlfile.path} #{env[:keyfile]} #{env[:keypass]}"
+  sh "java -classpath '../classes:../lib/*:../lib' UploadDocumentWithAssociations #{xmlfile.path} #{env[:keyfile]} #{env[:keypass]}"
 end
 
 def inject_saml(doc, env)
@@ -172,17 +168,16 @@ def build_request(url, data, headers, key: nil, keypass: nil, cert: nil, cacert:
   request
 end
 
-def send_document(xml, env, pdf)
+def send_document(xml, env, options)
   # inject SAML header
   doc = XML::Parser.string(xml).parse
   inject_saml(doc, env)
   remove_mustUnderstand(doc)
   xml = doc.to_s
-  File.open("/tmp/final.xml", 'w').write(xml)
-  filename = File.split(pdf)[1]
-  pdf = IO.read(pdf)
-
-  req = ERB.new(openrel("mtom_request.erb").read).result(binding)
+  open_relative("../log/#{options[:file_number]}-final.xml.log", 'a').write(xml)
+  filename = File.split(options[:pdf])[1]
+  pdf = IO.read(options[:pdf])
+  req = ERB.new(open_relative("templates/mtom_request.erb").read).result(binding)
   headers = {
     'Content-Type' => 'Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"'
   }
@@ -230,7 +225,7 @@ def handle_response(response)
   # now here's the hackiest thing in the world. This command is going to fail,
   # because we can't get the signatures to properly get decrypted. So run the
   # command, handle the error, and pull the message out of the file >:|
-  sh "java -classpath '.:../lib/*' DecryptMessage", true
+  sh "java -classpath '../classes:../lib/*' DecryptMessage", true
 
 end
 
@@ -273,7 +268,7 @@ def parse(args)
       options[:env] = v
     end
 
-    opts.on("--logfile [logfile]", "Logfile to use. Defaults to /usr/local/var/log/connect_vbms.log") do |v|
+    opts.on("--logfile [logfile]", "Logfile to use. Defaults to ../log/connect_vbms.log") do |v|
       $logfile = v
     end
   end
