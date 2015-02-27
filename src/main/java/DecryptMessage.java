@@ -13,6 +13,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.util.List;
+import java.util.Properties;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -27,6 +28,8 @@ public class DecryptMessage
   {
     try 
     {
+      System.setProperty("logfilename", args[2]);
+
       List<String> lines = Files.readAllLines(Paths.get(args[0]), Charset.defaultCharset());
       String encrypted_xml = "";
       for (String line : lines)
@@ -34,7 +37,7 @@ public class DecryptMessage
         encrypted_xml += line;
       }
 
-      String document = decrypt(encrypted_xml);
+      String document = decrypt(encrypted_xml, args[1]);
       System.out.println(document);
     }
     catch (Exception e)
@@ -53,12 +56,35 @@ public class DecryptMessage
     return doc;
   }
 
-  public static String decrypt(String encryptedXml) throws Exception {
-    Crypto crypto = CryptoFactory.getInstance();
+  public static Crypto getSigningCrypto(String keyfile) throws Exception {
+    Properties properties = new Properties();
+    properties.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyfile);
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "importkey");
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.private.password", "importkey");
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.alias", "vbms_server_key");
+
+    return CryptoFactory.getInstance(properties);
+  }
+
+  public static Crypto getDecryptionCrypto(String keyfile) throws Exception {
+    Properties properties = new Properties();
+    properties.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyfile);
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "importkey");
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.private.password", "importkey");
+
+    return CryptoFactory.getInstance(properties);
+  }
+
+  public static String decrypt(String encryptedXml, String keyfile) throws Exception {
+    Crypto signCrypto = getSigningCrypto(keyfile);
+    Crypto deCrypto = getDecryptionCrypto(keyfile);
     CallbackHandler handler = new WSSCallbackHandler();
     WSSecurityEngine secEngine = new WSSecurityEngine();
+
     Document doc = getSOAPDoc(encryptedXml);
-    java.util.List<WSSecurityEngineResult> results = secEngine.processSecurityHeader(doc, null, handler, crypto, crypto);
+    java.util.List<WSSecurityEngineResult> results = secEngine.processSecurityHeader(doc, null, handler, signCrypto, deCrypto);
     return XMLUtils.PrettyDocumentToString(doc);
   }
 

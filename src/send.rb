@@ -75,7 +75,7 @@ def upload_doc(options)
     file = prepare_xml(options[:pdf], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name], options[:exam_name])
     encrypted_xml = prepare_upload(file, env)
     response = send_document(encrypted_xml, env, options)
-    #handle_response(response)
+    puts handle_response(response, env, options)
   rescue Exception => e
     puts e.backtrace
     log(e.backtrace)
@@ -210,23 +210,25 @@ def get_soap(txt)
   XML::Parser.string(soap).parse
 end
 
-def handle_response(response)
+def handle_response(response, env, options)
   doc = get_soap(response)
   log("Response from VBMS:\n#{doc.to_s}")
 
   soap = "http://schemas.xmlsoap.org/soap/envelope/"
   if doc.find_first("//soap:Fault", soap)
-    $stderr.write("Received error from VBMS:\n#{soap.to_s}\nCheck logfile in #{$logfile}")
+    $stderr.write("Received error from VBMS:\n#{doc.to_s}\nCheck logfile in #{$logfile}\n")
     exit
   end
 
-  file = write_tempfile(soap.to_s)
+  file = write_tempfile(doc.to_s)
 
   # now here's the hackiest thing in the world. This command is going to fail,
   # because we can't get the signatures to properly get decrypted. So run the
   # command, handle the error, and pull the message out of the file >:|
-  sh "java -classpath '../classes:../lib/*' DecryptMessage", true
+  fname = rel("../log/#{options[:file_number]}.decrypt.log")
+  sh "java -classpath '../classes:../lib/*:../lib' DecryptMessage #{file.path} #{env[:keyfile]} '#{fname}'", true
 
+  File.read(fname).match(/<soap.*?<\/soap.*?>/)[0]
 end
 
 def parse(args)

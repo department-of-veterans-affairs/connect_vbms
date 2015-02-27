@@ -27,6 +27,8 @@ public class UploadDocumentWithAssociations
 {
   public static void main(String[] args)
   {
+    System.setProperty("logfilename", "../log/upload.log");
+
     Properties properties = new Properties();
     properties.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
     properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", args[1]);
