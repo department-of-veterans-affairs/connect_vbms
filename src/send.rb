@@ -5,6 +5,8 @@ require 'optparse'
 require 'tempfile'
 require 'time'
 require 'xml'
+require 'pg'
+require 'uri'
 
 # global log function
 $logfile = "../log/connect_vbms.log"
@@ -13,6 +15,14 @@ def log(msg)
   log.write("#{Time.now.utc.iso8601}: #{msg}")
   log.write("\n")
   log.write msg
+end
+
+# log to the DrTurboTax external_activity_log
+def db_log(conn, message, request_body, response_body, evaluation_id)
+  conn.exec_params(<<-EOM, [message, request_body, response_body, evaluation_id])
+INSERT INTO external_activity_logs(message, submitted_data, response_body, evaluation_id)
+VALUES ($1, $2, $3, $4)
+  EOM
 end
 
 # needs to happen before we change directories
@@ -52,9 +62,16 @@ def getenv(environment_name)
   env[:keypass] = ENV.fetch("CONNECT_VBMS_KEYPASS", nil)
   env[:cacert] = ENV.fetch("CONNECT_VBMS_CACERT", nil)
   env[:cert] = ENV.fetch("CONNECT_VBMS_CERT", nil)
+  env[:pg] = ENV.fetch("CONNECT_VBMS_POSTGRES", nil)
   [:keyfile, :saml, :key, :cacert, :cert].each do |k|
     env[k] = File.absolute_path(File.join(environment_directory, env[k])) if env[k]
   end
+
+  if env[:pg]
+    uri = URI.parse(env[:pg])
+    env[:pg] = PG.connect(uri.hostname, uri.port, nil, nil, uri.path[1..-1], uri.user, uri.password)
+  end
+
   env
 end
 
@@ -75,7 +92,10 @@ def upload_doc(options)
     file = prepare_xml(options[:pdf], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name], options[:exam_name])
     encrypted_xml = prepare_upload(file, env)
     response = send_document(encrypted_xml, env, options)
-    puts handle_response(response, env, options)
+    decrypted_response = handle_response(response, env, options)
+    if env[:pg]
+      db_log(env[:pg], "connect_vbms decrypted response", "", decrypted_response, options[:file_number])
+    end
   rescue Exception => e
     puts e.backtrace
     log(e.backtrace)
@@ -201,6 +221,11 @@ def send_document(xml, env, options)
   log("response code: #{response.code}")
   log("response headers: #{response.headers}")
   log("response body: #{response.body}")
+
+  # Let's submit the file_number instead of the evaluation_id, since we don't have that info here?
+  if env[:pg]
+    db_log(env[:pg], "connect_vbms status #{response.code}", xml, response.body, options[:file_number])
+  end
 
   response.body
 end
