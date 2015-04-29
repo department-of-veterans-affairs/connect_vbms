@@ -25,6 +25,8 @@ import org.apache.ws.security.WSConstants;
 
 public class UploadDocumentWithAssociations
 {
+  private static final String VBMS_NAMESPACE = "http://vbms.vba.va.gov/external/eDocumentService/v4";
+
   public static void main(String[] args)
   {
     System.setProperty("logfilename", "../log/upload.log");
@@ -91,8 +93,7 @@ public class UploadDocumentWithAssociations
     secHeader.insertSecurityHeader(doc);
     List<WSEncryptionPart> references = new ArrayList<WSEncryptionPart>();
     references.add(new WSEncryptionPart("TS-1"));
-    String vbmsNamespace = new String("http://vbms.vba.va.gov/external/eDocumentService/v4");
-    WSEncryptionPart documentPart = new WSEncryptionPart("document", vbmsNamespace, "Element");
+    WSEncryptionPart documentPart = new WSEncryptionPart("document", VBMS_NAMESPACE, "Element");
     references.add(documentPart);
     builder.setParts(references);
     Document signedDoc = builder.build(doc, crypto, secHeader);
@@ -108,8 +109,7 @@ public class UploadDocumentWithAssociations
     WSSecHeader secHeader = new WSSecHeader();
     secHeader.insertSecurityHeader(doc);
     List<WSEncryptionPart> references = new ArrayList<WSEncryptionPart>();
-    String vbmsNamespace = new String("http://vbms.vba.va.gov/external/eDocumentService/v4");
-    WSEncryptionPart documentPart = new WSEncryptionPart("document", vbmsNamespace, "Element");
+    WSEncryptionPart documentPart = new WSEncryptionPart("document", VBMS_NAMESPACE, "Element");
     references.add(documentPart);
     builder.setParts(references);
     Document encryptedDoc = builder.build(doc, crypto, secHeader);
