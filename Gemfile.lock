@@ -3,6 +3,7 @@ GEM
   specs:
     httpi (2.3.0)
       rack
+    libxml-ruby (2.8.0)
     rack (1.5.2)
 
 PLATFORMS
@@ -10,3 +11,4 @@ PLATFORMS
 
 DEPENDENCIES
   httpi
+  libxml-ruby
