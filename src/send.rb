@@ -106,8 +106,10 @@ def upload_doc(options)
     log(e.message)
     open_relative("../log/#{options[:file_number]}-signed.xml.log", 'a').write(encrypted_xml)
   ensure
-    file.close
-    file.unlink
+    if file
+      file.close
+      file.unlink
+    end
   end
 end
 
