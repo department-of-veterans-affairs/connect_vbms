@@ -8,6 +8,15 @@ require 'xml'
 require 'pg'
 require 'uri'
 
+$filedir = File.dirname(File.absolute_path(__FILE__))
+
+CLASSPATH = [
+    File.join($filedir, '../classes'),
+    File.join($filedir, '../lib'),
+    File.join($filedir, '../lib/*'),
+    $filedir,
+].join(':')
+
 # global log function
 $logfile = "../log/connect_vbms.log"
 def log(msg)
@@ -25,8 +34,6 @@ VALUES ($1, $2, $3, $4)
   EOM
 end
 
-# needs to happen before we change directories
-$filedir = File.dirname(File.absolute_path(__FILE__))
 def rel(name)
   File.join($filedir, name)
 end
@@ -83,10 +90,6 @@ end
 # return decrypted message
 def upload_doc(options)
   begin
-    # Because I don't know how to run a java file from another directory, we
-    # have to actually change directory into the directory containing this
-    # file. FML
-    Dir.chdir(File.dirname(File.expand_path(__FILE__)))
     env = getenv(options[:env])
     log("Connecting with env: #{env}")
     file = prepare_xml(options[:pdf], options[:file_number], options[:received_dt], options[:first_name], options[:middle_name], options[:last_name], options[:exam_name])
@@ -126,7 +129,7 @@ end
 def prepare_xml(pdf, file_number, received_dt, first_name, middle_name, last_name, subject)
   #what ought to go in these variables?
   externalId = "123"
-  filename = File.split(pdf)[1]
+  filename = File.basename(pdf)
 
   # Mary Kate Alber told us via email that the doctype should be "C&P Exam",
   # and a getDocumentTypes call shows this as the proper docType
@@ -152,7 +155,7 @@ def prepare_xml(pdf, file_number, received_dt, first_name, middle_name, last_nam
 end
 
 def prepare_upload(xmlfile, env)
-  sh "java -classpath '../classes:../lib/*:../lib' UploadDocumentWithAssociations #{xmlfile.path} #{env[:keyfile]} #{env[:keypass]}"
+  sh "java -classpath '#{CLASSPATH}' UploadDocumentWithAssociations #{xmlfile.path} #{env[:keyfile]} #{env[:keypass]}"
 end
 
 def inject_saml(doc, env)
@@ -251,7 +254,7 @@ def handle_response(response, env, options)
   # because we can't get the signatures to properly get decrypted. So run the
   # command, handle the error, and pull the message out of the file >:|
   fname = rel("../log/#{options[:file_number]}.decrypt.log")
-  sh "java -classpath '../classes:../lib/*:../lib' DecryptMessage #{file.path} #{env[:keyfile]} '#{fname}'", true
+  sh "java -classpath '#{CLASSPATH}' DecryptMessage #{file.path} #{env[:keyfile]} '#{fname}'", true
 
   match = File.read(fname).match(/<soap.*?<\/soap.*?>/)
   if match.nil?
