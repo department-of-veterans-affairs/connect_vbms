@@ -4,6 +4,7 @@ GEM
     httpi (2.3.0)
       rack
     libxml-ruby (2.8.0)
+    pg (0.18.1)
     rack (1.5.2)
 
 PLATFORMS
@@ -12,3 +13,4 @@ PLATFORMS
 DEPENDENCIES
   httpi
   libxml-ruby
+  pg
