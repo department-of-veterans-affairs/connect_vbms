@@ -20,7 +20,6 @@ import java.nio.charset.Charset;
 import org.apache.ws.security.WSEncryptionPart;
 import java.util.ArrayList;
 import org.apache.ws.security.SOAPConstants;
-import org.apache.ws.security.WSConstants;
 
 
 public class UploadDocumentWithAssociations
