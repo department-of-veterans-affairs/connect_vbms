@@ -39,12 +39,9 @@ public class UploadDocumentWithAssociations
 
     try
     {
-      List<String> lines = Files.readAllLines(Paths.get(args[0]), Charset.defaultCharset());
-      String document = "";
-      for (String line : lines)
-      {
-        document += line;
-      }
+      String document = new String(
+        Files.readAllBytes(Paths.get(args[0])), Charset.defaultCharset()
+      );
 
       Crypto crypto = CryptoFactory.getInstance(properties);
 

@@ -26,16 +26,13 @@ public class DecryptMessage
 {
   public static void main(String[] args)
   {
-    try 
+    try
     {
       System.setProperty("logfilename", args[2]);
 
-      List<String> lines = Files.readAllLines(Paths.get(args[0]), Charset.defaultCharset());
-      String encrypted_xml = "";
-      for (String line : lines)
-      {
-        encrypted_xml += line;
-      }
+      String encrypted_xml = new String(
+        Files.readAllBytes(Paths.get(args[0])), Charset.defaultCharset()
+      );
 
       String document = decrypt(encrypted_xml, args[1]);
       System.out.println(document);
