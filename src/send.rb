@@ -258,7 +258,7 @@ def handle_response(response, env, options)
   fname = rel("../log/#{options[:file_number]}.decrypt.log")
   sh "java -classpath '#{CLASSPATH}' DecryptMessage #{file.path} #{env[:keyfile]} '#{fname}'", true
 
-  match = File.read(fname).match(/<soap.*?<\/soap.*?>/)
+  match = File.read(fname).match(/<soap.*?<\/soap.*?>/m)
   if match.nil?
     "Unable to pull decrypted response from #{fname}"
   else
