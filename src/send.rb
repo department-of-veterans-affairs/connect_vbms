@@ -83,7 +83,7 @@ def getenv(environment_name)
 end
 
 # prepare XML for document upload
-# call UploadDocumentWithAssociations
+# call EncryptSOAPDocument
 # send XML, get response
 # check response for error
 # decrypt response
@@ -157,7 +157,7 @@ def prepare_xml(pdf, file_number, received_dt, first_name, middle_name, last_nam
 end
 
 def prepare_upload(xmlfile, env)
-  sh "java -classpath '#{CLASSPATH}' UploadDocumentWithAssociations #{xmlfile.path} #{env[:keyfile]} #{env[:keypass]}"
+  sh "java -classpath '#{CLASSPATH}' EncryptSOAPDocument #{xmlfile.path} #{env[:keyfile]} #{env[:keypass]}"
 end
 
 def inject_saml(doc, env)
@@ -260,7 +260,7 @@ def handle_response(response, env, options)
 
   match = File.read(fname).match(/<soap.*?<\/soap.*?>/m)
   if match.nil?
-    "Unable to pull decrypted response from #{fname}"
+    raise "Unable to pull decrypted response from #{fname}"
   else
     match[0]
   end

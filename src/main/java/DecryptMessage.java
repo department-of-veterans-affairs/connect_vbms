@@ -5,19 +5,20 @@ import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.util.XMLUtils;
 import org.w3c.dom.Document;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import java.util.Properties;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 // API docs at https://ws.apache.org/wss4j/apidocs/
 public class DecryptMessage
