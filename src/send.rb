@@ -96,6 +96,7 @@ def upload_doc(options)
     encrypted_xml = prepare_upload(file, env)
     response = send_document(encrypted_xml, env, options)
     decrypted_response = handle_response(response, env, options)
+    puts decrypted_response
     if env[:pg]
       db_log(env[:pg], "connect_vbms decrypted response", "", decrypted_response, options[:file_number])
     end
@@ -236,34 +237,32 @@ def send_document(xml, env, options)
 end
 
 def get_soap(txt)
-  soap = txt.match(/<soap:envelope.*?<\/soap:envelope>/im)[0]
-  XML::Parser.string(soap).parse
+  soap_txt = txt.match(/<soap:envelope.*?<\/soap:envelope>/im)[0]
 end
 
 def handle_response(response, env, options)
-  doc = get_soap(response)
-  log("Response from VBMS:\n#{doc.to_s}")
+  soap_txt = get_soap(response)
+  doc = XML::Parser.string(soap_txt).parse
+
+  # Do NOT use doc.to_s. This pretty-prints the XML improperly by
+  # tabifying it. Since Whitespace in XML is semantically meaningful,
+  # this will chanage the SHA1 Digest causing signature validation to
+  # fail.
+  log("Response from VBMS:\n#{soap_txt}")
 
   soap = "http://schemas.xmlsoap.org/soap/envelope/"
   if doc.find_first("//soap:Fault", soap)
-    $stderr.write("Received error from VBMS:\n#{doc.to_s}\nCheck logfile in #{$logfile}\n")
+    $stderr.write("Received error from VBMS:\n#{soap_txt}\nCheck logfile in #{$logfile}\n")
     exit
   end
 
-  file = write_tempfile(doc.to_s)
+  file = write_tempfile(soap_txt)
 
   # now here's the hackiest thing in the world. This command is going to fail,
   # because we can't get the signatures to properly get decrypted. So run the
   # command, handle the error, and pull the message out of the file >:|
   fname = rel("../log/#{options[:file_number]}.decrypt.log")
   sh "java -classpath '#{CLASSPATH}' DecryptMessage #{file.path} #{env[:keyfile]} '#{fname}'", true
-
-  match = File.read(fname).match(/<soap.*?<\/soap.*?>/m)
-  if match.nil?
-    raise "Unable to pull decrypted response from #{fname}"
-  else
-    match[0]
-  end
 end
 
 def parse(args)
