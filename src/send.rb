@@ -236,12 +236,8 @@ def send_document(xml, env, options)
   response.body
 end
 
-def get_soap(txt)
-  soap_txt = txt.match(/<soap:envelope.*?<\/soap:envelope>/im)[0]
-end
-
 def handle_response(response, env, options)
-  soap_txt = get_soap(response)
+  soap_txt = txt.match(/<soap:envelope.*?<\/soap:envelope>/im)[0]
   doc = XML::Parser.string(soap_txt).parse
 
   # Do NOT use doc.to_s. This pretty-prints the XML improperly by
