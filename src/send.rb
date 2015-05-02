@@ -43,12 +43,12 @@ def open_relative(name, mode='r')
   File.open(rel(name), mode)
 end
 
-def sh(cmd, ignore_errors=false)
+def sh(cmd)
   cmd.gsub! "\n", " \\\n"
   log(cmd)
   puts cmd
   out = `#{cmd}`
-  if $? != 0 && !ignore_errors
+  if $? != 0
     puts out
     puts cmd
     log("*** command failed: #{out}")
@@ -262,7 +262,7 @@ def handle_response(response, env, options)
   # because we can't get the signatures to properly get decrypted. So run the
   # command, handle the error, and pull the message out of the file >:|
   fname = rel("../log/#{options[:file_number]}.decrypt.log")
-  sh "java -classpath '#{CLASSPATH}' DecryptMessage #{file.path} #{env[:keyfile]} '#{fname}'", true
+  sh "java -classpath '#{CLASSPATH}' DecryptMessage #{file.path} #{env[:keyfile]} '#{fname}'"
 end
 
 def parse(args)
