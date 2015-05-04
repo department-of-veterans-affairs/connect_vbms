@@ -27,6 +27,7 @@ import java.util.ArrayList;
 public class EncryptSOAPDocument
 {
   private static final String VBMS_NAMESPACE = "http://vbms.vba.va.gov/external/eDocumentService/v4";
+  private static final String SOAP_NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
 
   public static void main(String[] args)
   {
@@ -88,10 +89,14 @@ public class EncryptSOAPDocument
     WSSecHeader secHeader = new WSSecHeader();
     secHeader.setMustUnderstand(false);
     secHeader.insertSecurityHeader(doc);
+
     List<WSEncryptionPart> references = new ArrayList<WSEncryptionPart>();
     references.add(new WSEncryptionPart("TS-1"));
+    WSEncryptionPart body = new WSEncryptionPart("Body", SOAP_NAMESPACE, "Content");
+    references.add(body);
     WSEncryptionPart documentPart = new WSEncryptionPart("document", VBMS_NAMESPACE, "Element");
     references.add(documentPart);
+
     builder.setParts(references);
     Document signedDoc = builder.build(doc, crypto, secHeader);
     return XMLUtils.PrettyDocumentToString(signedDoc);
@@ -107,6 +112,8 @@ public class EncryptSOAPDocument
     List<WSEncryptionPart> references = new ArrayList<WSEncryptionPart>();
     WSEncryptionPart documentPart = new WSEncryptionPart("document", VBMS_NAMESPACE, "Element");
     references.add(documentPart);
+    WSEncryptionPart body = new WSEncryptionPart("Body", SOAP_NAMESPACE, "Content");
+    references.add(body);
     builder.setParts(references);
     Document encryptedDoc = builder.build(doc, crypto, secHeader);
     return XMLUtils.PrettyDocumentToString(encryptedDoc);
