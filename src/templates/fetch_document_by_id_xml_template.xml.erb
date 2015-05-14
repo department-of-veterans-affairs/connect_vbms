@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v4="http://vbms.vba.va.gov/external/eDocumentService/v4">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v4:fetchDocumentById>
+        <v4:documentId><%= document_id %></v4:documentId>
+      </v4:fetchDocumentById>
+   </soapenv:Body>
+</soapenv:Envelope>

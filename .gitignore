@@ -6,3 +6,5 @@ src/out.txt
 src/*.log
 .ruby-version
 .ruby-gemset
+
+docs/_build/

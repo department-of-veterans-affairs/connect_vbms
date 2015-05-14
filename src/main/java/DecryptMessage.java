@@ -33,7 +33,7 @@ public class DecryptMessage
         Files.readAllBytes(Paths.get(args[0])), Charset.defaultCharset()
       );
 
-      String document = decrypt(encrypted_xml, args[1]);
+      String document = decrypt(encrypted_xml, args[1], args[3]);
       System.out.println(document);
     }
     catch (Exception e)
@@ -73,10 +73,10 @@ public class DecryptMessage
     return CryptoFactory.getInstance(properties);
   }
 
-  public static String decrypt(String encryptedXml, String keyfile) throws Exception {
+  public static String decrypt(String encryptedXml, String keyfile, String keypass) throws Exception {
     Crypto signCrypto = getSigningCrypto(keyfile);
     Crypto deCrypto = getDecryptionCrypto(keyfile);
-    CallbackHandler handler = new WSSCallbackHandler();
+    CallbackHandler handler = new WSSCallbackHandler(keypass);
     WSSecurityEngine secEngine = new WSSecurityEngine();
 
     Document doc = getSOAPDoc(encryptedXml);
@@ -85,14 +85,17 @@ public class DecryptMessage
   }
 
   public static class WSSCallbackHandler implements CallbackHandler {
-    public WSSCallbackHandler() {
+    public String keypass;
+
+    public WSSCallbackHandler(String keypass) {
+      this.keypass = keypass;
     }
 
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
       for (Callback callback : callbacks) {
         if (callback instanceof WSPasswordCallback) {
           WSPasswordCallback cb = (WSPasswordCallback) callback;
-          cb.setPassword("importkey");
+          cb.setPassword(this.keypass);
         }
       }
     }
