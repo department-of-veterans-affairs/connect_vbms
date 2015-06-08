@@ -29,25 +29,22 @@ RSpec.describe VBMS::Requests do
 
   describe "UploadDocumentWithAssociations" do
     it "executes succesfully when pointed at VBMS" do
-      path = nil
       Tempfile.open("tmp") do |t|
-        path = t.path
+        request = VBMS::Requests::UploadDocumentWithAssociations.new(
+          "784449089",
+          Time.now,
+          "Jane",
+          "Q",
+          "Citizen",
+          "knee",
+          t.path,
+          "356",
+          "Connect VBMS test",
+          true,
+        )
+
+        @client.send(request)
       end
-
-      request = VBMS::Requests::UploadDocumentWithAssociations.new(
-        "784449089",
-        Time.now,
-        "Jane",
-        "Q",
-        "Citizen",
-        "knee",
-        path,
-        "356",
-        "Connect VBMS test",
-        true,
-      )
-
-      @client.send(request)
     end
   end
 
