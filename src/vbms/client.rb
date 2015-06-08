@@ -21,12 +21,12 @@ module VBMS
 
     def send(request)
       unecrypted_xml = request.render_xml()
-      path = nil
+      output = nil
       Tempfile.open("tmp") do |t|
         t.write(unecrypted_xml)
-        path = t.path
+        t.flush()
+        output = VBMS.shell_java("EncryptSOAPDocument #{t.path} #@keyfile #@keypass #{request.name}")
       end
-      output = VBMS.shell_java("EncryptSOAPDocument #{path} #@keyfile #@keypass #{request.name}")
       doc = Nokogiri::XML(output)
       self.inject_saml(doc)
       self.remove_mustUnderstand(doc)
@@ -106,15 +106,14 @@ module VBMS
         raise VBMS::SOAPError.new(doc)
       end
 
-      path = nil
-      Tempfile.open("tmp") do |t|
-        t.write(soap)
-        path = t.path
-      end
-
       data = nil
-      Tempfile.open("log") do |t|
-        data = VBMS.shell_java("DecryptMessage #{path} #@keyfile #{t.path} #@keypass")
+      Tempfile.open("tmp") do |in_t|
+        in_t.write(soap)
+        in_t.flush()
+
+        Tempfile.open("log") do |out_t|
+          data = VBMS.shell_java("DecryptMessage #{in_t.path} #@keyfile #{out_t.path} #@keypass")
+        end
       end
 
       self.log(:decrypted_message, :decrypted_data => data, :request => request)
