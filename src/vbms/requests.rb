@@ -80,7 +80,7 @@ module VBMS
       end
 
       def handle_response(doc)
-        return doc.find(
+        return doc.xpath(
           "//v4:listDocumentsResponse/v4:result", VBMS::XML_NAMESPACES
         ).map do |el|
           VBMS::Document.new(
@@ -88,7 +88,7 @@ module VBMS
             el.attributes["filename"],
             el.attributes["docType"],
             el.attributes["source"],
-            Time.parse(el.find_first(
+            Time.parse(el.at_xpath(
               "//ns2:receivedDt/text()", VBMS::XML_NAMESPACES
             ).content).to_date,
           )
@@ -120,13 +120,13 @@ module VBMS
       end
 
       def handle_response(doc)
-        el = doc.find_first(
+        el = doc.at_xpath(
           "//v4:fetchDocumentResponse/v4:result", VBMS::XML_NAMESPACES
         )
-        document_el = el.find_first(
+        document_el = el.at_xpath(
           "//v4:document", VBMS::XML_NAMESPACES
         )
-        received_date = document_el.find_first(
+        received_date = document_el.at_xpath(
           "//ns2:receivedDt/text()", VBMS::XML_NAMESPACES
         )
         return VBMS::DocumentWithContent.new(
@@ -137,7 +137,7 @@ module VBMS
             document_el.attributes["source"],
             received_date.nil? ? nil : Time.parse(received_date.content).to_date,
           ),
-          Base64.decode64(el.find_first(
+          Base64.decode64(el.at_xpath(
             "//v4:content/ns2:data/text()", VBMS::XML_NAMESPACES
           ).content),
         )
@@ -158,7 +158,7 @@ module VBMS
       end
 
       def handle_response(doc)
-        return doc.find("//v4:getDocumentTypesResponse/v4:result", VBMS::XML_NAMESPACES).map do |el|
+        return doc.xpath("//v4:getDocumentTypesResponse/v4:result", VBMS::XML_NAMESPACES).map do |el|
           DocumentType.new(
             el.attributes["id"],
             el.attributes["description"]

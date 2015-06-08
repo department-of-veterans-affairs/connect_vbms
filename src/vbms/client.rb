@@ -27,7 +27,7 @@ module VBMS
         path = t.path
       end
       output = VBMS.shell_java("EncryptSOAPDocument #{path} #@keyfile #@keypass #{request.name}")
-      doc = XML::Parser.string(output).parse()
+      doc = Nokogiri::XML(output)
       self.inject_saml(doc)
       self.remove_mustUnderstand(doc)
 
@@ -55,12 +55,18 @@ module VBMS
     end
 
     def inject_saml(doc)
-      saml_doc = doc.import(XML::Parser.file(@saml).parse.root)
-      doc.find_first("//wsse:Security", "wsse:http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd") << saml_doc
+      saml_doc = Nokogiri::XML(File.read(@saml)).root
+      doc.at_xpath(
+        "//wsse:Security",
+        wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+      ) << saml_doc
     end
 
     def remove_mustUnderstand(doc)
-      doc.find_first("//wsse:Security", "wsse:http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd").attributes.get_attribute("mustUnderstand").remove!
+      doc.at_xpath(
+        "//wsse:Security",
+        wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+      ).remove_attribute("mustUnderstand")
     end
 
     def create_body(request, doc)
@@ -94,9 +100,9 @@ module VBMS
 
     def process_response(request, response)
       soap = response.body.match(/<soap:envelope.*?<\/soap:envelope>/im)[0]
-      doc = XML::Parser.string(soap).parse()
+      doc = Nokogiri::XML(soap)
 
-      if doc.find_first("//soap:Fault", "http://schemas.xmlsoap.org/soap/envelope/")
+      if doc.at_xpath("//soap:Fault", soap: "http://schemas.xmlsoap.org/soap/envelope/")
         raise VBMS::SOAPError.new(doc)
       end
 
@@ -113,7 +119,7 @@ module VBMS
 
       self.log(:decrypted_message, :decrypted_data => data, :request => request)
 
-      doc = XML::Parser.string(data).parse()
+      doc = Nokogiri::XML(data)
       return request.handle_response(doc)
     end
   end
