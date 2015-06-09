@@ -12,6 +12,32 @@ def env_path(env_dir, env_var_name)
   end
 end
 
+RSpec.describe VBMS::Client do
+  before(:example) do
+    @client = VBMS::Client.new(
+      nil, nil, nil, nil, nil, nil, nil
+    )
+  end
+
+  describe "remove_mustUnderstand" do
+    it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
+      doc = Nokogiri::XML(<<-EOF)
+      <?xml version="1.0" encoding="UTF-8"?>
+      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+          <soapenv:Header>
+              <wsse:Security soapenv:mustUnderstand="1">
+              </wsse:Security>
+          </soapenv:Header>
+      </soapenv:Envelope>
+      EOF
+
+      @client.remove_mustUnderstand(doc)
+
+      expect(doc.to_s).not_to include("mustUnderstand")
+    end
+  end
+end
+
 
 RSpec.describe VBMS::Requests do
   before(:example) do

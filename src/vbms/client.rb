@@ -66,7 +66,7 @@ module VBMS
       doc.at_xpath(
         "//wsse:Security",
         wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
-      ).remove_attribute("mustUnderstand")
+      ).attributes["mustUnderstand"].remove
     end
 
     def create_body(request, doc)
