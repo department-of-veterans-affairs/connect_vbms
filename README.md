@@ -1,18 +1,27 @@
 # connect_vbms
 
-## Java
+## Pre-requisites
 
-To build the java code, run `make build` from the root directory
+- [Java JDK 1.7 or above](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+- [Python 2.6 or above](https://www.python.org/downloads/)
+- Sphinx 1.3.1 or above (`pip install sphinx`)
+
+## Build
+
+From the root directory, run:
+
+`make build`
 
 ## Tests
 
-To run the tests, make sure you have built the java code, then: `bundle exec rspec`
+From the root directory, run:
+
+`bundle exec rspec`
 
 The tests are dependent on your network and on the VBMS test server being up and running.
 
 ## Docs
 
-To build the docs you will need to have python and sphinx >= 1.3.1 installed.
-If you don't have it installed, try `pip install sphinx`.
+From the root directory, run:
 
-Once you have that, just run `make docs`
+`make docs`
