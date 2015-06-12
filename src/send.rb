@@ -111,7 +111,7 @@ end
 
 def init_logger
   if pg_uri = ENV["CONNECT_VBMS_POSTGRES"]
-    VBMS::DBLogger.new(pg_uri)
+    DBLogger.new(pg_uri)
   else
     nil
   end
