@@ -108,5 +108,7 @@ def upload_doc(options)
   puts client.send(request).inspect
 end
 
-options = parse(ARGV)
-upload_doc(options)
+if __FILE__ == $0
+  options = parse(ARGV)
+  upload_doc(options)
+end
