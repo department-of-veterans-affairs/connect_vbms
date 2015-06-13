@@ -1,5 +1,36 @@
 module VBMS
   class Client
+    def self.FromEnvVars(logger = nil, env_name = "test")
+      env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
+      return VBMS::Client.new(
+        get_env("CONNECT_VBMS_URL"),
+        env_path(env_dir, "CONNECT_VBMS_KEYFILE"),
+        env_path(env_dir, "CONNECT_VBMS_SAML"),
+        env_path(env_dir, "CONNECT_VBMS_KEY", allow_empty: true),
+        get_env("CONNECT_VBMS_KEYPASS"),
+        env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
+        env_path(env_dir, "CONNECT_VBMS_CERT", allow_empty: true),
+        logger,
+      )
+    end
+
+    def self.get_env(env_var_name, allow_empty=false)
+      value = ENV[env_var_name]
+      if not allow_empty || value
+        raise "#{env_var_name} must be set"
+      end
+      value
+    end
+
+    def self.env_path(env_dir, env_var_name, allow_empty=false)
+      value = get_env(env_var_name, allow_empty)
+      if value.nil?
+        return nil
+      else
+        return File.join(env_dir, value)
+      end
+    end
+
     def initialize(endpoint_url, keyfile, saml, key, keypass, cacert,
                    client_cert, logger = nil)
       @endpoint_url = endpoint_url

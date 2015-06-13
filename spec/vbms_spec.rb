@@ -58,16 +58,7 @@ end
 
 RSpec.describe VBMS::Requests do
   before(:example) do
-    env_dir = File.join(ENV["CONNECT_VBMS_ENV_DIR"], "test")
-    @client = VBMS::Client.new(
-      ENV["CONNECT_VBMS_URL"],
-      env_path(env_dir, "CONNECT_VBMS_KEYFILE"),
-      env_path(env_dir, "CONNECT_VBMS_SAML"),
-      env_path(env_dir, "CONNECT_VBMS_KEY"),
-      ENV["CONNECT_VBMS_KEYPASS"],
-      env_path(env_dir, "CONNECT_VBMS_CACERT"),
-      env_path(env_dir, "CONNECT_VBMS_CERT"),
-    )
+    @client = VBMS::Client.FromEnvVars()
   end
 
   describe "UploadDocumentWithAssociations" do

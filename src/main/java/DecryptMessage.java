@@ -25,6 +25,10 @@ public class DecryptMessage
 {
   public static void main(String[] args)
   {
+    if (args.length < 4) {
+      throw new IllegalArgumentException("Needs 4 arguments");
+    }
+
     try
     {
       System.setProperty("logfilename", args[2]);

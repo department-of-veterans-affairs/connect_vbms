@@ -31,6 +31,10 @@ public class EncryptSOAPDocument
 
   public static void main(String[] args)
   {
+    if (args.length < 4) {
+      throw new IllegalArgumentException("Needs 4 arguments");
+    }
+
     System.setProperty("logfilename", "../log/upload.log");
 
     Properties properties = new Properties();

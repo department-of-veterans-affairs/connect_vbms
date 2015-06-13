@@ -92,15 +92,6 @@ def parse(args)
   options
 end
 
-def env_path(env_dir, env_var_name)
-  value = ENV[env_var_name]
-  if value.nil?
-    return nil
-  else
-    return File.join(env_dir, value)
-  end
-end
-
 def upload_doc(options)
   pg_uri = ENV["CONNECT_VBMS_POSTGRES"]
   if pg_uri
@@ -112,17 +103,7 @@ def upload_doc(options)
     logger = nil
   end
 
-  env_dir = File.join(ENV["CONNECT_VBMS_ENV_DIR"], options[:env])
-  client = VBMS::Client.new(
-    ENV["CONNECT_VBMS_URL"],
-    env_path(env_dir, "CONNECT_VBMS_KEYFILE"),
-    env_path(env_dir, "CONNECT_VBMS_SAML"),
-    env_path(env_dir, "CONNECT_VBMS_KEY"),
-    ENV["CONNECT_VBMS_KEYPASS"],
-    env_path(env_dir, "CONNECT_VBMS_CACERT"),
-    env_path(env_dir, "CONNECT_VBMS_CERT"),
-    logger,
-  )
+  client = VBMS::Client.FromEnvVars(logger: logger, env_name: options[:env])
 
   request = VBMS::Requests::UploadDocumentWithAssociations.new(
     options[:file_number],
