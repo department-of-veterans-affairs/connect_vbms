@@ -1,6 +1,3 @@
-# TODO: remove this once we can put our source code in `lib/`
-$LOAD_PATH << File.join(File.dirname(__FILE__), "..", "src")
-
 require 'spec_helper'
 require 'vbms'
 
