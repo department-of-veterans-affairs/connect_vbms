@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'pg'
 require 'optparse'
 
 require_relative 'vbms'
@@ -103,8 +104,6 @@ end
 def upload_doc(options)
   pg_uri = ENV["CONNECT_VBMS_POSTGRES"]
   if pg_uri
-    require 'pg'
-
     uri = URI.parse(pg_uri)
     logger = DBLogger.new(
       PG.connect(uri.hostname, uri.port, nil, nil, uri.path[1..-1], uri.user, uri.password)
