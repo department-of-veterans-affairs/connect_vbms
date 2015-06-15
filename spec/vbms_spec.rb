@@ -17,15 +17,10 @@ RSpec.describe VBMS do
       end
 
       it "should raise a JavaExecutionError" do
-        expect {VBMS::shell_java "failure"}.to raise_error VBMS::JavaExecutionError
-        begin
-          VBMS::shell_java "failure"
-        rescue VBMS::JavaExecutionError => e
-          expect(e.message).to eq <<-EOF
+        expect {VBMS::shell_java "failure"}.to raise_error VBMS::JavaExecutionError, <<-EOF
 Error running cmd: java -classpath '/does/not/exist' failure 2>&1
 Output: Error: Could not find or load main class failure
-          EOF
-        end
+        EOF
       end
     end
 
