@@ -4,16 +4,9 @@ require 'vbms'
 RSpec.describe VBMS do
   describe 'shell_java' do
     context "with a nonsense CLASSPATH" do
-      before do
-        @old_classpath = VBMS::CLASSPATH
-        VBMS::CLASSPATH = "/does/not/exist"
-      end
-
-      after do
-        VBMS::CLASSPATH = @old_classpath
-      end
-
       it "should raise a JavaExecutionError" do
+        stub_const("VBMS::CLASSPATH", "/does/not/exist")
+
         expect {VBMS::shell_java "failure"}.to raise_error VBMS::JavaExecutionError, <<-EOF
 Error running cmd: java -classpath '/does/not/exist' failure 2>&1
 Output: Error: Could not find or load main class failure
