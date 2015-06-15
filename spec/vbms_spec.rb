@@ -4,7 +4,7 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "src")
 require 'spec_helper'
 require 'vbms'
 
-RSpec.describe VBMS, focus:true do
+RSpec.describe VBMS do
   describe 'shell_java' do
     context "with a nonsense CLASSPATH" do
       before do
@@ -29,11 +29,17 @@ Output: Error: Could not find or load main class failure
       end
     end
 
+    # to generate the test keyfile:
+    #  $ keytool -genkey -alias vbms_server_key -keyalg RSA -keystore keystore.jks -keysize 2048
+    #  $ keytool -genkey -alias importkey -keyalg RSA -keystore keystore.jks -keysize 2048
+    #  and set all passwords to "importkey"
     it "should succesfully encrypt a file" do
       xml = File.expand_path "spec/data/unencrypted_xml.xml"
-      keyfile = File.expand_path "spec/data/key.key"
-      output = VBMS::shell_java("EncryptSOAPDocument #{xml} #{keyfile} bananas bananas")
-      puts output
+      keyfile = File.expand_path "spec/data/keystore.jks"
+      output = VBMS::shell_java("EncryptSOAPDocument #{xml} #{keyfile} importkey getDocumentTypes")
+      # as far as this test is concerned, we're successful if we run without
+      # errors and generate an XML document
+      doc = Nokogiri::XML(output)
     end
   end
 end
