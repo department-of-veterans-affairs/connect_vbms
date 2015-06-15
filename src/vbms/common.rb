@@ -28,6 +28,16 @@ module VBMS
   class SOAPError < ClientError
   end
 
+  class JavaExecutionError < ClientError
+    attr_reader :cmd, :output
+
+    def initialize(cmd, output)
+      super("Error running cmd: #{cmd}\nOutput: #{output}")
+      @cmd = cmd
+      @output = output
+    end
+  end
+
   DocumentType = Struct.new("DocumentType", :type_id, :description)
   Document = Struct.new("Document", :document_id, :filename, :doc_type, :source, :received_at)
   DocumentWithContent = Struct.new("DocumentWithContent", :document, :content)
@@ -38,10 +48,11 @@ module VBMS
       return ERB.new(File.read(location))
     end
 
-    def self.shell_java(cmd)
-      output = `java -classpath '#{VBMS::CLASSPATH}' #{cmd}`
+    def self.shell_java(args)
+      cmd = "java -classpath '#{VBMS::CLASSPATH}' #{args} 2>&1"
+      output = `#{cmd}`
       if $? != 0
-        raise "Error running: #{cmd}"
+        raise JavaExecutionError.new(cmd, output)
       end
       return output
     end
