@@ -1,14 +1,40 @@
 # TODO: remove this once we can put our source code in `lib/`
 $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "src")
 
+require 'spec_helper'
 require 'vbms'
 
-def env_path(env_dir, env_var_name)
-  value = ENV[env_var_name]
-  if value.nil?
-    return nil
-  else
-    return File.join(env_dir, value)
+RSpec.describe VBMS, focus:true do
+  describe 'shell_java' do
+    context "with a nonsense CLASSPATH" do
+      before do
+        @old_classpath = VBMS::CLASSPATH
+        VBMS::CLASSPATH = "/does/not/exist"
+      end
+
+      after do
+        VBMS::CLASSPATH = @old_classpath
+      end
+
+      it "should raise a JavaExecutionError" do
+        expect {VBMS::shell_java "failure"}.to raise_error VBMS::JavaExecutionError
+        begin
+          VBMS::shell_java "failure"
+        rescue VBMS::JavaExecutionError => e
+          expect(e.message).to eq <<-EOF
+Error running cmd: java -classpath '/does/not/exist' failure 2>&1
+Output: Error: Could not find or load main class failure
+          EOF
+        end
+      end
+    end
+
+    it "should succesfully encrypt a file" do
+      xml = File.expand_path "spec/data/unencrypted_xml.xml"
+      keyfile = File.expand_path "spec/data/key.key"
+      output = VBMS::shell_java("EncryptSOAPDocument #{xml} #{keyfile} bananas bananas")
+      puts output
+    end
   end
 end
 
