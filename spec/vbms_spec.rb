@@ -39,7 +39,7 @@ Output: Error: Could not find or load main class failure
       output = VBMS::shell_java("EncryptSOAPDocument #{xml} #{keyfile} importkey getDocumentTypes")
       # as far as this test is concerned, we're successful if we run without
       # errors and generate an XML document
-      doc = Nokogiri::XML(output)
+      Nokogiri::XML(output)
     end
   end
 end
