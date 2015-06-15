@@ -13,7 +13,7 @@ RSpec.describe 'send.rb' do
 
     it "should initialize a DBLogger" do
       expect(DBLogger).to receive(:new).with("postgres://localhost/drturbotax_development")
-      logger = init_logger
+      init_logger
     end
   end
 
