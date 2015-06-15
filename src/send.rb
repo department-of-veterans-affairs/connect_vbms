@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'pg'
 require 'optparse'
 
 require_relative 'vbms'
