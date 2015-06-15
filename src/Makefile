@@ -9,10 +9,10 @@ build: EncryptSOAPDocument.class DecryptMessage.class
 
 .PHONY:run
 run:
-	java -classpath '../classes:../lib/*:../lib' EncryptSOAPDocument
+	java -classpath '../classes:../lib/*:../lib:main/properties' EncryptSOAPDocument
 
 .PHONY:decrypt
 decrypt: DecryptMessage.class
 	# Decrypt fails... but run decrypt_hack to pull the message out of the log
-	java -classpath '../classes:../lib/*:../lib' DecryptMessage
+	java -classpath '../classes:../lib/*:../lib:main/properties' DecryptMessage
 	./decrypt_hack.rb

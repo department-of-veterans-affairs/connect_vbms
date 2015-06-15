@@ -14,6 +14,14 @@ def env_path(env_dir, env_var_name)
   end
 end
 
+def fixture_path(filename)
+  File.join(File.expand_path('../fixtures', __FILE__), filename)
+end
+
+def fixture(path)
+  File.read fixture_path(path)
+end
+
 RSpec.configure do |config|
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.

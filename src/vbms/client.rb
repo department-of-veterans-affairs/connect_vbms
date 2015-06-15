@@ -143,7 +143,7 @@ module VBMS
         in_t.flush()
 
         Tempfile.open("log") do |out_t|
-          data = VBMS.shell_java("DecryptMessage #{in_t.path} #@keyfile #{out_t.path} #@keypass")
+          data = VBMS.shell_java("DecryptMessage #{in_t.path} #@keyfile #@keypass #{out_t.path}")
         end
       end
 

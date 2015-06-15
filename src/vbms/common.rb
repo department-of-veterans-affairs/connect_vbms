@@ -4,6 +4,7 @@ module VBMS
       File.join(FILEDIR, '../../classes'),
       File.join(FILEDIR, '../../lib'),
       File.join(FILEDIR, '../../lib/*'),
+      File.join(FILEDIR, '../../src/main/properties'),
       FILEDIR,
   ].join(':')
 
