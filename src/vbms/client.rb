@@ -56,7 +56,7 @@ module VBMS
       Tempfile.open("tmp") do |t|
         t.write(unecrypted_xml)
         t.flush()
-        output = VBMS.shell_java("EncryptSOAPDocument #{t.path} #@keyfile #@keypass #{request.name}")
+        output = VBMS.encrypted_soap_document(t.path, @keyfile, @keypass, request.name)
       end
       doc = Nokogiri::XML(output)
       self.inject_saml(doc)
@@ -143,7 +143,7 @@ module VBMS
         in_t.flush()
 
         Tempfile.open("log") do |out_t|
-          data = VBMS.shell_java("DecryptMessage #{in_t.path} #@keyfile #@keypass #{out_t.path}")
+          data = VBMS.decrypt_message(in_t.path, @keyfile, @keypass, out_t.path)
         end
       end
 

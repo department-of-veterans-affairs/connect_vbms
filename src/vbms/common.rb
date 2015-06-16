@@ -1,12 +1,8 @@
+require 'open3'
+
 module VBMS
   FILEDIR = File.dirname(File.absolute_path(__FILE__))
-  CLASSPATH = [
-      File.join(FILEDIR, '../../classes'),
-      File.join(FILEDIR, '../../lib'),
-      File.join(FILEDIR, '../../lib/*'),
-      File.join(FILEDIR, '../../src/main/properties'),
-      FILEDIR,
-  ].join(':')
+  DO_WSSE = File.join(FILEDIR, '../../src/do_wsse.sh')
 
   XML_NAMESPACES = {
     "v4" => "http://vbms.vba.va.gov/external/eDocumentService/v4",
@@ -29,7 +25,7 @@ module VBMS
   class SOAPError < ClientError
   end
 
-  class JavaExecutionError < ClientError
+  class ExecutionError < ClientError
     attr_reader :cmd, :output
 
     def initialize(cmd, output)
@@ -49,11 +45,18 @@ module VBMS
       return ERB.new(File.read(location))
     end
 
-    def self.shell_java(args)
-      cmd = "java -classpath '#{VBMS::CLASSPATH}' #{args} 2>&1"
-      output = `#{cmd}`
-      if $? != 0
-        raise JavaExecutionError.new(cmd, output)
+    def self.decrypt_message(infile, keyfile, keypass, logfile, ignore_timestamp = false)
+      output, errors, status = Open3.capture3(DO_WSSE, '-i', infile, '-k', keyfile, '-p', keypass, '-l', logfile, ignore_timestamp ? '-t' : '')
+      if status != 0
+        raise ExecutionError.new(DO_WSSE + " DecryptMessage", errors)
+      end
+      return output
+    end
+
+    def self.encrypted_soap_document(infile, keyfile, keypass, request_name)
+      output, errors, status = Open3.capture3(DO_WSSE, '-e', '-i', infile, '-k', keyfile, '-p', keypass, '-n', request_name)
+      if status != 0
+        raise ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors)
       end
       return output
     end

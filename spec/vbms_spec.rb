@@ -1,35 +1,7 @@
 require 'spec_helper'
 require 'vbms'
 
-RSpec.describe VBMS do
-  describe 'shell_java' do
-    context "with a nonsense CLASSPATH" do
-      it "should raise a JavaExecutionError" do
-        stub_const("VBMS::CLASSPATH", "/does/not/exist")
-
-        expect {VBMS::shell_java "failure"}.to raise_error VBMS::JavaExecutionError, <<-EOF
-Error running cmd: java -classpath '/does/not/exist' failure 2>&1
-Output: Error: Could not find or load main class failure
-        EOF
-      end
-    end
-
-    # to generate the test keyfile:
-    #  $ keytool -genkey -alias vbms_server_key -keyalg RSA -keystore keystore.jks -keysize 2048
-    #  $ keytool -genkey -alias importkey -keyalg RSA -keystore keystore.jks -keysize 2048
-    #  and set all passwords to "importkey"
-    it "should succesfully encrypt a file" do
-      xml = File.expand_path "spec/data/unencrypted_xml.xml"
-      keyfile = File.expand_path "spec/data/keystore.jks"
-      output = VBMS::shell_java("EncryptSOAPDocument #{xml} #{keyfile} importkey getDocumentTypes")
-      # as far as this test is concerned, we're successful if we run without
-      # errors and generate an XML document
-      Nokogiri::XML(output)
-    end
-  end
-end
-
-RSpec.describe VBMS::Client do
+describe VBMS::Client do
   before(:example) do
     @client = VBMS::Client.new(
       nil, nil, nil, nil, nil, nil, nil
@@ -56,7 +28,7 @@ RSpec.describe VBMS::Client do
 end
 
 
-RSpec.describe VBMS::Requests do
+describe VBMS::Requests do
   before(:example) do
     @client = VBMS::Client.FromEnvVars()
   end

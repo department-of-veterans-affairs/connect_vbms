@@ -36,8 +36,6 @@ public class EncryptSOAPDocument
       System.exit(1);
     }
 
-    System.setProperty("logfilename", "../log/upload.log");
-
     String inFileName = args[0];
     String keyFileName = args[1];
     String keyFilePass = args[2];

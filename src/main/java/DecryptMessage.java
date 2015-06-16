@@ -26,7 +26,7 @@ public class DecryptMessage
 {
   public static void main(String[] args)
   {
-    if (args.length < 4) {
+    if (args.length < 3) {
       printUsage();
       System.exit(1);
     }
@@ -34,12 +34,9 @@ public class DecryptMessage
     String inFileName = args[0];
     String keyFileName = args[1];
     String keyFilePass = args[2];
-    String logFileName = args[3];
 
     try
     {
-      System.setProperty("logfilename", logFileName);
-
       String encrypted_xml = new String(
         Files.readAllBytes(Paths.get(inFileName)), Charset.defaultCharset()
       );
@@ -89,12 +86,13 @@ public class DecryptMessage
     Crypto deCrypto = getDecryptionCrypto(keyfile);
     CallbackHandler handler = new WSSCallbackHandler(keypass);
     WSSecurityEngine secEngine = new WSSecurityEngine();
-    WSSConfig config = WSSConfig.getNewInstance();
-
-    config.setTimeStampStrict(false);
-    config.setTimeStampFutureTTL(3600000);
-    config.setTimeStampTTL(3600000);
-    secEngine.setWssConfig(config);
+    if (Boolean.getBoolean("decrypt_ignore_wsse_timestamp")) {
+      WSSConfig config = WSSConfig.getNewInstance();
+      config.setTimeStampStrict(false);
+      config.setTimeStampFutureTTL(Integer.MAX_VALUE);
+      config.setTimeStampTTL(Integer.MAX_VALUE);
+      secEngine.setWssConfig(config);
+    }
  
     Document doc = getSOAPDoc(encryptedXml);
     java.util.List<WSSecurityEngineResult> results = secEngine.processSecurityHeader(doc, null, handler, signCrypto, deCrypto);
@@ -119,7 +117,7 @@ public class DecryptMessage
   }
 
   private static void printUsage() {
-    System.err.println("java DecryptMessage INFILE KEYFILE KEYPASS LOGFILE");
+    System.err.println("java DecryptMessage INFILE KEYFILE KEYPASS");
   }
 
   // Properties file with default crypto configuration for the test environment.
