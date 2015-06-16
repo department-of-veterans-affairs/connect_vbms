@@ -1,6 +1,6 @@
 module VBMS
   class Client
-    def self.FromEnvVars(logger = nil, env_name = "test")
+    def self.from_env_vars(logger = nil, env_name = "test")
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
       return VBMS::Client.new(
         get_env("CONNECT_VBMS_URL"),
@@ -52,12 +52,7 @@ module VBMS
 
     def send(request)
       unecrypted_xml = request.render_xml()
-      output = nil
-      Tempfile.open("tmp") do |t|
-        t.write(unecrypted_xml)
-        t.flush()
-        output = VBMS.encrypted_soap_document(t.path, @keyfile, @keypass, request.name)
-      end
+      output = VBMS.encrypted_soap_document_xml(unecrypted_xml, @keyfile, @keypass, request.name)
       doc = Nokogiri::XML(output)
       self.inject_saml(doc)
       self.remove_mustUnderstand(doc)
@@ -138,13 +133,8 @@ module VBMS
       end
 
       data = nil
-      Tempfile.open("tmp") do |in_t|
-        in_t.write(soap)
-        in_t.flush()
-
-        Tempfile.open("log") do |out_t|
-          data = VBMS.decrypt_message(in_t.path, @keyfile, @keypass, out_t.path)
-        end
+      Tempfile.open("log") do |out_t|
+        data = VBMS.decrypt_message_xml(soap, @keyfile, @keypass, out_t.path)
       end
 
       self.log(:decrypted_message, :decrypted_data => data, :request => request)

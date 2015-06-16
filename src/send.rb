@@ -103,7 +103,7 @@ def upload_doc(options)
     logger = nil
   end
 
-  client = VBMS::Client.FromEnvVars(logger: logger, env_name: options[:env])
+  client = VBMS::Client.from_env_vars(logger: logger, env_name: options[:env])
 
   request = VBMS::Requests::UploadDocumentWithAssociations.new(
     options[:file_number],

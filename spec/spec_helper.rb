@@ -4,6 +4,8 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "src")
 require 'vbms'
 require 'nokogiri'
 require 'byebug'
+require 'rspec/matchers'
+require 'equivalent-xml'
 
 def env_path(env_dir, env_var_name)
   value = ENV[env_var_name]

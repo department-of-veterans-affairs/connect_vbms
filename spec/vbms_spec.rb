@@ -30,7 +30,7 @@ end
 
 describe VBMS::Requests do
   before(:example) do
-    @client = VBMS::Client.FromEnvVars()
+    @client = VBMS::Client.from_env_vars()
   end
 
   describe "UploadDocumentWithAssociations" do

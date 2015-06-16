@@ -53,11 +53,28 @@ module VBMS
       return output
     end
 
+    def self.decrypt_message_xml(in_xml, keyfile, keypass, logfile, ignore_timestamp = false)
+      Tempfile.open("tmp") do |t|
+        t.write(in_xml)
+        t.flush()
+        return decrypt_message(t.path, keyfile, keypass, logfile,
+                               ignore_timestamp: ignore_timestamp)
+      end
+    end
+
     def self.encrypted_soap_document(infile, keyfile, keypass, request_name)
       output, errors, status = Open3.capture3(DO_WSSE, '-e', '-i', infile, '-k', keyfile, '-p', keypass, '-n', request_name)
       if status != 0
         raise ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors)
       end
       return output
+    end
+
+    def self.encrypted_soap_document_xml(in_xml, keyfile, keypass, request_name)
+      Tempfile.open("tmp") do |t|
+        t.write(in_xml)
+        t.flush()
+        return encrypted_soap_document(t.path, keyfile, keypass, request_name)
+      end
     end
 end
