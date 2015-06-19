@@ -7,6 +7,8 @@ module VBMS
   XML_NAMESPACES = {
     "v4" => "http://vbms.vba.va.gov/external/eDocumentService/v4",
     "ns2" => "http://vbms.vba.va.gov/cdm/document/v4",
+    "soapenv" => "http://schemas.xmlsoap.org/soap/envelope/",
+    "wsse" => "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
   }
 
   class ClientError < StandardError

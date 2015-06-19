@@ -71,19 +71,14 @@ public class DecryptMessage
     return properties;
   }
   
-  public static Crypto getSigningCrypto(String keyfile) throws Exception {
-    Properties properties = loadCryptoProperties(keyfile);
-    return CryptoFactory.getInstance(properties);
-  }
-
-  public static Crypto getDecryptionCrypto(String keyfile) throws Exception {
+  public static Crypto getCrypto(String keyfile) throws Exception {
     Properties properties = loadCryptoProperties(keyfile);
     return CryptoFactory.getInstance(properties);
   }
 
   public static String decrypt(String encryptedXml, String keyfile, String keypass) throws Exception {
-    Crypto signCrypto = getSigningCrypto(keyfile);
-    Crypto deCrypto = getDecryptionCrypto(keyfile);
+    Crypto signCrypto = getCrypto(keyfile);
+    Crypto deCrypto = getCrypto(keyfile);
     CallbackHandler handler = new WSSCallbackHandler(keypass);
     WSSecurityEngine secEngine = new WSSecurityEngine();
     if (Boolean.getBoolean("decrypt_ignore_wsse_timestamp")) {
