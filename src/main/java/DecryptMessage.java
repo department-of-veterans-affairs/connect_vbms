@@ -62,9 +62,9 @@ public class DecryptMessage
 
   private static Properties loadCryptoProperties(String keyfile) throws IOException {
     Properties properties = new Properties();
-    InputStream propertiesStream = DecryptMessage.class.getResourceAsStream(TEST_PROPERTIES);
+    InputStream propertiesStream = DecryptMessage.class.getResourceAsStream(VBMS_PROPERTIES);
     if (propertiesStream == null) {
-      throw new RuntimeException("Unable to load " + TEST_PROPERTIES + ". Is it in your classpath?");
+      throw new RuntimeException("Unable to load " + VBMS_PROPERTIES + ". Is it in your classpath?");
     }
     properties.load(propertiesStream);
     properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyfile);
@@ -116,5 +116,5 @@ public class DecryptMessage
   }
 
   // Properties file with default crypto configuration for the test environment.
-  private static final String TEST_PROPERTIES = "vbms_test.properties";
+  private static final String VBMS_PROPERTIES = "vbms.properties";
 }
