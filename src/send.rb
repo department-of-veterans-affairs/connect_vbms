@@ -1,21 +1,28 @@
 #!/usr/bin/env ruby
-require 'pg'
 require 'optparse'
 
 require_relative 'vbms'
 
+# Once connect_vbms is a gem, all the code in this file should go into CUI or
+# be deleted, and this file should be deleted
 
-# log to the DrTurboTax external_activity_log
-def db_log(conn, message, request_body, response_body, evaluation_id)
-  conn.exec_params(<<-EOM, [message, request_body, response_body, evaluation_id])
-INSERT INTO external_activity_logs(message, submitted_data, response_body, evaluation_id)
-VALUES ($1, $2, $3, $4)
-  EOM
+if ENV.has_key? "CONNECT_VBMS_POSTGRES"
+  begin
+    require 'pg'
+  rescue LoadError
+    print <<-EOF
+Unable to load the 'pg' gem, which is required if the CONNECT_VBMS_POSTGRES
+environment variable is set. Please either install the 'pg' gem or unset
+the CONNECT_VBMS_POSTGRES environment variable.
+    EOF
+    raise
+  end
 end
 
 class DBLogger
-  def initialize(conn)
-    @conn = conn
+  def initialize(pg_uri)
+    uri = URI.parse(pg_uri)
+    @conn = PG.connect(uri.hostname, uri.port, nil, nil, uri.path[1..-1], uri.user, uri.password)
   end
 
   def log(event, data)
@@ -101,16 +108,16 @@ def env_path(env_dir, env_var_name)
   end
 end
 
-def upload_doc(options)
-  pg_uri = ENV["CONNECT_VBMS_POSTGRES"]
-  if pg_uri
-    uri = URI.parse(pg_uri)
-    logger = DBLogger.new(
-      PG.connect(uri.hostname, uri.port, nil, nil, uri.path[1..-1], uri.user, uri.password)
-    )
+def init_logger
+  if pg_uri = ENV["CONNECT_VBMS_POSTGRES"]
+    DBLogger.new(pg_uri)
   else
-    logger = nil
+    nil
   end
+end
+
+def upload_doc(options)
+  logger = init_logger
 
   env_dir = File.join(ENV["CONNECT_VBMS_ENV_DIR"], options[:env])
   client = VBMS::Client.new(
@@ -144,5 +151,7 @@ def upload_doc(options)
   puts client.send(request).inspect
 end
 
-options = parse(ARGV)
-upload_doc(options)
+if __FILE__ == $0
+  options = parse(ARGV)
+  upload_doc(options)
+end
