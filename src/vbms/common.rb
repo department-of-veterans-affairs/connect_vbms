@@ -27,6 +27,9 @@ module VBMS
   class SOAPError < ClientError
   end
 
+  class EnvironmentError < ClientError
+  end
+
   class ExecutionError < ClientError
     attr_reader :cmd, :output
 

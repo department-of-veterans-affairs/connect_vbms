@@ -25,6 +25,81 @@ describe VBMS::Client do
       expect(doc.to_s).not_to include("mustUnderstand")
     end
   end
+
+  describe "from_env_vars" do
+  let (:vbms_env_vars) { {
+        'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
+        'CONNECT_VBMS_URL' => 'http://example.com/fake_vbms',
+        'CONNECT_VBMS_KEYFILE' => 'fake_keyfile.some_ext',
+        'CONNECT_VBMS_SAML' => 'fake_saml_token',
+        'CONNECT_VBMS_KEY' => 'fake_keyname',
+        'CONNECT_VBMS_KEYPASS' => 'fake_keypass',
+        'CONNECT_VBMS_CACERT' => 'fake_cacert',
+        'CONNECT_VBMS_CERT' => 'fake_cert',
+      } }
+
+    it "smoke test that it initializes when all environment variables are set" do
+      stub_const('ENV', vbms_env_vars) 
+      expect(VBMS::Client.from_env_vars).not_to be_nil
+    end
+
+    describe "required environment variables" do
+      it "needs CONNECT_VBMS_ENV_DIR set" do
+        vbms_env_vars.delete('CONNECT_VBMS_ENV_DIR')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_ENV_DIR must be set/)
+      end
+
+      it "needs CONNECT_VBMS_URL set" do
+        vbms_env_vars.delete('CONNECT_VBMS_URL')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_URL must be set/)
+      end
+
+      it "needs CONNECT_VBMS_KEYFILE set" do
+        vbms_env_vars.delete('CONNECT_VBMS_KEYFILE')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_KEYFILE must be set/)
+      end
+
+      it "needs CONNECT_VBMS_SAML set" do
+        vbms_env_vars.delete('CONNECT_VBMS_SAML')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_SAML must be set/)
+      end
+
+      it "needs CONNECT_VBMS_KEYPASS set" do
+        vbms_env_vars.delete('CONNECT_VBMS_KEYPASS')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_KEYPASS must be set/)
+      end
+    end
+
+    describe "required environment variables" do
+      it "needs CONNECT_VBMS_KEY set" do
+        vbms_env_vars.delete('CONNECT_VBMS_KEY')
+        stub_const('ENV', vbms_env_vars)
+        expect(VBMS::Client.from_env_vars).not_to be_nil
+      end
+
+      it "needs CONNECT_VBMS_CACERT set" do
+        vbms_env_vars.delete('CONNECT_VBMS_CACERT')
+        stub_const('ENV', vbms_env_vars)
+        expect(VBMS::Client.from_env_vars).not_to be_nil
+      end
+
+      it "needs CONNECT_VBMS_CERT set" do
+        vbms_env_vars.delete('CONNECT_VBMS_CERT')
+        stub_const('ENV', vbms_env_vars)
+        expect(VBMS::Client.from_env_vars).not_to be_nil
+      end
+    end
+  end
 end
 
 

@@ -1,6 +1,6 @@
 module VBMS
   class Client
-    def self.from_env_vars(logger = nil, env_name = "test")
+    def self.from_env_vars(logger: nil, env_name: "test")
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
       return VBMS::Client.new(
         get_env("CONNECT_VBMS_URL"),
@@ -12,18 +12,19 @@ module VBMS
         env_path(env_dir, "CONNECT_VBMS_CERT", allow_empty: true),
         logger,
       )
+
     end
 
-    def self.get_env(env_var_name, allow_empty=false)
+    def self.get_env(env_var_name, allow_empty: false)
       value = ENV[env_var_name]
-      if not allow_empty || value
-        raise "#{env_var_name} must be set"
+      if !allow_empty && (value.nil? || value.empty?)
+        raise EnvironmentError, "#{env_var_name} must be set"
       end
       value
     end
 
-    def self.env_path(env_dir, env_var_name, allow_empty=false)
-      value = get_env(env_var_name, allow_empty)
+    def self.env_path(env_dir, env_var_name, allow_empty: false)
+      value = get_env(env_var_name, allow_empty: allow_empty)
       if value.nil?
         return nil
       else
