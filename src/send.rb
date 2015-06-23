@@ -108,6 +108,16 @@ def env_path(env_dir, env_var_name)
   end
 end
 
+def upload_doc(options)
+  pg_uri = ENV["CONNECT_VBMS_POSTGRES"]
+  if pg_uri
+    uri = URI.parse(pg_uri)
+    logger = DBLogger.new(
+      PG.connect(uri.hostname, uri.port, nil, nil, uri.path[1..-1], uri.user, uri.password)
+    )
+  end
+end
+
 def init_logger
   if pg_uri = ENV["CONNECT_VBMS_POSTGRES"]
     DBLogger.new(pg_uri)
@@ -119,17 +129,7 @@ end
 def upload_doc(options)
   logger = init_logger
 
-  env_dir = File.join(ENV["CONNECT_VBMS_ENV_DIR"], options[:env])
-  client = VBMS::Client.new(
-    ENV["CONNECT_VBMS_URL"],
-    env_path(env_dir, "CONNECT_VBMS_KEYFILE"),
-    env_path(env_dir, "CONNECT_VBMS_SAML"),
-    env_path(env_dir, "CONNECT_VBMS_KEY"),
-    ENV["CONNECT_VBMS_KEYPASS"],
-    env_path(env_dir, "CONNECT_VBMS_CACERT"),
-    env_path(env_dir, "CONNECT_VBMS_CERT"),
-    logger,
-  )
+  client = VBMS::Client.from_env_vars(logger: logger, env_name: options[:env])
 
   request = VBMS::Requests::UploadDocumentWithAssociations.new(
     options[:file_number],

@@ -1,35 +1,7 @@
 require 'spec_helper'
 require 'vbms'
 
-RSpec.describe VBMS do
-  describe 'shell_java' do
-    context "with a nonsense CLASSPATH" do
-      it "should raise a JavaExecutionError" do
-        stub_const("VBMS::CLASSPATH", "/does/not/exist")
-
-        expect {VBMS::shell_java "failure"}.to raise_error VBMS::JavaExecutionError, <<-EOF
-Error running cmd: java -classpath '/does/not/exist' failure 2>&1
-Output: Error: Could not find or load main class failure
-        EOF
-      end
-    end
-
-    # to generate the test keyfile:
-    #  $ keytool -genkey -alias vbms_server_key -keyalg RSA -keystore keystore.jks -keysize 2048
-    #  $ keytool -genkey -alias importkey -keyalg RSA -keystore keystore.jks -keysize 2048
-    #  and set all passwords to "importkey"
-    it "should succesfully encrypt a file" do
-      xml = File.expand_path "spec/data/unencrypted_xml.xml"
-      keyfile = File.expand_path "spec/data/keystore.jks"
-      output = VBMS::shell_java("EncryptSOAPDocument #{xml} #{keyfile} importkey getDocumentTypes")
-      # as far as this test is concerned, we're successful if we run without
-      # errors and generate an XML document
-      Nokogiri::XML(output)
-    end
-  end
-end
-
-RSpec.describe VBMS::Client do
+describe VBMS::Client do
   before(:example) do
     @client = VBMS::Client.new(
       nil, nil, nil, nil, nil, nil, nil
@@ -53,21 +25,87 @@ RSpec.describe VBMS::Client do
       expect(doc.to_s).not_to include("mustUnderstand")
     end
   end
+
+  describe "from_env_vars" do
+  let (:vbms_env_vars) { {
+        'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
+        'CONNECT_VBMS_URL' => 'http://example.com/fake_vbms',
+        'CONNECT_VBMS_KEYFILE' => 'fake_keyfile.some_ext',
+        'CONNECT_VBMS_SAML' => 'fake_saml_token',
+        'CONNECT_VBMS_KEY' => 'fake_keyname',
+        'CONNECT_VBMS_KEYPASS' => 'fake_keypass',
+        'CONNECT_VBMS_CACERT' => 'fake_cacert',
+        'CONNECT_VBMS_CERT' => 'fake_cert',
+      } }
+
+    it "smoke test that it initializes when all environment variables are set" do
+      stub_const('ENV', vbms_env_vars) 
+      expect(VBMS::Client.from_env_vars).not_to be_nil
+    end
+
+    describe "required environment variables" do
+      it "needs CONNECT_VBMS_ENV_DIR set" do
+        vbms_env_vars.delete('CONNECT_VBMS_ENV_DIR')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_ENV_DIR must be set/)
+      end
+
+      it "needs CONNECT_VBMS_URL set" do
+        vbms_env_vars.delete('CONNECT_VBMS_URL')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_URL must be set/)
+      end
+
+      it "needs CONNECT_VBMS_KEYFILE set" do
+        vbms_env_vars.delete('CONNECT_VBMS_KEYFILE')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_KEYFILE must be set/)
+      end
+
+      it "needs CONNECT_VBMS_SAML set" do
+        vbms_env_vars.delete('CONNECT_VBMS_SAML')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_SAML must be set/)
+      end
+
+      it "needs CONNECT_VBMS_KEYPASS set" do
+        vbms_env_vars.delete('CONNECT_VBMS_KEYPASS')
+        stub_const('ENV', vbms_env_vars)
+        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                            /CONNECT_VBMS_KEYPASS must be set/)
+      end
+    end
+
+    describe "required environment variables" do
+      it "needs CONNECT_VBMS_KEY set" do
+        vbms_env_vars.delete('CONNECT_VBMS_KEY')
+        stub_const('ENV', vbms_env_vars)
+        expect(VBMS::Client.from_env_vars).not_to be_nil
+      end
+
+      it "needs CONNECT_VBMS_CACERT set" do
+        vbms_env_vars.delete('CONNECT_VBMS_CACERT')
+        stub_const('ENV', vbms_env_vars)
+        expect(VBMS::Client.from_env_vars).not_to be_nil
+      end
+
+      it "needs CONNECT_VBMS_CERT set" do
+        vbms_env_vars.delete('CONNECT_VBMS_CERT')
+        stub_const('ENV', vbms_env_vars)
+        expect(VBMS::Client.from_env_vars).not_to be_nil
+      end
+    end
+  end
 end
 
 
-RSpec.describe VBMS::Requests do
+describe VBMS::Requests do
   before(:example) do
-    env_dir = File.join(ENV["CONNECT_VBMS_ENV_DIR"], "test")
-    @client = VBMS::Client.new(
-      ENV["CONNECT_VBMS_URL"],
-      env_path(env_dir, "CONNECT_VBMS_KEYFILE"),
-      env_path(env_dir, "CONNECT_VBMS_SAML"),
-      env_path(env_dir, "CONNECT_VBMS_KEY"),
-      ENV["CONNECT_VBMS_KEYPASS"],
-      env_path(env_dir, "CONNECT_VBMS_CACERT"),
-      env_path(env_dir, "CONNECT_VBMS_CERT"),
-    )
+    @client = VBMS::Client.from_env_vars()
   end
 
   describe "UploadDocumentWithAssociations" do

@@ -1,5 +1,37 @@
 module VBMS
   class Client
+    def self.from_env_vars(logger: nil, env_name: "test")
+      env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
+      return VBMS::Client.new(
+        get_env("CONNECT_VBMS_URL"),
+        env_path(env_dir, "CONNECT_VBMS_KEYFILE"),
+        env_path(env_dir, "CONNECT_VBMS_SAML"),
+        env_path(env_dir, "CONNECT_VBMS_KEY", allow_empty: true),
+        get_env("CONNECT_VBMS_KEYPASS"),
+        env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
+        env_path(env_dir, "CONNECT_VBMS_CERT", allow_empty: true),
+        logger,
+      )
+
+    end
+
+    def self.get_env(env_var_name, allow_empty: false)
+      value = ENV[env_var_name]
+      if !allow_empty && (value.nil? || value.empty?)
+        raise EnvironmentError, "#{env_var_name} must be set"
+      end
+      value
+    end
+
+    def self.env_path(env_dir, env_var_name, allow_empty: false)
+      value = get_env(env_var_name, allow_empty: allow_empty)
+      if value.nil?
+        return nil
+      else
+        return File.join(env_dir, value)
+      end
+    end
+
     def initialize(endpoint_url, keyfile, saml, key, keypass, cacert,
                    client_cert, logger = nil)
       @endpoint_url = endpoint_url
@@ -21,12 +53,7 @@ module VBMS
 
     def send(request)
       unecrypted_xml = request.render_xml()
-      output = nil
-      Tempfile.open("tmp") do |t|
-        t.write(unecrypted_xml)
-        t.flush()
-        output = VBMS.shell_java("EncryptSOAPDocument #{t.path} #@keyfile #@keypass #{request.name}")
-      end
+      output = VBMS.encrypted_soap_document_xml(unecrypted_xml, @keyfile, @keypass, request.name)
       doc = Nokogiri::XML(output)
       self.inject_saml(doc)
       self.remove_mustUnderstand(doc)
@@ -107,13 +134,8 @@ module VBMS
       end
 
       data = nil
-      Tempfile.open("tmp") do |in_t|
-        in_t.write(soap)
-        in_t.flush()
-
-        Tempfile.open("log") do |out_t|
-          data = VBMS.shell_java("DecryptMessage #{in_t.path} #@keyfile #{out_t.path} #@keypass")
-        end
+      Tempfile.open("log") do |out_t|
+        data = VBMS.decrypt_message_xml(soap, @keyfile, @keypass, out_t.path)
       end
 
       self.log(:decrypted_message, :decrypted_data => data, :request => request)

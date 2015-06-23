@@ -16,13 +16,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 import java.util.ArrayList;
-
 
 public class EncryptSOAPDocument
 {
@@ -31,25 +31,29 @@ public class EncryptSOAPDocument
 
   public static void main(String[] args)
   {
-    System.setProperty("logfilename", "../log/upload.log");
+    if (args.length < 4) {
+      printUsage();
+      System.exit(1);
+    }
 
-    Properties properties = new Properties();
-    properties.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", args[1]);
-    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "importkey");
-    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.private.password", "importkey");
+    String inFileName = args[0];
+    String keyFileName = args[1];
+    String keyFilePass = args[2];
+    String requestName = args[3];
 
     try
     {
+      Properties properties = loadCryptoProperties(keyFileName);
+
       String document = new String(
-        Files.readAllBytes(Paths.get(args[0])), Charset.defaultCharset()
+        Files.readAllBytes(Paths.get(inFileName)), Charset.defaultCharset()
       );
 
       Crypto crypto = CryptoFactory.getInstance(properties);
 
       document = addTimestamp(document);
-      document = addSignature(document, crypto, args[2], args[3]);
-      document = addEncryption(document, crypto, args[3]);
+      document = addSignature(document, crypto, keyFilePass, requestName);
+      document = addEncryption(document, crypto, requestName);
       System.out.println(document);
     }
     catch (Exception e)
@@ -126,4 +130,22 @@ public class EncryptSOAPDocument
         return new WSEncryptionPart("Body", SOAP_NAMESPACE, "Content");
       }
   }
+
+  private static Properties loadCryptoProperties(String keyfile) throws IOException {
+    Properties properties = new Properties();
+    InputStream propertiesStream = EncryptSOAPDocument.class.getResourceAsStream(VBMS_PROPERTIES);
+    if (propertiesStream == null) {
+      throw new RuntimeException("Unable to load " + VBMS_PROPERTIES + ". Is it in your classpath?");
+    }
+    properties.load(propertiesStream);
+    properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyfile);
+    return properties;
+  }
+  
+  private static void printUsage() {
+    System.err.println("java EncryptSOAPDocument INFILE KEYFILE KEYPASS REQUESTNAME");
+  }
+
+  // Properties file with default crypto configuration for the test environment.
+  private static final String VBMS_PROPERTIES = "vbms.properties";
 }

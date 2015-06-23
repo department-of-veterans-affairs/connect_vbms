@@ -4,6 +4,8 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "src")
 require 'vbms'
 require 'nokogiri'
 require 'byebug'
+require 'rspec/matchers'
+require 'equivalent-xml'
 
 def env_path(env_dir, env_var_name)
   value = ENV[env_var_name]
@@ -12,6 +14,14 @@ def env_path(env_dir, env_var_name)
   else
     return File.join(env_dir, value)
   end
+end
+
+def fixture_path(filename)
+  File.join(File.expand_path('../fixtures', __FILE__), filename)
+end
+
+def fixture(path)
+  File.read fixture_path(path)
 end
 
 RSpec.configure do |config|
