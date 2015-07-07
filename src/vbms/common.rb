@@ -1,4 +1,5 @@
 require 'open3'
+require 'xmlenc'
 
 module VBMS
   FILEDIR = File.dirname(File.absolute_path(__FILE__))
@@ -65,6 +66,21 @@ module VBMS
         return decrypt_message(t.path, keyfile, keypass, logfile,
                                ignore_timestamp: ignore_timestamp)
       end
+    end
+
+    def self.decrypt_message_xml_ruby(encrypted_xml, keyfile_p12, keypass)
+      encrypted_doc = Xmlenc::EncryptedDocument.new(encrypted_xml)
+
+      # TODO(awong): Associate a keystore class with this API instead of
+      # passing path per request. The keystore client should take in a ds:KeyInfo
+      # node and know how to find the associated private key.
+      encryption_key = OpenSSL::PKCS12.new(File.read(keyfile_p12), keypass)
+      decrypted_doc = encrypted_doc.decrypt(encryption_key.key)
+
+      # TODO(awong): Signature verification.
+      # TODO(awong): Timestamp validation.
+
+      decrypted_doc
     end
 
     def self.encrypted_soap_document(infile, keyfile, keypass, request_name)

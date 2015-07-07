@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'httpi'
 gem 'nokogiri'
+gem 'xmlenc'
 
 # to install without postgres, "bundle install --without postgres"
 group :postgres do
