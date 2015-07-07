@@ -15,7 +15,7 @@ describe "Ruby Encrypt/Decrypt test vs Java reference impl" do
     encrypted_xml = VBMS.encrypted_soap_document(
       plaintext_xml, test_jks_keystore, test_keystore_pass, plaintext_request_name)
     decrypted_xml = VBMS.decrypt_message_xml(encrypted_xml, test_jks_keystore,
-                                             test_keystore_pass, plaintext_request_name)
+                                             test_keystore_pass, "log/decrypt.log")
 
     # Compare the decrypted request node with the original request node.
     original_doc = Nokogiri::XML(fixture('plaintext_basic_soap.xml'))
@@ -52,7 +52,7 @@ describe "Ruby Encrypt/Decrypt test vs Java reference impl" do
     encrypted_xml = VBMS.encrypted_soap_document(
       plaintext_unicode_xml, test_jks_keystore, test_keystore_pass, plaintext_request_name)
     decrypted_xml = VBMS.decrypt_message_xml(encrypted_xml, test_jks_keystore,
-                                             test_keystore_pass, plaintext_request_name)
+                                             test_keystore_pass, "log/decrypt.log")
 
     # Compare the decrypted request node with the original request node.
     original_doc = Nokogiri::XML(fixture('plaintext_unicode_soap.xml'))
