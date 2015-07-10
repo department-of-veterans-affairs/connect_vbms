@@ -52,8 +52,8 @@ module VBMS
     end
 
     def send(request)
-      unecrypted_xml = request.render_xml()
-      output = VBMS.encrypted_soap_document_xml(unecrypted_xml, @keyfile, @keypass, request.name)
+      unencrypted_xml = request.render_xml()
+      output = VBMS.encrypted_soap_document_xml(unencrypted_xml, @keyfile, @keypass, request.name)
       doc = Nokogiri::XML(output)
       self.inject_saml(doc)
       self.remove_mustUnderstand(doc)
