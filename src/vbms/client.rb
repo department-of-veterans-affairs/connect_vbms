@@ -71,7 +71,7 @@ module VBMS
         :response_code => response.code,
         :request_body => doc.to_s,
         :response_body => response.body,
-        :request => response
+        :request => request
       )
 
       if response.code != 200
