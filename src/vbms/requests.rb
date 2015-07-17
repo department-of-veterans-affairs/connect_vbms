@@ -84,10 +84,10 @@ module VBMS
           "//v4:listDocumentsResponse/v4:result", VBMS::XML_NAMESPACES
         ).map do |el|
           VBMS::Document.new(
-            el.attributes["id"].value,
-            el.attributes["filename"].value,
-            el.attributes["docType"].value,
-            el.has_attribute?("source") ? el.attributes["source"].value : nil,
+            el["id"],
+            el["filename"],
+            el["docType"],
+            el["source"],
             Time.parse(el.at_xpath(
               "//ns2:receivedDt/text()", VBMS::XML_NAMESPACES
             ).content).to_date,
@@ -131,10 +131,10 @@ module VBMS
         )
         return VBMS::DocumentWithContent.new(
           VBMS::Document.new(
-            document_el.attributes["id"].value,
-            document_el.attributes["filename"].value,
-            document_el.attributes["docType"].value,
-            document_el.attributes["source"].value,
+            document_el["id"],
+            document_el["filename"],
+            document_el["docType"],
+            document_el["source"],
             received_date.nil? ? nil : Time.parse(received_date.content).to_date,
           ),
           Base64.decode64(el.at_xpath(
@@ -160,8 +160,8 @@ module VBMS
       def handle_response(doc)
         return doc.xpath("//v4:getDocumentTypesResponse/v4:result", VBMS::XML_NAMESPACES).map do |el|
           DocumentType.new(
-            el.attributes["id"].value,
-            el.attributes["description"].value
+            el["id"],
+            el["description"]
           )
         end
       end
