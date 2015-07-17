@@ -39,7 +39,7 @@ describe VBMS::Client do
       } }
 
     it "smoke test that it initializes when all environment variables are set" do
-      stub_const('ENV', vbms_env_vars) 
+      stub_const('ENV', vbms_env_vars)
       expect(VBMS::Client.from_env_vars).not_to be_nil
     end
 
@@ -154,6 +154,9 @@ describe VBMS::Requests do
       result = @client.send(request)
 
       expect(result).not_to be_empty
+
+      expect(result[0].type_id).to be_a_kind_of(String)
+      expect(result[0].description).to be_a_kind_of(String)
     end
   end
 end
