@@ -9,6 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Alex Gaynor", "Bill Mill", "Albert Wong"]
   spec.email         = ["alex.gaynor@va.gov", "bill@adhocteam.us", "albert.wong@va.gov"]
 
+  spec.platform      = Gem::Platform::RUBY
   spec.summary       = %q{Connect to VBMS with ease}
   spec.description   = %q{Connect to VBMS with ease}
   spec.homepage      = "http://va.gov"
