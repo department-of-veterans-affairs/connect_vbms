@@ -4,8 +4,8 @@ Welcome to Connect VBMS
 Connect VBMS is an SDK for integrating with VBMS from Ruby.
 
 To get started, you'll first need to get credentials from the VBMS team.
-You'll also need to make sure you have ``javac`` installed (version 1.7 or higher), and run ``make``
-in the root of the Connect VBMS repo.
+You'll also need to make sure you have ``javac`` installed (version 1.7 or higher), and run
+``rake`` in the root of the Connect VBMS repo to build a gem in the ``pkg`` dir.
 
 Once you have credentials for VBMS, you can dive in:
 
