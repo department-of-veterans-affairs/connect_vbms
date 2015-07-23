@@ -9,4 +9,3 @@ task :docs do
 end
 
 Rake::Task[:build].prerequisites << Rake::Task[:build_java]
-Rake::Task[:build].prerequisites << Rake::Task[:docs]
