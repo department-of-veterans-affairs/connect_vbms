@@ -48,6 +48,19 @@ Result
 
 An ``Array`` of ``VBMS::DocumentType``.
 
+``UploadDocumentWithAssociations``
+----------------------------------
+
+.. code-block:: ruby
+
+    VBMS::Requests::UploadDocumentWithAssociations.new(
+        '<file number>', <received at>, '<first name>', '<middle name>',
+        '<last name>', '<exam name>', '<path to pdf>', '<doc type id>',
+        '<source>', <new mail>
+    )
+
+``UploadDocumentWithAssociations`` creates a new file in the Veteran's eFolder.
+
 Responses
 =========
 
