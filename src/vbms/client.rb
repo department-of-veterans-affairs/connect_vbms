@@ -53,6 +53,15 @@ module VBMS
 
     def send(request)
       unencrypted_xml = request.render_xml()
+
+      self.log(
+        :unencrypted_xml,
+        :response_code => "",
+        :request_body => unencrypted_xml,
+        :response_body => "",
+        :request => request
+      )
+
       output = VBMS.encrypted_soap_document_xml(unencrypted_xml, @keyfile, @keypass, request.name)
       doc = Nokogiri::XML(output)
       self.inject_saml(doc)
