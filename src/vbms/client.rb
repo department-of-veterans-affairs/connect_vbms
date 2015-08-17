@@ -56,8 +56,7 @@ module VBMS
 
       self.log(
         :unencrypted_xml,
-        request_body: unencrypted_xml,
-        request: request
+        unencrypted_body: unencrypted_xml,
       )
 
       output = VBMS.encrypted_soap_document_xml(unencrypted_xml, @keyfile, @keypass, request.name)
