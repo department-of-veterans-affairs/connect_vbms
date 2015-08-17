@@ -26,6 +26,45 @@ describe VBMS::Client do
     end
   end
 
+  describe "#send" do
+    before do
+      @client = VBMS::Client.new(
+        nil, nil, nil, nil, nil, nil, nil
+      )
+      @request = double("request",
+        file_number: "123456788",
+        received_at: DateTime.new(2010, 01, 01),
+        first_name: "Joe",
+        middle_name: "Eagle",
+        last_name: "Citizen",
+        exam_name: "Test Fixture Exam",
+        pdf_file: "",
+        doc_type: "",
+        source: "CUI tests",
+        name: "uploadDocumentWithAssociations",
+        new_mail: "",
+        render_xml: "<xml></xml>",
+      )
+      @response = double("response", :code => 200, :body => "response")
+    end
+
+    it "creates two log messages" do
+      body = Nokogiri::XML("<xml>body</xml")
+      allow(HTTPI).to receive(:post).and_return(@response)
+      allow(@client).to receive(:process_response).and_return(nil)
+      allow(VBMS).to receive(:encrypted_soap_document_xml).and_return(body.to_s)
+      allow(@client).to receive(:inject_saml)
+      allow(@client).to receive(:remove_mustUnderstand)
+      allow(@client).to receive(:create_body).and_return(body.to_s)
+      allow(@client).to receive(:process_body)
+
+      expect(@client).to receive(:log).with(:unencrypted_xml, unencrypted_body: @request.render_xml)
+      expect(@client).to receive(:log).with(:request, response_code: @response.code, request_body: body.to_s, response_body: @response.body, request: @request)
+
+      @client.send(@request)
+    end
+  end
+
   describe "from_env_vars" do
   let (:vbms_env_vars) { {
         'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
