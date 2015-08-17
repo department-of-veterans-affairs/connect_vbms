@@ -26,7 +26,7 @@ describe VBMS::Client do
     end
   end
 
-  describe "#send", focus:true do
+  describe "#send" do
     before do
       @client = VBMS::Client.new(
         nil, nil, nil, nil, nil, nil, nil
@@ -58,7 +58,7 @@ describe VBMS::Client do
       allow(@client).to receive(:create_body).and_return(body.to_s)
       allow(@client).to receive(:process_body)
 
-      expect(@client).to receive(:log).with(:unencrypted_xml, response_code: "", request_body: @request.render_xml, response_body: "", request: @request)
+      expect(@client).to receive(:log).with(:unencrypted_xml, request_body: @request.render_xml, request: @request)
       expect(@client).to receive(:log).with(:request, response_code: @response.code, request_body: body.to_s, response_body: @response.body, request: @request)
 
       @client.send(@request)
