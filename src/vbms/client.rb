@@ -56,9 +56,7 @@ module VBMS
 
       self.log(
         :unencrypted_xml,
-        response_code: "",
         request_body: unencrypted_xml,
-        response_body: "",
         request: request
       )
 
