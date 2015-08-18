@@ -1,8 +1,6 @@
 before_install: gem install bundler
 cache: bundler
 language: ruby
-env:
-    - JRUBY_OPTS="--2.2 $JRUBY_OPTS"
 rvm:
   - 2.1.0
   - 2.2.2
