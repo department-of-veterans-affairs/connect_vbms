@@ -2,4 +2,4 @@ bundler_args: --without development
 language: ruby
 rvm:
   - 2.1.0
-services: elasticsearch
+before_install: gem install bundler
