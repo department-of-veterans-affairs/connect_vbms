@@ -5,7 +5,6 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "src")
 
 require 'vbms'
 require 'nokogiri'
-require 'byebug'
 require 'rspec/matchers'
 require 'equivalent-xml'
 
