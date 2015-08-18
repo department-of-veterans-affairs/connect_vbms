@@ -1,9 +1,13 @@
-before_install: gem install bundler
-cache: bundler
 language: ruby
-env:
-    - JRUBY_OPTS="--2.0 $JRUBY_OPTS"
-rvm:
-  - 2.1.0
-  - 2.2.2
-  - jruby
+cache: bundler
+
+matrix:
+  include:
+    - rvm: 2.1.0
+      before_install: gem install bundler --no-ri --no-rdoc
+    - rvm: 2.2.2
+      before_install: gem install bundler --no-ri --no-rdoc
+    - rvm: jruby-1.7.20
+      before_install: gem install bundler --no-ri --no-rdoc
+      before_script: export JRUBY_OPTS="$JRUBY_OPTS --2.0"
+  fast_finish: true
