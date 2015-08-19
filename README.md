@@ -2,6 +2,8 @@
 
 Connect VBMS is a Ruby library for connecting to VBMS.
 
+![](https://travis-ci.org/department-of-veterans-affairs/connect_vbms.svg?branch=master)
+
 ## Pre-requisites
 
 - [Java JDK 1.7 or above](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
