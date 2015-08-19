@@ -13,3 +13,5 @@ Gemfile.lock
 docs/_build/
 
 pkg
+
+coverage
