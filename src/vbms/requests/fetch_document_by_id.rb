@@ -14,9 +14,11 @@ module VBMS
       end
 
       def render_xml
-        document_id = @document_id
-
-        template.result(binding)
+        VBMS::Requests.soap do |xml|
+          xml['v4'].fetchDocumentById do
+            xml['v4'].documentId @document_id
+          end
+        end
       end
 
       def multipart?

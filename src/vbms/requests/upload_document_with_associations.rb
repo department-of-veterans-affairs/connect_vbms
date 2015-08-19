@@ -25,22 +25,39 @@ module VBMS
         VBMS.load_erb('upload_document_xml_template.xml.erb')
       end
 
-      def render_xml
-        # TODO: this is wrong
-        external_id = '123'
-        filename = File.basename(@pdf_file)
-        doc_type = @doc_type
-        received_date = @received_at.getlocal('-05:00').strftime('%Y-%m-%d-05:00')
-        source = @source
-        new_mail = @new_mail
-        file_number = @file_number
-        subject = @exam_name
-        first_name = @first_name
-        middle_name = @middle_name
-        last_name = @last_name
-
-        template.result(binding)
+      def received_date
+        @received_at.getlocal("-05:00").strftime("%Y-%m-%d-05:00")
       end
+
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def render_xml
+        filename = File.basename(@pdf_file)
+
+        VBMS::Requests.soap do |xml|
+          xml['v4'].uploadDocumentWithAssociations do
+            xml['v4'].document(
+              externalId: "123",
+              fileNumber: @file_number,
+              filename: filename,
+              docType: @doc_type,
+              subject: @exam_name,
+              veteranFirstName: @first_name,
+              veteranMiddleName: @middle_name,
+              veteranLastName: @last_name,
+              newMail: @new_mail,
+              source: @source
+            ) do
+              xml['doc'].receivedDt received_date
+            end
+            xml['v4'].documentContent do
+              xml['doc'].data do
+                xml['xop'].Include(href: filename)
+              end
+            end
+          end
+        end
+      end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       def multipart?
         true

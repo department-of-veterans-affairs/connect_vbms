@@ -6,7 +6,9 @@ module VBMS
       end
 
       def render_xml
-        VBMS.load_erb('get_document_types_xml_template.xml.erb').result(binding)
+        VBMS::Requests.soap do |xml|
+          xml['v4'].getDocumentTypes
+        end
       end
 
       def multipart?

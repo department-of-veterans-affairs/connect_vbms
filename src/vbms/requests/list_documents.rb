@@ -14,9 +14,11 @@ module VBMS
       end
 
       def render_xml
-        file_number = @file_number
-
-        template.result(binding)
+        VBMS::Requests.soap do |xml|
+          xml['v4'].listDocuments do
+            xml['v4'].fileNumber @file_number
+          end
+        end
       end
 
       def multipart?
