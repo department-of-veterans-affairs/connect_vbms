@@ -1,4 +1,9 @@
 require 'bundler/gem_tasks'
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new(:spec)
+
+task default: [:build_java, :spec]
 
 task :build_java do
   sh "make -C src build"

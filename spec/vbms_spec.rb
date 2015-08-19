@@ -147,7 +147,7 @@ describe VBMS::Requests do
     @client = VBMS::Client.from_env_vars()
   end
 
-  describe "UploadDocumentWithAssociations" do
+  describe "UploadDocumentWithAssociations", integration: true do
     it "executes succesfully when pointed at VBMS" do
       Tempfile.open("tmp") do |t|
         request = VBMS::Requests::UploadDocumentWithAssociations.new(
@@ -169,7 +169,7 @@ describe VBMS::Requests do
   end
 
   describe "ListDocuments" do
-    it "executes succesfully when pointed at VBMS" do
+    it "executes succesfully when pointed at VBMS", integration: true do
       request = VBMS::Requests::ListDocuments.new("784449089")
 
       @client.send(request)
@@ -177,7 +177,7 @@ describe VBMS::Requests do
   end
 
   describe "FetchDocumentById" do
-    it "executes succesfully when pointed at VBMS" do
+    it "executes succesfully when pointed at VBMS", integration: true do
       # Use ListDocuments to find a document to fetch
       request = VBMS::Requests::ListDocuments.new("784449089")
       result = @client.send(request)
@@ -188,7 +188,7 @@ describe VBMS::Requests do
   end
 
   describe "GetDocumentTypes" do
-    it "executes succesfully when pointed at VBMS" do
+    it "executes succesfully when pointed at VBMS", integration: true do
       request = VBMS::Requests::GetDocumentTypes.new()
       result = @client.send(request)
 

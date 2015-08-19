@@ -1,9 +1,10 @@
+# encoding: utf-8
+
 # TODO: remove this once we can put our source code in `lib/`
 $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "src")
 
 require 'vbms'
 require 'nokogiri'
-require 'byebug'
 require 'rspec/matchers'
 require 'equivalent-xml'
 
@@ -34,4 +35,10 @@ RSpec.configure do |config|
   # get run.
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
+
+  # If CONNECT_VBMS_KEYFILE is not set, don't run the integration tests
+  if !ENV.has_key? "CONNECT_VBMS_KEYFILE"
+    puts "¡¡¡ CONNECT_VBMS_KEYFILE is not set, not running integration tests!!!"
+    config.filter_run_excluding integration: true
+  end
 end
