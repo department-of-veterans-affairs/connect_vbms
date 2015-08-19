@@ -120,6 +120,27 @@ module VBMS
         return self.template.result(binding)
       end
 
+      def render_xml_noko
+        namespaces = {
+          "xmlns:soapenv" => "http://schemas.xmlsoap.org/soap/envelope/",
+          "xmlns:v4" => "http://vbms.vba.va.gov/external/eDocumentService/v4",
+          "xmlns:doc" => "http://vbms.vba.va.gov/cdm/document/v4",
+          "xmlns:cdm" => "http://vbms.vba.va.gov/cdm",
+          "xmlns:xop" => "http://www.w3.org/2004/08/xop/include",
+        }
+
+        Nokogiri::XML::Builder.new do |xml|
+          xml['soapenv'].Envelope(namespaces) {
+            xml['soapenv'].Header
+            xml['soapenv'].Body {
+              xml['v4'].listDocuments {
+                xml['v4'].fileNumber @file_number
+              }
+            }
+          }
+        end.to_xml
+      end
+
       def is_multipart
         return false
       end
@@ -160,6 +181,27 @@ module VBMS
         return self.template.result(binding)
       end
 
+      def render_xml_noko
+        namespaces = {
+          "xmlns:soapenv" => "http://schemas.xmlsoap.org/soap/envelope/",
+          "xmlns:v4" => "http://vbms.vba.va.gov/external/eDocumentService/v4",
+          "xmlns:doc" => "http://vbms.vba.va.gov/cdm/document/v4",
+          "xmlns:cdm" => "http://vbms.vba.va.gov/cdm",
+          "xmlns:xop" => "http://www.w3.org/2004/08/xop/include",
+        }
+
+        Nokogiri::XML::Builder.new do |xml|
+          xml['soapenv'].Envelope(namespaces) {
+            xml['soapenv'].Header
+            xml['soapenv'].Body {
+              xml['v4'].fetchDocumentById {
+                xml['v4'].documentId @document_id
+              }
+            }
+          }
+        end.to_xml
+      end
+
       def is_multipart
         return false
       end
@@ -196,6 +238,25 @@ module VBMS
 
       def render_xml
         return VBMS.load_erb("get_document_types_xml_template.xml.erb").result(binding)
+      end
+
+      def render_xml_noko
+        namespaces = {
+          "xmlns:soapenv" => "http://schemas.xmlsoap.org/soap/envelope/",
+          "xmlns:v4" => "http://vbms.vba.va.gov/external/eDocumentService/v4",
+          "xmlns:doc" => "http://vbms.vba.va.gov/cdm/document/v4",
+          "xmlns:cdm" => "http://vbms.vba.va.gov/cdm",
+          "xmlns:xop" => "http://www.w3.org/2004/08/xop/include",
+        }
+
+        Nokogiri::XML::Builder.new do |xml|
+          xml['soapenv'].Envelope(namespaces) {
+            xml['soapenv'].Header
+            xml['soapenv'].Body {
+              xml['v4'].getDocumentTypes
+            }
+          }
+        end.to_xml
       end
 
       def is_multipart
