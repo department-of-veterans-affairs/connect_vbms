@@ -169,11 +169,24 @@ describe VBMS::Requests do
   end
 
   describe "ListDocuments" do
+    let (:list_documents_response_xml) { fixture_path('list_documents_response.xml') }
+
     it "executes succesfully when pointed at VBMS", integration: true do
       request = VBMS::Requests::ListDocuments.new("784449089")
 
       @client.send(request)
     end
+
+    it "parses received dates correctly", integration: false do
+        request = VBMS::Requests::ListDocuments.new('')
+        xml = File.read(list_documents_response_xml)
+        doc = Nokogiri::XML(xml)
+        vbmsDocs = request.handle_response(doc)
+
+        expect(vbmsDocs[0].received_at).to eq(Date.parse('2015-08-03-04:00'))
+        expect(vbmsDocs[1].received_at).to eq(Date.parse('2015-08-07-04:00'))
+    end
+
   end
 
   describe "FetchDocumentById" do
