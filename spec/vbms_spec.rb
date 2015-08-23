@@ -169,33 +169,21 @@ describe VBMS::Requests do
   end
 
   describe "ListDocuments" do
-    let (:list_documents_response_xml) { fixture_path('list_documents_response.xml') }
-    let (:vbms_env_vars) { {
-          'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
-          'CONNECT_VBMS_URL' => 'http://example.com/fake_vbms',
-          'CONNECT_VBMS_KEYFILE' => 'fake_keyfile.some_ext',
-          'CONNECT_VBMS_SAML' => 'fake_saml_token',
-          'CONNECT_VBMS_KEY' => 'fake_keyname',
-          'CONNECT_VBMS_KEYPASS' => 'fake_keypass',
-          'CONNECT_VBMS_CACERT' => 'fake_cacert',
-          'CONNECT_VBMS_CERT' => 'fake_cert',
-    } }
-
     it "executes succesfully when pointed at VBMS", integration: true do
       request = VBMS::Requests::ListDocuments.new("784449089")
 
       @client.send(request)
     end
 
-    it "parses received dates correctly" do
-      request = VBMS::Requests::ListDocuments.new('')
-      xml = File.read(list_documents_response_xml)
-      doc = Nokogiri::XML(xml)
-      vbmsDocs = request.handle_response(doc)
-
-      expect(vbmsDocs[0].received_at).to eq(Date.parse('2015-08-03-04:00'))
-      expect(vbmsDocs[1].received_at).to eq(Date.parse('2015-08-07-04:00'))
-    end
+    # it "parses received dates correctly" do
+    #   request = VBMS::Requests::ListDocuments.new('')
+    #   xml = File.read(list_documents_response_xml)
+    #   doc = Nokogiri::XML(xml)
+    #   vbmsDocs = request.handle_response(doc)
+    #
+    #   expect(vbmsDocs[0].received_at).to eq(Date.parse('2015-08-03-04:00'))
+    #   expect(vbmsDocs[1].received_at).to eq(Date.parse('2015-08-07-04:00'))
+    # end
 
   end
 
@@ -220,5 +208,19 @@ describe VBMS::Requests do
       expect(result[0].type_id).to be_a_kind_of(String)
       expect(result[0].description).to be_a_kind_of(String)
     end
+  end
+end
+
+describe VBMS::Requests::ListDocuments do
+  let (:list_documents_response_xml) { fixture_path('list_documents_response.xml') }
+
+  it "parses received dates correctly" do
+    request = VBMS::Requests::ListDocuments.new('')
+    xml = File.read(list_documents_response_xml)
+    doc = Nokogiri::XML(xml)
+    vbmsDocs = request.handle_response(doc)
+
+    expect(vbmsDocs[0].received_at).to eq(Date.parse('2015-08-03-04:00'))
+    expect(vbmsDocs[1].received_at).to eq(Date.parse('2015-08-07-04:00'))
   end
 end
