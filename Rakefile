@@ -13,4 +13,8 @@ task :docs do
   sh "make -C docs html"
 end
 
+task :lint do
+  sh "rubocop src/vbms"
+end
+
 Rake::Task[:build].prerequisites << Rake::Task[:build_java]
