@@ -80,15 +80,14 @@ module VBMS
       end
 
       def handle_response(doc)
-          xmlNodeSet = doc.xpath('//v4:listDocumentsResponse/v4:result', VBMS::XML_NAMESPACES)
+        xmlNodeSet = doc.xpath('//v4:listDocumentsResponse/v4:result', VBMS::XML_NAMESPACES)
 
-          docs = []
-          xmlNodeSet.each do |xmlNode|
-            receivedDt = xmlNode.children.detect{|childNode| childNode.name == 'receivedDt' }.try(:content).try(:to_date)
-            docs << VBMS::Document.new(xmlNode['id'], xmlNode['filename'], xmlNode['docType'], xmlNode['source'], receivedDt)
-          end
-
-          return docs
+        docs = []
+        xmlNodeSet.each do |xmlNode|
+          receivedDt = xmlNode.children.detect{|childNode| childNode.name == 'receivedDt' }.try(:content).try(:to_date)
+          docs << VBMS::Document.new(xmlNode['id'], xmlNode['filename'], xmlNode['docType'], xmlNode['source'], receivedDt)
+        end
+        return docs
       end
     end
 
