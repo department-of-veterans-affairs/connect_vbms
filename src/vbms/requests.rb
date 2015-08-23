@@ -80,14 +80,20 @@ module VBMS
       end
 
       def handle_response(doc)
-        xmlNodeSet = doc.xpath('//v4:listDocumentsResponse/v4:result', VBMS::XML_NAMESPACES)
-
-        docs = []
-        xmlNodeSet.each do |xmlNode|
-          receivedDt = xmlNode.children.detect{|childNode| childNode.name == 'receivedDt' }.try(:content).try(:to_date)
-          docs << VBMS::Document.new(xmlNode['id'], xmlNode['filename'], xmlNode['docType'], xmlNode['source'], receivedDt)
+        return doc.xpath(
+          "//v4:listDocumentsResponse/v4:result", VBMS::XML_NAMESPACES
+        ).map do |el|
+          received_dt = el.at_xpath(
+            "ns2:receivedDt/text()", VBMS::XML_NAMESPACES
+          )
+          VBMS::Document.new(
+            el["id"],
+            el["filename"],
+            el["docType"],
+            el["source"],
+            received_dt.nil? ? nil : Time.parse(received_dt.content).to_date
+          )
         end
-        return docs
       end
     end
 
