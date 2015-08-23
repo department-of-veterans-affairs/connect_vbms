@@ -178,6 +178,8 @@ describe VBMS::Requests do
     end
 
     it "parses received dates correctly", integration: false do
+      ENV['CONNECT_VBMS_ENV_DIR'] = 'unittest' #needed to bypass environment variable check, which actually isn't relevant
+      
       request = VBMS::Requests::ListDocuments.new('')
       xml = File.read(list_documents_response_xml)
       doc = Nokogiri::XML(xml)
