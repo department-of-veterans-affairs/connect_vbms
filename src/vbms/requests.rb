@@ -83,14 +83,15 @@ module VBMS
         return doc.xpath(
           "//v4:listDocumentsResponse/v4:result", VBMS::XML_NAMESPACES
         ).map do |el|
+          received_dt = el.at_xpath(
+            "ns2:receivedDt/text()", VBMS::XML_NAMESPACES
+          )
           VBMS::Document.new(
             el["id"],
             el["filename"],
             el["docType"],
             el["source"],
-            Time.parse(el.at_xpath(
-              "//ns2:receivedDt/text()", VBMS::XML_NAMESPACES
-            ).content).to_date,
+            received_dt.nil? ? nil : Time.parse(received_dt.content).to_date
           )
         end
       end
