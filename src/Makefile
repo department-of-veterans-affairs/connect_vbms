@@ -1,4 +1,4 @@
-# if BOOTCLASSPATH, TARGET, and SOURCE are defined, enable building for a specific java
+# if BOOTCLASSPATH, TARGET are defined, enable building for a specific java
 ifneq (,$(and $(BOOTCLASSPATH), $(TARGET)))
   TARGET_ARG=-target $(TARGET)
   SOURCE_ARG=-source $(TARGET)
