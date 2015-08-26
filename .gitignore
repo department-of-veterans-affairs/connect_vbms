@@ -8,10 +8,9 @@ src/*.log
 vendor/bundle
 .ruby-version
 .ruby-gemset
-
 Gemfile.lock
 docs/_build/
-
 pkg
-
 coverage
+Vagrantfile
+.vagrant
