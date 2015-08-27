@@ -70,8 +70,10 @@ module VBMS
 
       http_request = build_request(
         body,
-        'Content-Type' => 'Multipart/Related; type="application/xop+xml";' \
-        'start-info="application/soap+xml"; boundary="boundary_1234"')
+        'Content-Type' => 'Multipart/Related; '\
+                  'type="application/xop+xml"; '\
+                  'start-info="application/soap+xml"; '\
+                  'boundary="boundary_1234"')
       HTTPI.log = false
       response = HTTPI.post(http_request)
 
