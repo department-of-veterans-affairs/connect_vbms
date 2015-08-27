@@ -3,7 +3,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <v4:uploadDocumentWithAssociations>
-        <v4:document externalId="<%= externalId %>"
+        <v4:document externalId="<%= external_id %>"
           fileNumber="<%= file_number %>"
           filename="<%= filename %>"
           docType="<%= doc_type %>"
@@ -14,7 +14,7 @@
           newMail="<%= new_mail %>"
           source="<%= source %>"
           >
-          <doc:receivedDt><%= receivedDt %></doc:receivedDt>
+          <doc:receivedDt><%= received_date %></doc:receivedDt>
          </v4:document>
          <v4:documentContent>
             <doc:data>

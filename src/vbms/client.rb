@@ -48,6 +48,7 @@ module VBMS
       @logger.log(event, data) if @logger
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def send(request)
       unencrypted_xml = request.render_xml
 
@@ -63,13 +64,14 @@ module VBMS
         request.name)
       doc = Nokogiri::XML(output)
       inject_saml(doc)
-      remove_mustUnderstand(doc)
+      remove_must_understand(doc)
 
       body = create_body(request, doc)
 
       http_request = build_request(
         body,
-        'Content-Type' => 'Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"')
+        'Content-Type' => 'Multipart/Related; type="application/xop+xml";' \
+        'start-info="application/soap+xml"; boundary="boundary_1234"')
       HTTPI.log = false
       response = HTTPI.post(http_request)
 
@@ -87,6 +89,7 @@ module VBMS
 
       process_response(request, response)
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def inject_saml(doc)
       saml_doc = Nokogiri::XML(File.read(@saml)).root
@@ -96,7 +99,7 @@ module VBMS
       ) << saml_doc
     end
 
-    def remove_mustUnderstand(doc)
+    def remove_must_understand(doc)
       doc.at_xpath(
         '//wsse:Security',
         wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
@@ -114,6 +117,7 @@ module VBMS
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def build_request(body, headers)
       request = HTTPI::Request.new(@endpoint_url)
       if @key
@@ -131,13 +135,16 @@ module VBMS
       request.headers = headers
       request
     end
+    # rubocop:enable Metrics/AbcSize
 
     def process_response(request, response)
       soap = response.body.match(%r{<soap:envelope.*?</soap:envelope>}im)[0]
       doc = Nokogiri::XML(soap)
 
       if doc.at_xpath('//soap:Fault', soap: 'http://schemas.xmlsoap.org/soap/envelope/')
+        # rubocop:disable Style/RaiseArgs
         fail VBMS::SOAPError.new(doc)
+        # rubocop:enable Style/RaiseArgs
       end
 
       data = nil

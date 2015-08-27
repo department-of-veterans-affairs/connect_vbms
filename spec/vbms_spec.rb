@@ -8,7 +8,7 @@ describe VBMS::Client do
     )
   end
 
-  describe "remove_mustUnderstand" do
+  describe "remove_must_understand" do
     it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
       doc = Nokogiri::XML(<<-EOF)
       <?xml version="1.0" encoding="UTF-8"?>
@@ -20,7 +20,7 @@ describe VBMS::Client do
       </soapenv:Envelope>
       EOF
 
-      @client.remove_mustUnderstand(doc)
+      @client.remove_must_understand(doc)
 
       expect(doc.to_s).not_to include("mustUnderstand")
     end
@@ -54,7 +54,7 @@ describe VBMS::Client do
       allow(@client).to receive(:process_response).and_return(nil)
       allow(VBMS).to receive(:encrypted_soap_document_xml).and_return(body.to_s)
       allow(@client).to receive(:inject_saml)
-      allow(@client).to receive(:remove_mustUnderstand)
+      allow(@client).to receive(:remove_must_understand)
       allow(@client).to receive(:create_body).and_return(body.to_s)
       allow(@client).to receive(:process_body)
 
