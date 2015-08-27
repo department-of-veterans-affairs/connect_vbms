@@ -1,24 +1,23 @@
 module VBMS
   class Client
-    def self.from_env_vars(logger: nil, env_name: "test")
-      env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
-      return VBMS::Client.new(
-        get_env("CONNECT_VBMS_URL"),
-        env_path(env_dir, "CONNECT_VBMS_KEYFILE"),
-        env_path(env_dir, "CONNECT_VBMS_SAML"),
-        env_path(env_dir, "CONNECT_VBMS_KEY", allow_empty: true),
-        get_env("CONNECT_VBMS_KEYPASS"),
-        env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
-        env_path(env_dir, "CONNECT_VBMS_CERT", allow_empty: true),
-        logger,
+    def self.from_env_vars(logger: nil, env_name: 'test')
+      env_dir = File.join(get_env('CONNECT_VBMS_ENV_DIR'), env_name)
+      VBMS::Client.new(
+        get_env('CONNECT_VBMS_URL'),
+        env_path(env_dir, 'CONNECT_VBMS_KEYFILE'),
+        env_path(env_dir, 'CONNECT_VBMS_SAML'),
+        env_path(env_dir, 'CONNECT_VBMS_KEY', allow_empty: true),
+        get_env('CONNECT_VBMS_KEYPASS'),
+        env_path(env_dir, 'CONNECT_VBMS_CACERT', allow_empty: true),
+        env_path(env_dir, 'CONNECT_VBMS_CERT', allow_empty: true),
+        logger
       )
-
     end
 
     def self.get_env(env_var_name, allow_empty: false)
       value = ENV[env_var_name]
       if !allow_empty && (value.nil? || value.empty?)
-        raise EnvironmentError, "#{env_var_name} must be set"
+        fail EnvironmentError, "#{env_var_name} must be set"
       end
       value
     end
@@ -46,33 +45,39 @@ module VBMS
     end
 
     def log(event, data)
-      if @logger
-        @logger.log(event, data)
-      end
+      @logger.log(event, data) if @logger
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def send(request)
-      unencrypted_xml = request.render_xml()
+      unencrypted_xml = request.render_xml
 
-      self.log(
+      log(
         :unencrypted_xml,
-        unencrypted_body: unencrypted_xml,
+        unencrypted_body: unencrypted_xml
       )
 
-      output = VBMS.encrypted_soap_document_xml(unencrypted_xml, @keyfile, @keypass, request.name)
+      output = VBMS.encrypted_soap_document_xml(
+        unencrypted_xml,
+        @keyfile,
+        @keypass,
+        request.name)
       doc = Nokogiri::XML(output)
-      self.inject_saml(doc)
-      self.remove_mustUnderstand(doc)
+      inject_saml(doc)
+      remove_must_understand(doc)
 
-      body = self.create_body(request, doc)
+      body = create_body(request, doc)
 
-      http_request = self.build_request(body, {
-        'Content-Type' => 'Multipart/Related; type="application/xop+xml"; start-info="application/soap+xml"; boundary="boundary_1234"'
-      })
+      http_request = build_request(
+        body,
+        'Content-Type' => 'Multipart/Related; '\
+                  'type="application/xop+xml"; '\
+                  'start-info="application/soap+xml"; '\
+                  'boundary="boundary_1234"')
       HTTPI.log = false
       response = HTTPI.post(http_request)
 
-      self.log(
+      log(
         :request,
         response_code: response.code,
         request_body: doc.to_s,
@@ -81,38 +86,40 @@ module VBMS
       )
 
       if response.code != 200
-        raise VBMS::HTTPError.new(response.code, response.body)
+        fail VBMS::HTTPError.new(response.code, response.body)
       end
 
-      return self.process_response(request, response)
+      process_response(request, response)
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def inject_saml(doc)
       saml_doc = Nokogiri::XML(File.read(@saml)).root
       doc.at_xpath(
-        "//wsse:Security",
-        wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+        '//wsse:Security',
+        wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
       ) << saml_doc
     end
 
-    def remove_mustUnderstand(doc)
+    def remove_must_understand(doc)
       doc.at_xpath(
-        "//wsse:Security",
-        wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
-      ).attributes["mustUnderstand"].remove
+        '//wsse:Security',
+        wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
+      ).attributes['mustUnderstand'].remove
     end
 
     def create_body(request, doc)
-      if request.is_multipart
+      if request.multipart?
         filepath = request.multipart_file
         filename = File.basename(filepath)
         content = File.read(filepath)
-        return VBMS.load_erb("mtom_request.erb").result(binding)
+        return VBMS.load_erb('mtom_request.erb').result(binding)
       else
-        return VBMS.load_erb("request.erb").result(binding)
+        return VBMS.load_erb('request.erb').result(binding)
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def build_request(body, headers)
       request = HTTPI::Request.new(@endpoint_url)
       if @key
@@ -128,26 +135,29 @@ module VBMS
 
       request.body = body
       request.headers = headers
-      return request
+      request
     end
+    # rubocop:enable Metrics/AbcSize
 
     def process_response(request, response)
-      soap = response.body.match(/<soap:envelope.*?<\/soap:envelope>/im)[0]
+      soap = response.body.match(%r{<soap:envelope.*?</soap:envelope>}im)[0]
       doc = Nokogiri::XML(soap)
 
-      if doc.at_xpath("//soap:Fault", soap: "http://schemas.xmlsoap.org/soap/envelope/")
-        raise VBMS::SOAPError.new(doc)
+      if doc.at_xpath('//soap:Fault', soap: 'http://schemas.xmlsoap.org/soap/envelope/')
+        # rubocop:disable Style/RaiseArgs
+        fail VBMS::SOAPError.new(doc)
+        # rubocop:enable Style/RaiseArgs
       end
 
       data = nil
-      Tempfile.open("log") do |out_t|
+      Tempfile.open('log') do |out_t|
         data = VBMS.decrypt_message_xml(soap, @keyfile, @keypass, out_t.path)
       end
 
-      self.log(:decrypted_message, :decrypted_data => data, :request => request)
+      log(:decrypted_message, decrypted_data: data, request: request)
 
       doc = Nokogiri::XML(data)
-      return request.handle_response(doc)
+      request.handle_response(doc)
     end
   end
 end
