@@ -71,7 +71,7 @@ module VBMS
               }
             }
           }
-        end.to_xml
+        end
       end
 
       def is_multipart

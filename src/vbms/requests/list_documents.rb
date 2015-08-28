@@ -24,7 +24,7 @@ module VBMS
           xml['v4'].listDocuments {
             xml['v4'].fileNumber @file_number
           }
-        end.to_xml
+        end
       end
 
       def is_multipart

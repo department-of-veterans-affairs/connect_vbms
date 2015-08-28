@@ -14,7 +14,7 @@ module VBMS
           xml['soapenv'].Header
           xml['soapenv'].Body { yield(xml) }
         }
-      end
+      end.to_xml
     end
   end
 end
