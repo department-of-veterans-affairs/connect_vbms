@@ -11,7 +11,6 @@ require 'vbms'
 require 'nokogiri'
 require 'rspec/matchers'
 require 'equivalent-xml'
-require 'webmock/rspec'
 
 require 'byebug' if RUBY_PLATFORM != "java"
 
@@ -37,6 +36,7 @@ def setup_webmock(endpoint_url, response_file, request_name)
 
   require 'webmock/rspec'
 
+  require 'webmock/rspec'
   response_path = fixture_path("requests/#{response_file}.xml")
   keystore_path = fixture_path('test_keystore.jks')
 
