@@ -11,10 +11,9 @@ require 'vbms'
 require 'nokogiri'
 require 'rspec/matchers'
 require 'equivalent-xml'
+require 'webmock/rspec'
 
-if RUBY_PLATFORM != "java"
-  require 'byebug'
-end
+require 'byebug' if RUBY_PLATFORM != "java"
 
 def env_path(env_dir, env_var_name)
   value = ENV[env_var_name]
@@ -37,6 +36,7 @@ def setup_webmock(endpoint_url, response_file, request_name)
   return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
 
   require 'webmock/rspec'
+
   response_path = fixture_path("requests/#{response_file}.xml")
   keystore_path = fixture_path('test_keystore.jks')
 
