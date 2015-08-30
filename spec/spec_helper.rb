@@ -11,7 +11,6 @@ require 'vbms'
 require 'nokogiri'
 require 'rspec/matchers'
 require 'equivalent-xml'
-require 'webmock/rspec'
 
 def env_path(env_dir, env_var_name)
   value = ENV[env_var_name]
@@ -33,6 +32,7 @@ end
 def setup_webmock(endpoint_url, response_file, request_name)
   return if ENV.key?('CONNECT')
 
+  require 'webmock/rspec'
   response_path = fixture_path("requests/#{response_file}.xml")
   keystore_path = fixture_path('test_keystore.jks')
 
