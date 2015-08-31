@@ -9,6 +9,7 @@ require 'nokogiri'
 require 'vbms/common'
 require 'vbms/client'
 require 'vbms/version'
+require 'vbms/requests'
 
 require 'vbms/requests/upload_document_with_associations'
 require 'vbms/requests/list_documents'
