@@ -1,5 +1,6 @@
 require 'base64'
 require 'nokogiri'
+require 'xmldsig'
 
 module SoapScum
   module XMLNamespaces
@@ -104,7 +105,7 @@ module SoapScum
         builder.doc
     end
 
-    def encrypt(soap_doc, certificate, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt, validity: 5.minutes)
+    def encrypt(soap_doc, certificate, sign_key, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt, validity: 5.minutes)
       envelope = soap_doc.xpath('/soapenv:Envelope', soapenv: XMLNamespaces::SOAPENV)
 
       # Ensure there is a header node.
@@ -114,6 +115,7 @@ module SoapScum
           xml["soapenv"].Header('xmlns:soapenv' => XMLNamespaces::SOAPENV)
         end
         envelope.children.first.add_previous_sibling(header_builder.doc.root)
+        header = envelope.children.first
       end
 
       # Create the wsse:Security header.
@@ -125,25 +127,29 @@ module SoapScum
         xml['wsse'].Security('xmlns:wsse' => XMLNamespaces::WSSE,
                              'xmlns:wsu' => XMLNamespaces::WSU,
                              'soapenv:mustUnderstand' => '1') do
-          # TODO(awong): Allow configurable digest and signature methods.
-#          add_xmldsig_template(xml, certificate, "http://www.w3.org/2000/09/xmldsig#sha1", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", nodes_to_sign)
           add_xmlenc_template(xml, certificate, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt)
+          # TODO(awong): Allow configurable digest and signature methods.
+          add_xmldsig_template(xml, certificate, "http://www.w3.org/2000/09/xmldsig#sha1", "http://www.w3.org/2000/09/xmldsig#rsa-sha1")
 
           # Add wsu:Timestamp
-          xml['wsu'].Timestamp('wsu:Id' => "TS-#{generate_id}") do
+          timestamp_id = "TS-#{generate_id}"
+          xml['wsu'].Timestamp('wsu:Id' => timestamp_id) do
             # Using localtime technically follows spec but seems to break
             # various parsers.
             now = Time.now.utc
             xml['wsu'].Created now.xmlschema
             xml['wsu'].Expires (now + validity).xmlschema
           end
+
         end
       end
 
       # Ensure IDs exist on elements like body.
       # Perform actual signature on plaintext.
       # Perform actual encryption
-      soap_doc
+      unsigned_document = Xmldsig::SignedDocument.new(soap_doc.serialize(encoding: 'UTF-8', save_with: Nokogiri::XML::Node::SaveOptions::AS_XML))
+      unsigned_document.sign(sign_key)
+      unsigned_document.document
     end
 
    private
@@ -226,26 +232,26 @@ module SoapScum
       end
     end
 
-    def add_dsig_template(xml, certificate, digest_method, signature_method, nodes_to_sign)
-      signature_id = "EK-#{generate_id}"
-      xml['ds'].Signature('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', Id: signature_id) do
+    def add_xmldsig_template(xml, certificate, digest_method, signature_method)
+      xml['ds'].Signature('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', Id: "EK-#{generate_id}") do
         xml['ds'].SignedInfo do
           # TODO(awong): Allow modification of CanonicalizationMethod.
           xml['ds'].CanonicalizationMethod(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
             xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "soapenv v4")
           end
           xml['ds'].SignatureMethod(Algorithm: signature_method)
-          nodes_to_sign.each do |node|
-            xml['ds'].Reference(URI: "##{node.Id}") do
-              xml['ds'].Transforms do
-                xml['ds'].Transform(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
-                  xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "soapenv v4")
-                end
-              end
-              xml['ds'].DigestMethod(Algorithm: digest_method)
-              xml['ds'].DigestValue
-            end
-          end
+#         This still needs to reference notes to sign.
+#          nodes_to_sign.each do |node|
+#            xml['ds'].Reference(URI: "##{node.attr('wsu:Id')}") do
+#              xml['ds'].Transforms do
+#                xml['ds'].Transform(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
+#                  xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "soapenv v4")
+#                end
+#              end
+#              xml['ds'].DigestMethod(Algorithm: digest_method)
+#              xml['ds'].DigestValue
+#            end
+#          end
         end
         xml['ds'].SignatureValue
         xml['ds'].KeyInfo('xmlns:ds' => XMLNamespaces::DS, Id: "KI-#{generate_id}") do
