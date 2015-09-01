@@ -29,7 +29,7 @@ describe VBMS::Client do
   describe "#send" do
     before do
       @client = VBMS::Client.new(
-        nil, nil, nil, nil, nil, nil, nil
+        'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil
       )
       @request = double("request",
         file_number: "123456788",
@@ -144,7 +144,15 @@ end
 
 describe VBMS::Requests do
   before(:example) do
-    @client = VBMS::Client.from_env_vars()
+    if ENV.key?('CONNECT')
+      # We're doing it live and connecting to VBMS test server
+      # otherwise, just use @client from above and webmock
+      @client = VBMS::Client.from_env_vars()
+    else
+      @client = VBMS::Client.new(
+        'http://test.endpoint.url/', fixture_path('test_keystore.jks'), fixture_path('test_samltoken.xml'), nil, 'importkey', nil, nil, nil
+      )
+    end
   end
 
   describe "UploadDocumentWithAssociations", integration: true do
@@ -163,7 +171,10 @@ describe VBMS::Requests do
           true,
         )
 
+        setup_webmock(@client.endpoint_url, 'upload_document_with_associations', 'uploadDocumentWithAssociationsResponse')
         @client.send(request)
+
+        # other tests?
       end
     end
   end
@@ -172,6 +183,7 @@ describe VBMS::Requests do
     it "executes succesfully when pointed at VBMS", integration: true do
       request = VBMS::Requests::ListDocuments.new("784449089")
 
+      setup_webmock(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
       @client.send(request)
     end
   end
@@ -179,10 +191,12 @@ describe VBMS::Requests do
   describe "FetchDocumentById" do
     it "executes succesfully when pointed at VBMS", integration: true do
       # Use ListDocuments to find a document to fetch
+      setup_webmock(@client.endpoint_url, 'list_documents2', 'listDocumentsResponse')
       request = VBMS::Requests::ListDocuments.new("784449089")
       result = @client.send(request)
 
       request = VBMS::Requests::FetchDocumentById.new(result[0].document_id)
+      setup_webmock(@client.endpoint_url, 'fetch_document', 'fetchDocumentResponse')
       @client.send(request)
     end
   end
@@ -190,6 +204,8 @@ describe VBMS::Requests do
   describe "GetDocumentTypes" do
     it "executes succesfully when pointed at VBMS", integration: true do
       request = VBMS::Requests::GetDocumentTypes.new()
+
+      setup_webmock(@client.endpoint_url, 'get_document_types', 'getDocumentTypesResponse')
       result = @client.send(request)
 
       expect(result).not_to be_empty

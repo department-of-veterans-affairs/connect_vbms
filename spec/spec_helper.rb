@@ -33,6 +33,19 @@ def fixture(path)
   File.read fixture_path(path)
 end
 
+def setup_webmock(endpoint_url, response_file, request_name)
+  return if ENV.key?('CONNECT')
+
+  require 'webmock/rspec'
+  response_path = fixture_path("requests/#{response_file}.xml")
+  keystore_path = fixture_path('test_keystore.jks')
+
+  encrypted = VBMS.encrypted_soap_document(response_path, keystore_path, 'importkey', request_name)
+  # encrypt it
+
+  stub_request(:post, endpoint_url).to_return(body: encrypted)
+end
+
 RSpec.configure do |config|
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
@@ -45,8 +58,8 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
 
   # If CONNECT_VBMS_KEYFILE is not set, don't run the integration tests
-  if !ENV.has_key? "CONNECT_VBMS_KEYFILE"
-    puts "¡¡¡ CONNECT_VBMS_KEYFILE is not set, not running integration tests!!!"
+  if ENV.key?('CONNECT') && !ENV.key?('CONNECT_VBMS_KEYFILE')
+    puts '¡¡¡ CONNECT_VBMS_KEYFILE is not set, not running integration tests!!!'
     config.filter_run_excluding integration: true
   end
 end
