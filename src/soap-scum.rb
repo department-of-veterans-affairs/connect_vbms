@@ -147,7 +147,6 @@ module SoapScum
       # Ensure IDs exist on elements like body.
       # Perform actual signature on plaintext.
       # Perform actual encryption
-      binding.pry
       unsigned_document = Xmldsig::SignedDocument.new(soap_doc.serialize(encoding: 'UTF-8', save_with: Nokogiri::XML::Node::SaveOptions::AS_XML))
       unsigned_document.sign(sign_key)
       unsigned_document.document
