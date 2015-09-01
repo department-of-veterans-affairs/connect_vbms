@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'simplecov'
 SimpleCov.start do
-    refuse_coverage_drop
+  refuse_coverage_drop
 end
 
 # TODO: remove this once we can put our source code in `lib/`
@@ -56,6 +56,13 @@ RSpec.configure do |config|
   # get run.
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
+  config.color = true
+  if config.files_to_run.one?
+    # Use the documentation formatter for detailed output,
+    # unless a formatter has already been configured
+    # (e.g. via a command-line flag).
+    config.default_formatter = :documentation
+  end
 
   # If CONNECT_VBMS_KEYFILE is not set, don't run the integration tests
   if ENV.key?('CONNECT') && !ENV.key?('CONNECT_VBMS_KEYFILE')
