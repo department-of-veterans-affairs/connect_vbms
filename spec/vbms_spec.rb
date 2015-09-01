@@ -4,12 +4,8 @@ require 'vbms'
 describe VBMS::Client do
   before(:example) do
     @client = VBMS::Client.new(
-      'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil
+      nil, nil, nil, nil, nil, nil, nil
     )
-  end
-
-  after(:example) do
-    cleanup_webmock
   end
 
   describe "remove_must_understand" do

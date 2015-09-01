@@ -42,19 +42,6 @@ def setup_webmock(endpoint_url, response_file, request_name)
   stub_request(:post, endpoint_url).to_return(body: encrypted)
 end
 
-
-  # headers, body = response.split(/\n\n/, 2)
-
-  # parsed_headers = Hash[headers.split("\n").map{ |s| s.scan(/^(\S+): (.+)/).first }]
-
-  # fail "Can't find Date header" unless parsed_headers.key?('Date')
-  # time = Time.parse(parsed_headers['Date'])
-  # Timecop.freeze(time)
-
-
-def cleanup_webmock
-end
-
 RSpec.configure do |config|
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
