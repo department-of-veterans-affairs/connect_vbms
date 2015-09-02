@@ -3,7 +3,7 @@ require 'spec_helper'
 describe VBMS::Client do
   before(:example) do
     @client = VBMS::Client.new(
-      nil, nil, nil, nil, nil, nil, nil
+      'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil
     )
   end
 

@@ -12,9 +12,7 @@ require 'nokogiri'
 require 'rspec/matchers'
 require 'equivalent-xml'
 
-if RUBY_PLATFORM != "java"
-  require 'byebug'
-end
+require 'byebug' if RUBY_PLATFORM != "java"
 
 def env_path(env_dir, env_var_name)
   value = ENV[env_var_name]
