@@ -7,10 +7,6 @@ describe VBMS::Client do
     )
   end
 
-  after(:example) do
-    cleanup_webmock
-  end
-
   describe "remove_must_understand" do
     it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
       doc = Nokogiri::XML(<<-EOF)

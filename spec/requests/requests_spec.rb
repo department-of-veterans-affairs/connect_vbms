@@ -49,7 +49,7 @@ describe VBMS::Requests do
   describe "FetchDocumentById" do
     it "executes succesfully when pointed at VBMS", integration: true do
       # Use ListDocuments to find a document to fetch
-      setup_webmock(@client.endpoint_url, 'list_documents2', 'listDocumentsResponse')
+      setup_webmock(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
       request = VBMS::Requests::ListDocuments.new("784449089")
       result = @client.send(request)
 

@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe VBMS::Requests::UploadDocumentWithAssociations do
-  describe "render_xml" do
-    subject { VBMS::Requests::UploadDocumentWithAssociations.new(
+  subject { VBMS::Requests::UploadDocumentWithAssociations.new(
       '123456788',
       Time.now.utc,
       'Joe', 'Eagle', 'Citizen',
@@ -12,6 +11,7 @@ describe VBMS::Requests::UploadDocumentWithAssociations do
       'UDWA test source',
       'UDWA new mail') }
 
+  describe "render_xml" do
     it "generates valid XML" do
       xml = subject.render_xml
       doc = Nokogiri::XML::Document.parse(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
@@ -23,18 +23,15 @@ describe VBMS::Requests::UploadDocumentWithAssociations do
   end
 
   describe "parsing the XML" do
-    before(:all) do
-      request = VBMS::Requests::FetchDocumentById.new('')
+    before do
       xml = File.read(fixture_path('requests/upload_document_with_associations.xml'))
-      doc = Nokogiri::XML(xml)
-      @response = request.handle_response(doc)
+      @doc = Nokogiri::XML(xml)
+      @response = subject.handle_response(@doc)
     end
-
-    subject { @response }
 
     # TODO: should we do more with this?
     it "should just return the document" do
-      expect(subject).to eq(doc)
+      expect(@response).to eq(@doc)
     end
   end
 end
