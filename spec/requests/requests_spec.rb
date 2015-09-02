@@ -13,7 +13,7 @@ describe VBMS::Requests do
     end
   end
 
-  describe "UploadDocumentWithAssociations", integration: true do
+  describe "UploadDocumentWithAssociations" do
     it "executes succesfully when pointed at VBMS" do
       Tempfile.open("tmp") do |t|
         request = VBMS::Requests::UploadDocumentWithAssociations.new(
@@ -38,7 +38,7 @@ describe VBMS::Requests do
   end
 
   describe "ListDocuments" do
-    it "executes succesfully when pointed at VBMS", integration: true do
+    it "executes succesfully when pointed at VBMS" do
       request = VBMS::Requests::ListDocuments.new("784449089")
 
       setup_webmock(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
@@ -47,7 +47,7 @@ describe VBMS::Requests do
   end
 
   describe "FetchDocumentById" do
-    it "executes succesfully when pointed at VBMS", integration: true do
+    it "executes succesfully when pointed at VBMS" do
       # Use ListDocuments to find a document to fetch
       setup_webmock(@client.endpoint_url, 'list_documents2', 'listDocumentsResponse')
       request = VBMS::Requests::ListDocuments.new("784449089")
@@ -60,7 +60,7 @@ describe VBMS::Requests do
   end
 
   describe "GetDocumentTypes" do
-    it "executes succesfully when pointed at VBMS", integration: true do
+    it "executes succesfully when pointed at VBMS" do
       request = VBMS::Requests::GetDocumentTypes.new()
 
       setup_webmock(@client.endpoint_url, 'get_document_types', 'getDocumentTypesResponse')
