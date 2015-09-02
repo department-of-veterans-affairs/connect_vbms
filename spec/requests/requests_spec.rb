@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe VBMS::Requests do
   before(:example) do
-    if ENV.key?('USE_VBMS_TEST_SERVER')
+    if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
       # We're doing it live and connecting to VBMS test server
       # otherwise, just use @client from above and webmock
       @client = VBMS::Client.from_env_vars
