@@ -31,19 +31,46 @@ def fixture(path)
   File.read fixture_path(path)
 end
 
-def setup_webmock(endpoint_url, response_file, request_name)
-  if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
-    puts 'WARNING: the tests will be connecting to the live VBMS test server'
-    return
+
+FILEDIR = File.dirname(File.absolute_path(__FILE__))
+DO_WSSE = File.join(FILEDIR, '../src/do_wsse.sh')
+
+# Note: these should not be replaced with calls to the similar functions in VBMS, since
+# I want them to continue to call the Java WSSE utility even when encryption/decryption in
+# gem is done in Ruby, so we can check as against Ruby methods
+def encrypted_xml_file(response_path, request_name)
+  keystore_path = fixture_path('test_keystore.jks')
+
+  args = [DO_WSSE,
+          '-e',
+          '-i', response_path,
+          '-k', keystore_path,
+          '-p', 'importkey',
+          '-n', request_name]
+  output, errors, status = Open3.capture3(*args)
+
+  if status != 0
+    fail VBMS::ExecutionError.new(DO_WSSE + ' EncryptSOAPDocument', errors)
   end
+
+  output
+end
+
+def encrypted_xml_buffer(xml, request_name)
+  Tempfile.open('tmp') do |t|
+    t.write(xml)
+    t.flush
+    return encrypted_xml_file(t.path, request_name)
+  end
+end
+
+def webmock_soap_response(endpoint_url, response_file, request_name)
+  return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
 
   require 'webmock/rspec'
   response_path = fixture_path("requests/#{response_file}.xml")
-  keystore_path = fixture_path('test_keystore.jks')
 
-  encrypted = VBMS.encrypted_soap_document(response_path, keystore_path, 'importkey', request_name)
-  # encrypt it
-
+  encrypted = encrypted_xml_file(response_path, request_name)
   stub_request(:post, endpoint_url).to_return(body: encrypted)
 end
 
