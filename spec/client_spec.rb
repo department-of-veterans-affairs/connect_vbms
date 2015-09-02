@@ -31,21 +31,21 @@ describe VBMS::Client do
         'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil
       )
 
-      @request = double('request',
-                        file_number: '123456788',
+      @request = double("request",
+                        file_number: "123456788",
                         received_at: DateTime.new(2010, 01, 01),
-                        first_name: 'Joe',
-                        middle_name: 'Eagle',
-                        last_name: 'Citizen',
-                        exam_name: 'Test Fixture Exam',
-                        pdf_file: '',
-                        doc_type: '',
-                        source: 'CUI tests',
-                        name: 'uploadDocumentWithAssociations',
-                        new_mail: '',
-                        render_xml: '<xml></xml>')
+                        first_name: "Joe",
+                        middle_name: "Eagle",
+                        last_name: "Citizen",
+                        exam_name: "Test Fixture Exam",
+                        pdf_file: "",
+                        doc_type: "",
+                        source: "CUI tests",
+                        name: "uploadDocumentWithAssociations",
+                        new_mail: "",
+                        render_xml: "<xml></xml>")
 
-      @response = double('response', code: 200, body: 'response')
+      @response = double("response", code: 200, body: "response")
     end
 
     it 'creates two log messages' do
@@ -65,17 +65,19 @@ describe VBMS::Client do
     end
   end
 
-  describe 'from_env_vars' do
-    let(:vbms_env_vars) { {'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
-                           'CONNECT_VBMS_URL' => 'http://example.com/fake_vbms',
-                           'CONNECT_VBMS_KEYFILE' => 'fake_keyfile.some_ext',
-                           'CONNECT_VBMS_SAML' => 'fake_saml_token',
-                           'CONNECT_VBMS_KEY' => 'fake_keyname',
-                           'CONNECT_VBMS_KEYPASS' => 'fake_keypass',
-                           'CONNECT_VBMS_CACERT' => 'fake_cacert',
-                           'CONNECT_VBMS_CERT' => 'fake_cert' } }
+  describe "from_env_vars" do
+    let(:vbms_env_vars) { {
+                             'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
+                             'CONNECT_VBMS_URL' => 'http://example.com/fake_vbms',
+                             'CONNECT_VBMS_KEYFILE' => 'fake_keyfile.some_ext',
+                             'CONNECT_VBMS_SAML' => 'fake_saml_token',
+                             'CONNECT_VBMS_KEY' => 'fake_keyname',
+                             'CONNECT_VBMS_KEYPASS' => 'fake_keypass',
+                             'CONNECT_VBMS_CACERT' => 'fake_cacert',
+                             'CONNECT_VBMS_CERT' => 'fake_cert'
+    } }
 
-    it 'smoke test that it initializes when all environment variables are set' do
+    it "smoke test that it initializes when all environment variables are set" do
       stub_const('ENV', vbms_env_vars)
       expect(VBMS::Client.from_env_vars).not_to be_nil
     end
@@ -137,7 +139,7 @@ describe VBMS::Client do
       end
     end
 
-    describe 'process_response' do
+    describe "process_response" do
       let(:client) do 
         VBMS::Client.new('http://test.endpoint.url/',
                          fixture_path('test_keystore.jks'),
@@ -147,19 +149,19 @@ describe VBMS::Client do
                          nil, nil, nil)
       end
 
-      let(:request) { double('request') }
+      let(:request) { double("request") }
       let(:response_body) { '' }
-      let(:response) { double('response', body: response_body) }
+      let(:response) { double("response", body: response_body) }
 
       subject { client.process_response(request, response) }
 
-      context 'when it is given valid encrypted XML' do
-        let(:response_body) { encrypted_xml_file(fixture_path('requests/fetch_document.xml'), 'fetchDocumentResponse') }
+      context "when it is given valid encrypted XML" do
+        let(:response_body) { encrypted_xml_file(fixture_path("requests/fetch_document.xml"), 'fetchDocumentResponse') }
 
-        it 'should return a decrypted XML document' do
+        it "should return a decrypted XML document" do
           expect(request).to receive(:handle_response) do |doc|
             expect(doc).to be_a(Nokogiri::XML::Document)
-            expect(doc.at_xpath('//soapenv:Envelope', VBMS::XML_NAMESPACES)).to_not be_nil
+            expect(doc.at_xpath("//soapenv:Envelope", VBMS::XML_NAMESPACES)).to_not be_nil
           end
 
           expect { subject }.to_not raise_error

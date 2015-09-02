@@ -181,7 +181,7 @@ module VBMS
       rescue Nokogiri::XML::SyntaxError
         raise SOAPError.new("Unable to parse decrypted SOAP response", data)
       end
-      
+
       request.handle_response(doc)
     end
   end
