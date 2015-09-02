@@ -34,7 +34,10 @@ def fixture(path)
 end
 
 def setup_webmock(endpoint_url, response_file, request_name)
-  return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
+  if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
+    puts 'WARNING: the tests will be connecting to the live VBMS test server'
+    return
+  end
 
   require 'webmock/rspec'
   response_path = fixture_path("requests/#{response_file}.xml")
@@ -62,11 +65,5 @@ RSpec.configure do |config|
     # unless a formatter has already been configured
     # (e.g. via a command-line flag).
     config.default_formatter = :documentation
-  end
-
-  # If CONNECT_VBMS_KEYFILE is not set, don't run the integration tests
-  if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS') && !ENV.key?('CONNECT_VBMS_KEYFILE')
-    puts '¡¡¡ CONNECT_VBMS_KEYFILE is not set, not running integration tests!!!'
-    config.filter_run_excluding integration: true
   end
 end
