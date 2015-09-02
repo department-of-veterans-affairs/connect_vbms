@@ -50,7 +50,7 @@ describe VBMS::Requests do
     it "executes succesfully when pointed at VBMS" do
       # Use ListDocuments to find a document to fetch
 
-      webmock_soap_response(@client.endpoint_url, 'list_documents2', 'listDocumentsResponse')
+      webmock_soap_response(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
 
       request = VBMS::Requests::ListDocuments.new("784449089")
       result = @client.send(request)
