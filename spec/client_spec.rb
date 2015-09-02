@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'vbms'
 
 describe VBMS::Client do
   before(:example) do
@@ -29,7 +28,7 @@ describe VBMS::Client do
   describe "#send" do
     before do
       @client = VBMS::Client.new(
-        nil, nil, nil, nil, nil, nil, nil
+        'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil
       )
       @request = double("request",
         file_number: "123456788",
@@ -137,65 +136,6 @@ describe VBMS::Client do
         stub_const('ENV', vbms_env_vars)
         expect(VBMS::Client.from_env_vars).not_to be_nil
       end
-    end
-  end
-end
-
-
-describe VBMS::Requests do
-  before(:example) do
-    @client = VBMS::Client.from_env_vars()
-  end
-
-  describe "UploadDocumentWithAssociations", integration: true do
-    it "executes succesfully when pointed at VBMS" do
-      Tempfile.open("tmp") do |t|
-        request = VBMS::Requests::UploadDocumentWithAssociations.new(
-          "784449089",
-          Time.now,
-          "Jane",
-          "Q",
-          "Citizen",
-          "knee",
-          t.path,
-          "356",
-          "Connect VBMS test",
-          true,
-        )
-
-        @client.send(request)
-      end
-    end
-  end
-
-  describe "ListDocuments" do
-    it "executes succesfully when pointed at VBMS", integration: true do
-      request = VBMS::Requests::ListDocuments.new("784449089")
-
-      @client.send(request)
-    end
-  end
-
-  describe "FetchDocumentById" do
-    it "executes succesfully when pointed at VBMS", integration: true do
-      # Use ListDocuments to find a document to fetch
-      request = VBMS::Requests::ListDocuments.new("784449089")
-      result = @client.send(request)
-
-      request = VBMS::Requests::FetchDocumentById.new(result[0].document_id)
-      @client.send(request)
-    end
-  end
-
-  describe "GetDocumentTypes" do
-    it "executes succesfully when pointed at VBMS", integration: true do
-      request = VBMS::Requests::GetDocumentTypes.new()
-      result = @client.send(request)
-
-      expect(result).not_to be_empty
-
-      expect(result[0].type_id).to be_a_kind_of(String)
-      expect(result[0].description).to be_a_kind_of(String)
     end
   end
 end
