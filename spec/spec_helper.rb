@@ -35,8 +35,6 @@ def setup_webmock(endpoint_url, response_file, request_name)
   return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
 
   require 'webmock/rspec'
-
-  require 'webmock/rspec'
   response_path = fixture_path("requests/#{response_file}.xml")
   keystore_path = fixture_path('test_keystore.jks')
 
