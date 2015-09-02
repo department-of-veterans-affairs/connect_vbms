@@ -142,23 +142,44 @@ module VBMS
     # rubocop:enable Metrics/AbcSize
 
     def process_response(request, response)
-      soap = response.body.match(%r{<soap:envelope.*?</soap:envelope>}im)[0]
-      doc = Nokogiri::XML(soap)
+      # we could check the response content-type to make sure it's XML, but they don't seem
+      # to send any HTTP headers back, so we'll just have to do a quick check to see if it
+      # looks like XML and then go from there
+      unless response.body.match(%r{<\?xml version})
+        fail SOAPError, "Request did not return XML"
+      end
 
-      if doc.at_xpath('//soap:Fault', soap: 'http://schemas.xmlsoap.org/soap/envelope/')
+      begin
+        full_doc = Nokogiri::XML(response.body)
+      rescue
+        fail SOAPError, "Unable to parse SOAP response"
+      end
+
+      soap = full_doc.at_xpath("//soapenv:Envelope", VBMS::XML_NAMESPACES)
+
+      if soap.nil?
+        fail SOAPError, "No SOAP envelope found in response"
+      end
+
+      if soap.at_xpath('//soapenv:Fault', VBMS::XML_NAMESPACES)
         # rubocop:disable Style/RaiseArgs
-        fail VBMS::SOAPError.new(doc)
+        fail VBMS::SOAPError.new(soap)
         # rubocop:enable Style/RaiseArgs
       end
 
       data = nil
       Tempfile.open('log') do |out_t|
-        data = VBMS.decrypt_message_xml(soap, @keyfile, @keypass, out_t.path)
+        data = VBMS.decrypt_message_xml(soap.to_s, @keyfile, @keypass, out_t.path)
       end
 
       log(:decrypted_message, decrypted_data: data, request: request)
 
-      doc = Nokogiri::XML(data)
+      begin
+        doc = Nokogiri::XML(data)
+      rescue
+        fail SOAPError, "Unable to parse SOAP response"
+      end
+      
       request.handle_response(doc)
     end
   end
