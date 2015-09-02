@@ -2,16 +2,16 @@ require 'spec_helper'
 
 describe VBMS::Requests::ListDocuments do
   describe "render_xml" do
-  	subject { VBMS::Requests::ListDocuments.new("123456788") }
-	
-  	it "generates valid XML" do
-  	  xml = subject.render_xml
-  	  doc = Nokogiri::XML::Document.parse(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
-  	  xsd = Nokogiri::XML::Schema(File.read("spec/soap.xsd"))
-  	  expect(xsd.errors).to eq []
-  	  errors = xsd.validate(Nokogiri::XML(xml))
-  	  expect(errors).to eq []
-  	end
+    subject { VBMS::Requests::ListDocuments.new("123456788") }
+  
+    it "generates valid XML" do
+      xml = subject.render_xml
+      doc = Nokogiri::XML::Document.parse(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+      xsd = Nokogiri::XML::Schema(File.read("spec/soap.xsd"))
+      expect(xsd.errors).to eq []
+      errors = xsd.validate(Nokogiri::XML(xml))
+      expect(errors).to eq []
+    end
   end
 
   describe "parsing the XML response" do
