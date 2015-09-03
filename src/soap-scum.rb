@@ -14,11 +14,11 @@ module SoapScum
 
   class KeyStore
     CertificateAndKey = Struct.new(:certificate, :key)
-    def all()
-      @by_subject.map{|_, x| x}
+    def all
+      @by_subject.values
     end
 
-    def initialize()
+    def initialize
       @by_subject = {}
     end
 
@@ -92,6 +92,7 @@ module SoapScum
     # populate it.
     #
     # TODO(awong): Add mustUnderstand support.
+    # TODO(astone): add ws:Id
     def wrap_in_soap(contents_doc)
         builder = Nokogiri::XML::Builder.new do |xml|
           xml['soapenv'].Envelope('xmlns:soapenv' => XMLNamespaces::SOAPENV) do
@@ -105,7 +106,7 @@ module SoapScum
         builder.doc
     end
 
-    def encrypt(soap_doc, certificate, sign_key, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt, validity: 5.minutes)
+    def encrypt(soap_doc, certificate, private_key, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt, validity: 5.minutes)
       envelope = soap_doc.xpath('/soapenv:Envelope', soapenv: XMLNamespaces::SOAPENV)
 
       # Ensure there is a header node.
@@ -118,6 +119,8 @@ module SoapScum
         header = envelope.children.first
       end
 
+      nodes_to_sign = soap_doc.at_xpath('/soapenv:Envelope/soapenv:Body',
+                                        soapenv: SoapScum::XMLNamespaces::SOAPENV).children
       # Create the wsse:Security header.
       #   * Generate timestammp element.
       #   * Create xmlenc template
@@ -126,10 +129,10 @@ module SoapScum
         # TODO(awong): Do we need mustUnderstand?
         xml['wsse'].Security('xmlns:wsse' => XMLNamespaces::WSSE,
                              'xmlns:wsu' => XMLNamespaces::WSU,
-                             'soapenv:mustUnderstand' => '1') do
+) do
           add_xmlenc_template(xml, certificate, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt)
           # TODO(awong): Allow configurable digest and signature methods.
-          add_xmldsig_template(xml, certificate, "http://www.w3.org/2000/09/xmldsig#sha1", "http://www.w3.org/2000/09/xmldsig#rsa-sha1")
+          add_xmldsig_template(xml, certificate, "http://www.w3.org/2000/09/xmldsig#sha1", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", nodes_to_sign)
 
           # Add wsu:Timestamp
           timestamp_id = "TS-#{generate_id}"
@@ -147,12 +150,25 @@ module SoapScum
       # Ensure IDs exist on elements like body.
       # Perform actual signature on plaintext.
       # Perform actual encryption
-      unsigned_document = Xmldsig::SignedDocument.new(soap_doc.serialize(encoding: 'UTF-8', save_with: Nokogiri::XML::Node::SaveOptions::AS_XML))
-      unsigned_document.sign(sign_key)
-      unsigned_document.document
+      # unsigned_document = Xmldsig::SignedDocument.new(
+      #   soap_doc.serialize(
+      #     encoding: 'UTF-8',
+      #     save_with: Nokogiri::XML::Node::SaveOptions::AS_XML))
+      # unsigned_document.sign(private_key)
+      sign_soap_doc(soap_doc, private_key)
     end
 
    private
+
+    def sign_soap_doc(soap_doc, private_key)
+      Xmldsig::SignedDocument.new(
+        soap_doc.serialize(
+          encoding: 'UTF-8',
+          save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
+        )
+      ).sign(private_key)
+    end
+
     def generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm, cipher)
       cipher.reset
       cipher.encrypt
@@ -232,7 +248,7 @@ module SoapScum
       end
     end
 
-    def add_xmldsig_template(xml, certificate, digest_method, signature_method)
+    def add_xmldsig_template(xml, certificate, digest_method, signature_method, nodes_to_sign)
       xml['ds'].Signature('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', Id: "EK-#{generate_id}") do
         xml['ds'].SignedInfo do
           # TODO(awong): Allow modification of CanonicalizationMethod.
@@ -240,18 +256,18 @@ module SoapScum
             xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "soapenv v4")
           end
           xml['ds'].SignatureMethod(Algorithm: signature_method)
-#         This still needs to reference notes to sign.
-#          nodes_to_sign.each do |node|
-#            xml['ds'].Reference(URI: "##{node.attr('wsu:Id')}") do
-#              xml['ds'].Transforms do
-#                xml['ds'].Transform(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
-#                  xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "soapenv v4")
-#                end
-#              end
-#              xml['ds'].DigestMethod(Algorithm: digest_method)
-#              xml['ds'].DigestValue
-#            end
-#          end
+          # [TODO astone]         This still needs to reference nodes to sign.
+          nodes_to_sign.each do |node|
+            xml['ds'].Reference(URI: "##{node.attr('wsu:Id')}") do
+             xml['ds'].Transforms do
+               xml['ds'].Transform(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
+                 xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "soapenv v4")
+               end
+             end
+             xml['ds'].DigestMethod(Algorithm: digest_method)
+             xml['ds'].DigestValue
+            end
+          end
         end
         xml['ds'].SignatureValue
         xml['ds'].KeyInfo('xmlns:ds' => XMLNamespaces::DS, Id: "KI-#{generate_id}") do

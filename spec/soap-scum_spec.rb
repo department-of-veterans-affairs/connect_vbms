@@ -57,13 +57,14 @@ describe :SoapScum do
 
     it "Encrypts and signs a soap message" do
       soap_doc = message_processor.wrap_in_soap(content_document)
-      encrypted_doc = message_processor.encrypt(soap_doc, keystore.all.first.certificate,
+      encrypted_xml = message_processor.encrypt(soap_doc,
+                                                keystore.all.first.certificate,
                                                 keystore.all.first.key,
                                                 SoapScum::MessageProcessor::CryptoAlgorithms::RSA1_5,
                                                 SoapScum::MessageProcessor::CryptoAlgorithms::AES128,
-                                                soap_doc.at_xpath('/soapenv:Envelope/soapenv:Body',
-                                                                  soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
-      encrypted_xml = encrypted_doc.serialize(encoding: 'UTF-8', save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+                                                soap_doc.at_xpath(
+                                                  '/soapenv:Envelope/soapenv:Body',
+                                                  soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
       decrypted_xml = VBMS.decrypt_message_xml(encrypted_xml, test_jks_keystore,
                                                test_keystore_pass, 'test-logfile')
       # TODO(awong): Verify decrypt_xml matches original soap_doc.
