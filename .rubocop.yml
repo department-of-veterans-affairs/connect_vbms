@@ -82,3 +82,6 @@ Style/StringLiterals:
   SupportedStyles:
   - single_quotes
   - double_quotes
+
+Style/RaiseArgs:
+  Enabled: false
