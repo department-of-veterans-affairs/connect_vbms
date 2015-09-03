@@ -141,43 +141,45 @@ module VBMS
     end
     # rubocop:enable Metrics/AbcSize
 
+    def parse_xml_strictly(xml_string)
+      Nokogiri::XML(xml_string, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
+    end
+
     def process_response(request, response)
       # we could check the response content-type to make sure it's XML, but they don't seem
-      # to send any HTTP headers back, so we'll just have to do a quick check to see if it
-      # looks like XML and then go from there
-      unless response.body.match(%r{<\?xml version})
-        fail SOAPError, "Request did not return XML"
-      end
-
+      # to send any HTTP headers back, so we'll instead rely on strict XML parsing instead
       begin
-        full_doc = Nokogiri::XML(response.body)
-      rescue
-        fail SOAPError, "Unable to parse SOAP response"
+        full_doc = parse_xml_strictly(response.body)
+      rescue Nokogiri::XML::SyntaxError
+        raise SOAPError.new("Unable to parse SOAP response", response.body)
       end
 
-      soap = full_doc.at_xpath("//soapenv:Envelope", VBMS::XML_NAMESPACES)
-
+      # the envelope should be the root node of the document
+      soap = full_doc.at_xpath("/soapenv:Envelope", VBMS::XML_NAMESPACES)
       if soap.nil?
-        fail SOAPError, "No SOAP envelope found in response"
+        fail SOAPError.new("No SOAP envelope found in response", response.body)
       end
 
       if soap.at_xpath('//soapenv:Fault', VBMS::XML_NAMESPACES)
-        # rubocop:disable Style/RaiseArgs
-        fail VBMS::SOAPError.new(soap)
-        # rubocop:enable Style/RaiseArgs
+        fail SOAPError.new("SOAP Fault returned", response.body)
       end
 
       data = nil
-      Tempfile.open('log') do |out_t|
-        data = VBMS.decrypt_message_xml(soap.to_s, @keyfile, @keypass, out_t.path)
+
+      begin
+        Tempfile.open('log') do |out_t|
+          data = VBMS.decrypt_message_xml(response.body, @keyfile, @keypass, out_t.path)
+        end
+      rescue ExecutionError
+        raise SOAPError.new("Unable to decrypt SOAP response", response.body)
       end
 
       log(:decrypted_message, decrypted_data: data, request: request)
 
       begin
-        doc = Nokogiri::XML(data)
-      rescue
-        fail SOAPError, "Unable to parse SOAP response"
+        doc = parse_xml_strictly(data)
+      rescue Nokogiri::XML::SyntaxError
+        raise SOAPError.new("Unable to parse decrypted SOAP response", data)
       end
       
       request.handle_response(doc)
