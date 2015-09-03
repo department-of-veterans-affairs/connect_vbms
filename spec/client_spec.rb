@@ -166,11 +166,64 @@ describe VBMS::Client do
         end
       end
 
+      context "when it is given an unencrypted XML" do
+        let(:response_body) { fixture_path('requests/fetch_document.xml') }
+
+        it "should raise a SOAPError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(VBMS::SOAPError)
+            expect(error.message).to eq('Unable to parse SOAP response')
+            expect(error.body).to eq(response_body)
+          end
+        end
+      end
+
+      context "when it is given a document that won't decrypt" do
+        let(:response_body) { encrypted_xml_file(fixture_path('requests/fetch_document.xml'), 'fetchDocumentResponse').gsub(%r{<xenc:CipherValue>.+</xenc:CipherValue>}, '<xenc:CipherValue></xenc:CipherValue>') }
+
+        it "should raise a SOAPError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(VBMS::SOAPError)
+            expect(error.message).to eq('Unable to decrypt SOAP response')
+            expect(error.body).to eq(response_body)
+          end
+        end
+      end
+
+      context "when it is given a document that contains a SOAP fault" do
+        let(:response_body) do <<-EOF
+          <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Header/>
+            <soap:Body>
+              <soap:Fault>
+                <faultcode>soap:Client</faultcode>
+                <faultstring>Message does not have necessary info</faultstring>
+                <faultactor>http://foo.com</faultactor>
+                <detail>Detailed fault information</detail>
+              </soap:Fault>
+            </soap:Body>
+          </soap:Envelope>
+          EOF
+        end
+
+        it "should raise a SOAPError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(VBMS::SOAPError)
+            expect(error.message).to eq('SOAP Fault returned')
+            expect(error.body).to eq(response_body)
+          end
+        end
+      end
+
       context 'when the server sends an HTML response error page' do
         let(:response_body) { "<html><head><title>An error has occurred</title></head><body><p>I know you were expecting HTML, but sometimes sites do this</p></body></html>"}
 
-        it 'should raise a SOAPError' do
-          expect { subject }.to raise_error(VBMS::SOAPError)
+        it "should raise a SOAPError" do
+          expect { subject }.to raise_error do |error|
+            expect(error).to be_a(VBMS::SOAPError)
+            expect(error.message).to eq('No SOAP envelope found in response')
+            expect(error.body).to eq(response_body)
+          end
         end
       end
     end
