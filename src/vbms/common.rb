@@ -26,6 +26,12 @@ module VBMS
   end
 
   class SOAPError < ClientError
+    attr_reader :body
+
+    def initialize(msg, soap_response = nil)
+      super(msg)
+      @body = soap_response
+    end
   end
 
   class EnvironmentError < ClientError
