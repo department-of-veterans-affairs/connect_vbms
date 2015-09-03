@@ -49,7 +49,7 @@ describe VBMS::Client do
     end
 
     it 'creates two log messages' do
-      body = Nokogiri::XML('<xml>body</xml')
+      body = Nokogiri::XML('<xml>body</xml>')
       allow(HTTPI).to receive(:post).and_return(@response)
       allow(@client).to receive(:process_response).and_return(nil)
       allow(VBMS).to receive(:encrypted_soap_document_xml).and_return(body.to_s)
