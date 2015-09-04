@@ -35,7 +35,7 @@ Connect VBMS works by creating request objects, which are pure-data objects to
 represent the set of parameters an API call takes. These request objects are
 then passed to the client for execution.
 
-For ``ListDocuments``, the result is a list of ``VBMS::Document`` objects. For
+For ``ListDocuments``, the result is a list of ``VBMS::Responses::Document`` objects. For
 full details on ``ListDocuments`` and all the other API requests, consult the
 :doc:`API requests documentation <requests>`.
 

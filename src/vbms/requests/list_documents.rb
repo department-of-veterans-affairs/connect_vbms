@@ -29,16 +29,7 @@ module VBMS
         doc.xpath(
           '//v4:listDocumentsResponse/v4:result', VBMS::XML_NAMESPACES
         ).map do |el|
-          received_date = el.at_xpath(
-            'ns2:receivedDt/text()', VBMS::XML_NAMESPACES
-          )
-          VBMS::Document.new(
-            el['id'],
-            el['filename'],
-            el['docType'],
-            el['source'],
-            received_date.nil? ? nil : Time.parse(received_date.content).to_date
-          )
+          VBMS::Responses::Document.create_from_xml(el)
         end
       end
     end

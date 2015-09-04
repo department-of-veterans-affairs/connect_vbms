@@ -25,7 +25,7 @@ describe VBMS::Requests::GetDocumentTypes do
 
     it 'should return an array of DocumentType objects' do
       expect(subject).to be_an(Array)
-      expect(subject).to all(be_a(VBMS::DocumentType))
+      expect(subject).to all(be_a(VBMS::Responses::DocumentType))
       expect(subject.count).to eq(512)
     end
 

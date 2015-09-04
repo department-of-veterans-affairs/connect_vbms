@@ -47,15 +47,6 @@ module VBMS
     end
   end
 
-  DocumentType = Struct.new('DocumentType', :type_id, :description)
-  Document = Struct.new('Document',
-                        :document_id,
-                        :filename,
-                        :doc_type,
-                        :source,
-                        :received_at)
-  DocumentWithContent = Struct.new('DocumentWithContent', :document, :content)
-
   private
 
   def self.load_erb(path)

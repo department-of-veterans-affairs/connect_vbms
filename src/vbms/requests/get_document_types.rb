@@ -19,10 +19,7 @@ module VBMS
         doc.xpath(
           '//v4:getDocumentTypesResponse/v4:result', VBMS::XML_NAMESPACES
         ).map do |el|
-          DocumentType.new(
-            el['id'],
-            el['description']
-          )
+          VBMS::Responses::DocumentType.create_from_xml(el)
         end
       end
     end

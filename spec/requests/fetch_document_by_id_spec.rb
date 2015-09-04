@@ -24,7 +24,7 @@ describe VBMS::Requests::FetchDocumentById do
     subject { @response }
 
     it 'should return a DocumentWithContent object' do
-      expect(subject).to be_a(VBMS::DocumentWithContent)
+      expect(subject).to be_a(VBMS::Responses::DocumentWithContent)
     end
 
     it 'has valid document information' do
