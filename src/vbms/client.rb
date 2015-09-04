@@ -159,5 +159,6 @@ module VBMS
       doc = Nokogiri::XML(data)
       request.handle_response(doc)
     end
+    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
   end
 end
