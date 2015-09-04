@@ -131,7 +131,6 @@ module VBMS
         request.auth.ssl.ca_cert_file = @cacert
         request.auth.ssl.verify_mode = :peer
       else
-        # TODO: this can't really be correct
         request.auth.ssl.verify_mode = :none
       end
 

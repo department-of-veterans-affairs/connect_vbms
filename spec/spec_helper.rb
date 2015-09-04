@@ -4,7 +4,6 @@ SimpleCov.start do
   refuse_coverage_drop
 end
 
-# TODO: remove this once we can put our source code in `lib/`
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'src')
 
 require 'vbms'
