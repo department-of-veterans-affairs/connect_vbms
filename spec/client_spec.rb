@@ -11,7 +11,9 @@ describe VBMS::Client do
     it 'takes a Nokogiri document and deletes the mustUnderstand attribute' do
       doc = Nokogiri::XML(<<-EOF)
       <?xml version="1.0" encoding="UTF-8"?>
-      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+      <soapenv:Envelope 
+           xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+           xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
         <soapenv:Header>
           <wsse:Security soapenv:mustUnderstand="1">
           </wsse:Security>
@@ -59,21 +61,26 @@ describe VBMS::Client do
       allow(@client).to receive(:process_body)
 
       expect(@client).to receive(:log).with(:unencrypted_xml, unencrypted_body: @request.render_xml)
-      expect(@client).to receive(:log).with(:request, response_code: @response.code, request_body: body.to_s, response_body: @response.body, request: @request)
+      expect(@client).to receive(:log).with(:request, response_code: @response.code, 
+                                                      request_body: body.to_s, 
+                                                      response_body: @response.body, 
+                                                      request: @request)
 
       @client.send(@request)
     end
   end
 
   describe 'from_env_vars' do
-    let(:vbms_env_vars) { {'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
-                           'CONNECT_VBMS_URL' => 'http://example.com/fake_vbms',
-                           'CONNECT_VBMS_KEYFILE' => 'fake_keyfile.some_ext',
-                           'CONNECT_VBMS_SAML' => 'fake_saml_token',
-                           'CONNECT_VBMS_KEY' => 'fake_keyname',
-                           'CONNECT_VBMS_KEYPASS' => 'fake_keypass',
-                           'CONNECT_VBMS_CACERT' => 'fake_cacert',
-                           'CONNECT_VBMS_CERT' => 'fake_cert' } }
+    let(:vbms_env_vars) do
+      { 'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
+        'CONNECT_VBMS_URL' => 'http://example.com/fake_vbms',
+        'CONNECT_VBMS_KEYFILE' => 'fake_keyfile.some_ext',
+        'CONNECT_VBMS_SAML' => 'fake_saml_token',
+        'CONNECT_VBMS_KEY' => 'fake_keyname',
+        'CONNECT_VBMS_KEYPASS' => 'fake_keypass',
+        'CONNECT_VBMS_CACERT' => 'fake_cacert',
+        'CONNECT_VBMS_CERT' => 'fake_cert' }
+    end
 
     it 'smoke test that it initializes when all environment variables are set' do
       stub_const('ENV', vbms_env_vars)
@@ -84,36 +91,36 @@ describe VBMS::Client do
       it 'needs CONNECT_VBMS_ENV_DIR set' do
         vbms_env_vars.delete('CONNECT_VBMS_ENV_DIR')
         stub_const('ENV', vbms_env_vars)
-        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                            /CONNECT_VBMS_ENV_DIR must be set/)
+        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                             /CONNECT_VBMS_ENV_DIR must be set/)
       end
 
       it 'needs CONNECT_VBMS_URL set' do
         vbms_env_vars.delete('CONNECT_VBMS_URL')
         stub_const('ENV', vbms_env_vars)
-        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                            /CONNECT_VBMS_URL must be set/)
+        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                             /CONNECT_VBMS_URL must be set/)
       end
 
       it 'needs CONNECT_VBMS_KEYFILE set' do
         vbms_env_vars.delete('CONNECT_VBMS_KEYFILE')
         stub_const('ENV', vbms_env_vars)
-        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                            /CONNECT_VBMS_KEYFILE must be set/)
+        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                             /CONNECT_VBMS_KEYFILE must be set/)
       end
 
       it 'needs CONNECT_VBMS_SAML set' do
         vbms_env_vars.delete('CONNECT_VBMS_SAML')
         stub_const('ENV', vbms_env_vars)
-        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                            /CONNECT_VBMS_SAML must be set/)
+        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                             /CONNECT_VBMS_SAML must be set/)
       end
 
       it 'needs CONNECT_VBMS_KEYPASS set' do
         vbms_env_vars.delete('CONNECT_VBMS_KEYPASS')
         stub_const('ENV', vbms_env_vars)
-        expect{ VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                            /CONNECT_VBMS_KEYPASS must be set/)
+        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
+                                                             /CONNECT_VBMS_KEYPASS must be set/)
       end
     end
 
@@ -179,7 +186,11 @@ describe VBMS::Client do
       end
 
       context "when it is given a document that won't decrypt" do
-        let(:response_body) { encrypted_xml_file(fixture_path('requests/fetch_document.xml'), 'fetchDocumentResponse').gsub(%r{<xenc:CipherValue>.+</xenc:CipherValue>}, '<xenc:CipherValue></xenc:CipherValue>') }
+        let(:response_body) do
+          encrypted_xml_file(fixture_path('requests/fetch_document.xml'), 
+                             'fetchDocumentResponse').gsub(%r{<xenc:CipherValue>.+</xenc:CipherValue>}, 
+                                                           '<xenc:CipherValue></xenc:CipherValue>')
+        end
 
         it "should raise a SOAPError" do
           expect { subject }.to raise_error do |error|
@@ -191,7 +202,8 @@ describe VBMS::Client do
       end
 
       context "when it is given a document that contains a SOAP fault" do
-        let(:response_body) do <<-EOF
+        let(:response_body) do 
+          <<-EOF
           <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
             <soap:Header/>
             <soap:Body>
@@ -216,7 +228,16 @@ describe VBMS::Client do
       end
 
       context 'when the server sends an HTML response error page' do
-        let(:response_body) { "<html><head><title>An error has occurred</title></head><body><p>I know you were expecting HTML, but sometimes sites do this</p></body></html>"}
+        let(:response_body) do 
+          <<-EOF
+          <html>
+            <head><title>An error has occurred</title></head>
+            <body>
+              <p>I know you were expecting HTML, but sometimes sites do this</p>
+            </body>
+          </html>
+          EOF
+        end
 
         it "should raise a SOAPError" do
           expect { subject }.to raise_error do |error|

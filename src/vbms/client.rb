@@ -145,6 +145,7 @@ module VBMS
       Nokogiri::XML(xml_string, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
     end
 
+    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
     def process_response(request, response)
       # we could check the response content-type to make sure it's XML, but they don't seem
       # to send any HTTP headers back, so we'll instead rely on strict XML parsing instead
@@ -184,5 +185,6 @@ module VBMS
       
       request.handle_response(doc)
     end
+    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
   end
 end
