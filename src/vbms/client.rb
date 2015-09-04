@@ -146,9 +146,7 @@ module VBMS
       doc = Nokogiri::XML(soap)
 
       if doc.at_xpath('//soap:Fault', soap: 'http://schemas.xmlsoap.org/soap/envelope/')
-        # rubocop:disable Style/RaiseArgs
         fail VBMS::SOAPError.new(doc)
-        # rubocop:enable Style/RaiseArgs
       end
 
       data = nil
