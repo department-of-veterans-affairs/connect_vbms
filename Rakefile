@@ -17,8 +17,6 @@ end
 desc 'Run RuboCop on the src directory'
 RuboCop::RakeTask.new(:rubocop) do |task|
   task.patterns = ['src/**/*.rb']
-  # only show the files with failures
-  task.formatters = ['files']
   # Trigger failure for CI
   task.fail_on_error = true
 end
