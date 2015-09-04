@@ -74,13 +74,6 @@ Style/GuardClause:
   Enabled: true
   MinBodyLength: 1
 
-Style/RaiseArgs:
-  EnforcedStyle: exploded
-  Enabled: false
-  SupportedStyles:
-    - compact # raise Exception.new(msg)
-    - exploded # raise Exception, msg 
-
 Style/StringLiterals:
   Description: Checks if uses of quotes match the configured preference.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#consistent-string-literals
