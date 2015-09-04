@@ -31,7 +31,6 @@ def fixture(path)
   File.read fixture_path(path)
 end
 
-
 FILEDIR = File.dirname(File.absolute_path(__FILE__))
 DO_WSSE = File.join(FILEDIR, '../src/do_wsse.sh')
 
@@ -75,9 +74,9 @@ def webmock_soap_response(endpoint_url, response_file, request_name)
 end
 
 RSpec.configure do |config|
-# The settings below are suggested to provide a good initial experience
-# with RSpec, but feel free to customize to your heart's content.
-
+  # The settings below are suggested to provide a good initial experience
+  # with RSpec, but feel free to customize to your heart's content.
+  #
   # These two settings work together to allow you to limit a spec run
   # to individual examples or groups you care about by tagging them with
   # `:focus` metadata. When nothing is tagged with `:focus`, all examples

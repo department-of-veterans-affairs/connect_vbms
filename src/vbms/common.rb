@@ -78,7 +78,7 @@ module VBMS
       output, errors, status = Open3.capture3(*args)
     rescue TypeError
       # sometimes one of the Open3 return values is a nil and it complains about coercion
-      fail ExecutionError.new(DO_WSSE + args.join(' ') + ': DecryptMessage', errors) if status != 0
+      raise ExecutionError.new(DO_WSSE + args.join(' ') + ': DecryptMessage', errors) if status != 0
     end
 
     fail ExecutionError.new(DO_WSSE + ' DecryptMessage', errors) if status != 0
