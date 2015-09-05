@@ -1,4 +1,5 @@
 module VBMS
+  # rubocop:disable Metrics/ClassLength
   class Client
     attr_reader :endpoint_url
     
@@ -145,12 +146,23 @@ module VBMS
       Nokogiri::XML(xml_string, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
     end
 
+    def get_body(response_body)
+      message = Mail.read_from_string(response_body)
+      if message.multipart?
+        message.body.parts[0].body.to_s
+      else
+        response_body
+      end
+    end
+
     # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
     def process_response(request, response)
+      body = get_body(response.body)
+
       # we could check the response content-type to make sure it's XML, but they don't seem
       # to send any HTTP headers back, so we'll instead rely on strict XML parsing instead
       begin
-        full_doc = parse_xml_strictly(response.body)
+        full_doc = parse_xml_strictly(body)
       rescue Nokogiri::XML::SyntaxError
         raise SOAPError.new("Unable to parse SOAP response", response.body)
       end
@@ -169,7 +181,7 @@ module VBMS
 
       begin
         Tempfile.open('log') do |out_t|
-          data = VBMS.decrypt_message_xml(response.body, @keyfile, @keypass, out_t.path)
+          data = VBMS.decrypt_message_xml(body, @keyfile, @keypass, out_t.path)
         end
       rescue ExecutionError
         raise SOAPError.new("Unable to decrypt SOAP response", response.body)
@@ -187,4 +199,5 @@ module VBMS
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
   end
+  # rubocop:enable Metrics/ClassLength
 end
