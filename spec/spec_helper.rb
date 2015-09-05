@@ -32,7 +32,7 @@ def fixture(path)
 end
 
 def parse_strict(xml_string)
-  doc = Nokogiri::XML(xml_string, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+  Nokogiri::XML(xml_string, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
 end
 
 def setup_webmock(endpoint_url, response_file, request_name)
