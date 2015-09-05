@@ -139,12 +139,12 @@ describe VBMS::Client do
     end
 
     describe 'process_response' do
-      let(:client) do 
+      let(:client) do
         VBMS::Client.new('http://test.endpoint.url/',
                          fixture_path('test_keystore.jks'),
-                         fixture_path('test_samltoken.xml'), 
-                         nil, 
-                         'importkey', 
+                         fixture_path('test_samltoken.xml'),
+                         nil,
+                         'importkey',
                          nil, nil, nil)
       end
 
