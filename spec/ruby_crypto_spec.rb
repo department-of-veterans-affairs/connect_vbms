@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe "Ruby Encrypt/Decrypt test vs Java reference impl" do
-  let (:encrypted_xml) { fixture_path('encrypted_response.xml') }
-  let (:plaintext_xml) { fixture_path('plaintext_basic_soap.xml') }
-  let (:plaintext_unicode_xml) { fixture_path('plaintext_unicode_soap.xml') }
-  let (:plaintext_request_name) { "getDocumentTypes" }
-  let (:test_jks_keystore) { fixture_path('test_keystore.jks') }
-  let (:test_pc12_server_key) { fixture_path('test_keystore_vbms_server_key.p12') }
-  let (:test_pc12_client_key) { fixture_path('test_keystore_importkey.p12') }
-  let (:test_keystore_pass) { "importkey" }
+  let(:encrypted_xml) { fixture_path('encrypted_response.xml') }
+  let(:plaintext_xml) { fixture_path('plaintext_basic_soap.xml') }
+  let(:plaintext_unicode_xml) { fixture_path('plaintext_unicode_soap.xml') }
+  let(:plaintext_request_name) { "getDocumentTypes" }
+  let(:test_jks_keystore) { fixture_path('test_keystore.jks') }
+  let(:test_pc12_server_key) { fixture_path('test_keystore_vbms_server_key.p12') }
+  let(:test_pc12_client_key) { fixture_path('test_keystore_importkey.p12') }
+  let(:test_keystore_pass) { "importkey" }
 
   it "encrypts in ruby, and decrypts using java" do
     # TODO(awong): Implement encrypt in ruby.
@@ -30,9 +30,7 @@ describe "Ruby Encrypt/Decrypt test vs Java reference impl" do
   end
 
   it "encrypts in java, and decrypts using ruby" do
-    if RUBY_PLATFORM=="java"
-      pending("This spec fails in jruby")
-    end
+    pending("This spec fails in jruby") if RUBY_PLATFORM == "java"
 
     encrypted_xml = VBMS.encrypted_soap_document(
       plaintext_xml, test_jks_keystore, test_keystore_pass, plaintext_request_name)
