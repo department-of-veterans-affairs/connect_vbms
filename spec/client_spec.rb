@@ -33,20 +33,20 @@ describe VBMS::Client do
         'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil
       )
       @request = double("request",
-        file_number: "123456788",
-        received_at: DateTime.new(2010, 01, 01),
-        first_name: "Joe",
-        middle_name: "Eagle",
-        last_name: "Citizen",
-        exam_name: "Test Fixture Exam",
-        pdf_file: "",
-        doc_type: "",
-        source: "CUI tests",
-        name: "uploadDocumentWithAssociations",
-        new_mail: "",
-        render_xml: "<xml></xml>",
-      )
-      @response = double("response", :code => 200, :body => "response")
+                        file_number: "123456788",
+                        received_at: DateTime.new(2010, 01, 01),
+                        first_name: "Joe",
+                        middle_name: "Eagle",
+                        last_name: "Citizen",
+                        exam_name: "Test Fixture Exam",
+                        pdf_file: "",
+                        doc_type: "",
+                        source: "CUI tests",
+                        name: "uploadDocumentWithAssociations",
+                        new_mail: "",
+                        render_xml: "<xml></xml>"
+                       )
+      @response = double("response", code: 200, body: "response")
     end
 
     it "creates two log messages" do
