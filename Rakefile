@@ -16,7 +16,7 @@ end
 
 desc 'Run RuboCop on the src directory'
 RuboCop::RakeTask.new(:rubocop) do |task|
-  task.patterns = ['src/**/*.rb']
+  task.patterns = ['src/**/*.rb', 'spec/**/*.rb']
   # Trigger failure for CI
   task.fail_on_error = true
 end
