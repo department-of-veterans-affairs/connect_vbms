@@ -1,4 +1,5 @@
 module VBMS
+  # rubocop:disable Metrics/ClassLength
   class Client
     attr_reader :endpoint_url
     
@@ -198,4 +199,5 @@ module VBMS
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
   end
+  # rubocop:enable Metrics/ClassLength
 end
