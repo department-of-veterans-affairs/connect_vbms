@@ -29,8 +29,9 @@ describe VBMS::Requests do
           true,
         )
 
-        webmock_soap_response(@client.endpoint_url, 'upload_document_with_associations',
-                              'uploadDocumentWithAssociationsResponse')
+        webmock_multipart_response(@client.endpoint_url,
+                                   'upload_document_with_associations',
+                                   'uploadDocumentWithAssociationsResponse')
         @client.send(request)
 
         # other tests?
