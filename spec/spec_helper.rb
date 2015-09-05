@@ -31,6 +31,10 @@ def fixture(path)
   File.read fixture_path(path)
 end
 
+def parse_strict(xml_string)
+  doc = Nokogiri::XML(xml_string, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+end
+
 def setup_webmock(endpoint_url, response_file, request_name)
   if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
     puts 'WARNING: the tests will be connecting to the live VBMS test server'

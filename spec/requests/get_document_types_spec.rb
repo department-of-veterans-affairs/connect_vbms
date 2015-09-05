@@ -8,7 +8,7 @@ describe VBMS::Requests::GetDocumentTypes do
       xml = subject.render_xml
       xsd = Nokogiri::XML::Schema(File.read("spec/soap.xsd"))
       expect(xsd.errors).to eq []
-      errors = xsd.validate(Nokogiri::XML(xml))
+      errors = xsd.validate(parse_strict(xml))
       expect(errors).to eq []
     end
   end
@@ -17,7 +17,7 @@ describe VBMS::Requests::GetDocumentTypes do
     before(:all) do
       request = VBMS::Requests::GetDocumentTypes.new
       xml = File.read(fixture_path('requests/get_document_types.xml'))
-      doc = Nokogiri::XML(xml)
+      doc = parse_strict(xml)
       @response = request.handle_response(doc)
     end
 
