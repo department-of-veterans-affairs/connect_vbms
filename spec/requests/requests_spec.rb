@@ -8,11 +8,7 @@ describe VBMS::Requests do
       @client = VBMS::Client.from_env_vars
     else
       @client = VBMS::Client.new(
-        'http://test.endpoint.url/', 
-        fixture_path('test_keystore.jks'), 
-        fixture_path('test_samltoken.xml'), 
-        nil, 
-        'importkey', nil, nil, nil
+        'http://test.endpoint.url/', fixture_path('test_keystore.jks'), fixture_path('test_samltoken.xml'), nil, 'importkey', nil, nil, nil
       )
     end
   end
@@ -30,7 +26,7 @@ describe VBMS::Requests do
           t.path,
           "356",
           "Connect VBMS test",
-          true
+          true,
         )
 
         webmock_soap_response(@client.endpoint_url, 'upload_document_with_associations', 
@@ -68,7 +64,7 @@ describe VBMS::Requests do
 
   describe "GetDocumentTypes" do
     it "executes succesfully when pointed at VBMS" do
-      request = VBMS::Requests::GetDocumentTypes.new
+      request = VBMS::Requests::GetDocumentTypes.new()
 
       webmock_soap_response(@client.endpoint_url, 'get_document_types', 'getDocumentTypesResponse')
       result = @client.send(request)
