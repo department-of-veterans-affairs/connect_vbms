@@ -1,7 +1,7 @@
 module VBMS
   class Client
     attr_reader :endpoint_url
-    
+
     def self.from_env_vars(logger: nil, env_name: 'test')
       env_dir = File.join(get_env('CONNECT_VBMS_ENV_DIR'), env_name)
       VBMS::Client.new(
@@ -159,6 +159,5 @@ module VBMS
       doc = Nokogiri::XML(data)
       request.handle_response(doc)
     end
-    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
   end
 end
