@@ -141,23 +141,47 @@ module VBMS
     end
     # rubocop:enable Metrics/AbcSize
 
-    def process_response(request, response)
-      soap = response.body.match(%r{<soap:envelope.*?</soap:envelope>}im)[0]
-      doc = Nokogiri::XML(soap)
-
-      if doc.at_xpath('//soap:Fault', soap: 'http://schemas.xmlsoap.org/soap/envelope/')
-        fail VBMS::SOAPError.new(doc)
+    def parse_xml_strictly(xml_string)
+      begin
+        xml = Nokogiri::XML(
+          xml_string,
+          nil,
+          nil,
+          Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET
+        )
+      rescue Nokogiri::XML::SyntaxError
+        raise SOAPError.new("Unable to parse SOAP message", xml_string)
       end
+      xml
+    end
 
-      data = nil
-      Tempfile.open('log') do |out_t|
-        data = VBMS.decrypt_message_xml(soap, @keyfile, @keypass, out_t.path)
+    def process_response(request, response)
+      # we could check the response content-type to make sure it's XML, but they don't seem
+      # to send any HTTP headers back, so we'll instead rely on strict XML parsing instead
+      full_doc = parse_xml_strictly(response.body)
+      check_soap_errors(full_doc, response)
+
+      begin
+        data = Tempfile.open('log') do |out_t|
+          VBMS.decrypt_message_xml(response.body, @keyfile, @keypass, out_t.path)
+        end
+      rescue ExecutionError
+        raise SOAPError.new("Unable to decrypt SOAP response", response.body)
       end
 
       log(:decrypted_message, decrypted_data: data, request: request)
-
-      doc = Nokogiri::XML(data)
+      doc = parse_xml_strictly(data)
       request.handle_response(doc)
+    end
+
+    def check_soap_errors(doc, response)
+      # the envelope should be the root node of the document
+      soap = doc.at_xpath("/soapenv:Envelope", VBMS::XML_NAMESPACES)
+      fail SOAPError.new("No SOAP envelope found in response", response.body) if
+        soap.nil?
+
+      fail SOAPError.new("SOAP Fault returned", response.body) if
+        soap.at_xpath('//soapenv:Fault', VBMS::XML_NAMESPACES)
     end
   end
 end

@@ -29,7 +29,8 @@ describe VBMS::Requests do
           true,
         )
 
-        setup_webmock(@client.endpoint_url, 'upload_document_with_associations', 'uploadDocumentWithAssociationsResponse')
+        webmock_soap_response(@client.endpoint_url, 'upload_document_with_associations',
+                              'uploadDocumentWithAssociationsResponse')
         @client.send(request)
 
         # other tests?
@@ -41,7 +42,7 @@ describe VBMS::Requests do
     it "executes succesfully when pointed at VBMS" do
       request = VBMS::Requests::ListDocuments.new("784449089")
 
-      setup_webmock(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
+      webmock_soap_response(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
       @client.send(request)
     end
   end
@@ -49,12 +50,14 @@ describe VBMS::Requests do
   describe "FetchDocumentById" do
     it "executes succesfully when pointed at VBMS" do
       # Use ListDocuments to find a document to fetch
-      setup_webmock(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
+
+      webmock_soap_response(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
+
       request = VBMS::Requests::ListDocuments.new("784449089")
       result = @client.send(request)
 
       request = VBMS::Requests::FetchDocumentById.new(result[0].document_id)
-      setup_webmock(@client.endpoint_url, 'fetch_document', 'fetchDocumentResponse')
+      webmock_soap_response(@client.endpoint_url, 'fetch_document', 'fetchDocumentResponse')
       @client.send(request)
     end
   end
@@ -63,7 +66,7 @@ describe VBMS::Requests do
     it "executes succesfully when pointed at VBMS" do
       request = VBMS::Requests::GetDocumentTypes.new()
 
-      setup_webmock(@client.endpoint_url, 'get_document_types', 'getDocumentTypesResponse')
+      webmock_soap_response(@client.endpoint_url, 'get_document_types', 'getDocumentTypesResponse')
       result = @client.send(request)
 
       expect(result).not_to be_empty
