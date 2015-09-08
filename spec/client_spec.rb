@@ -173,7 +173,7 @@ describe VBMS::Client do
         it "should raise a SOAPError" do
           expect { subject }.to raise_error do |error|
             expect(error).to be_a(VBMS::SOAPError)
-            expect(error.message).to eq('Unable to parse SOAP response')
+            expect(error.message).to eq('Unable to parse SOAP message')
             expect(error.body).to eq(response_body)
           end
         end
