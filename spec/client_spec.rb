@@ -64,6 +64,16 @@ describe VBMS::Client do
     end
   end
 
+  describe "multipart_boundary" do
+    it "should extract the boundary from the header" do
+      headers = {
+        'Content-Type' => 'multipart/related; type="application/xop+xml"; boundary="uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d"; start="<root.message@cxf.apache.org>"; start-info="text/xml"'
+      }
+
+      expect(@client.multipart_boundary(headers)).to eq('uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d')
+    end
+  end
+
   describe "from_env_vars" do
   let (:vbms_env_vars) { {
         'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
@@ -138,6 +148,7 @@ describe VBMS::Client do
       end
     end
 
+
     describe 'process_response' do
       let(:client) do
         VBMS::Client.new('http://test.endpoint.url/',
@@ -150,7 +161,7 @@ describe VBMS::Client do
 
       let(:request) { double('request') }
       let(:response_body) { '' }
-      let(:response) { double('response', body: response_body) }
+      let(:response) { double('response', body: response_body, multipart?: false) }
 
       subject { client.process_response(request, response) }
 
@@ -226,6 +237,10 @@ describe VBMS::Client do
             expect(error.body).to eq(response_body)
           end
         end
+      end
+
+      context "when the server sends a MIME multipart response" do
+
       end
     end
   end

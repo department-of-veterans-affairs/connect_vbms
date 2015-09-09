@@ -146,21 +146,40 @@ module VBMS
       Nokogiri::XML(xml_string, nil, nil, Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET)
     end
 
-    def get_body(response_body)
-      message = Mail.read_from_string(response_body)
-      if message.multipart?
-        message.body.parts[0].body.to_s
-      else
-        response_body
+    def multipart_boundary(headers)
+      return nil unless headers.key?('Content-Type')
+      Mail::Field.new('Content-Type', headers['Content-Type']).parameters['boundary']
+    end
+
+    def multipart_sections(response)
+      boundary = multipart_boundary(response.headers)
+      return if boundary.nil?
+      Mail::Part.new(
+        headers: response.headers,
+        body: response.body
+      ).body.split!(boundary).parts
+    end
+
+    def get_body(response)
+      if response.multipart?
+        parts = multipart_sections(response)
+        unless parts.nil?
+          # might consider looking for application/xml+xop payload in there
+          return parts.first.body.to_s
+        end
       end
+
+      # otherwise just return the body
+      response.body
     end
 
     # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
     def process_response(request, response)
-      body = get_body(response.body)
+      body = get_body(response)
 
       # we could check the response content-type to make sure it's XML, but they don't seem
       # to send any HTTP headers back, so we'll instead rely on strict XML parsing instead
+
       begin
         full_doc = parse_xml_strictly(body)
       rescue Nokogiri::XML::SyntaxError
