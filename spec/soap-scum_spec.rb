@@ -60,7 +60,7 @@ describe :SoapScum do
       encrypted_xml = message_processor.encrypt(soap_doc,
                                                 keystore.all.first.certificate,
                                                 keystore.all.first.key,
-                                                SoapScum::MessageProcessor::CryptoAlgorithms::RSA1_5,
+                                                SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
                                                 SoapScum::MessageProcessor::CryptoAlgorithms::AES128,
                                                 soap_doc.at_xpath(
                                                   '/soapenv:Envelope/soapenv:Body',

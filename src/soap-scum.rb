@@ -68,7 +68,7 @@ module SoapScum
 
   class MessageProcessor
     module CryptoAlgorithms
-      RSA1_5 = 'http://www.w3.org/2001/04/xmlenc#rsa-1_5'
+      RSA_PKCS1_15 = 'http://www.w3.org/2001/04/xmlenc#rsa-1_5'
       RSA_OAEP = 'http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p'
       # TODO(awong): Add triple-des support for xmlenc 1.0 compliance.
       AES128 = 'http://www.w3.org/2001/04/xmlenc#aes128-cbc'
@@ -127,7 +127,6 @@ module SoapScum
       #   * Create xmlenc template
       #   * Create xmldsig template
       Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header', soap: XMLNamespaces::SOAPENV)) do |xml|
-        # TODO(awong): Do we need mustUnderstand?
         xml['wsse'].Security('xmlns:wsse' => XMLNamespaces::WSSE,
                              'xmlns:wsu' => XMLNamespaces::WSU,
 ) do
