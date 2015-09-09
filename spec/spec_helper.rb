@@ -31,6 +31,10 @@ def fixture(path)
   File.read fixture_path(path)
 end
 
+def parse_strict(xml_string)
+  Nokogiri::XML(xml_string, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+end
+
 def setup_webmock(endpoint_url, response_file, request_name)
   if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
     puts 'WARNING: the tests will be connecting to the live VBMS test server'
@@ -48,9 +52,9 @@ def setup_webmock(endpoint_url, response_file, request_name)
 end
 
 RSpec.configure do |config|
-# The settings below are suggested to provide a good initial experience
-# with RSpec, but feel free to customize to your heart's content.
-
+  # The settings below are suggested to provide a good initial experience
+  # with RSpec, but feel free to customize to your heart's content.
+  #
   # These two settings work together to allow you to limit a spec run
   # to individual examples or groups you care about by tagging them with
   # `:focus` metadata. When nothing is tagged with `:focus`, all examples
