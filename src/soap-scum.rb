@@ -216,7 +216,7 @@ module SoapScum
       # Generate a secure key as per ruby docs.
       cipher = get_block_cipher(cipher_algorithm)
       cipher.encrypt
-      symmetric_key = cipher.random_key
+      symmetric_key = cipher.key = SecureRandom.random_bytes(cipher.key_len)
 
       key_id = "EK-#{generate_id}"
       xml['xenc'].EncryptedKey('xmlns:xenc' => 'http://www.w3.org/2001/04/xmlenc#', Id: key_id) do
