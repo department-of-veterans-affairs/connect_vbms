@@ -84,22 +84,12 @@ def webmock_multipart_response(endpoint_url, response_file, request_name)
   response_path = fixture_path("requests/#{response_file}.xml")
 
   encrypted_xml = encrypted_xml_file(response_path, request_name)
-  template = File.read("spec/fixtures/requests/#{response_file}.txt")
+  response = File.read("spec/fixtures/requests/#{response_file}.txt")
 
-  body = ERB.new(template).result(binding)
-  headers = {
-    'Date' => 'Sat, 05 Sep 2015 17:44:11 GMT',
-    'Server' => 'Apache/2.2.15 (Red Hat)',
-    'Set-Cookie' => 'JSESSIONID=mHyem8EzyQhu3jtv4P1xJr9W_FryU_22i2-oLcUj_WW5v3S49c34!-1437936355; path=/; HttpOnly',
-    'X-Powered-By' => 'Servlet/3.0 JSP/2.2',
-    'Connection' => 'close',
-    'Content-Type' => 'multipart/related; type="application/xop+xml"; '\
-                      'boundary="uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d"; '\
-                      'start="<root.message@cxf.apache.org>"; '\
-                      'start-info="text/xml"',
-    'Transfer-Encoding' => 'chunked'
-  }
-
+  # reads the header section from the file and loads into headers
+  header_section, body_text = response.split(/\r\n\r\n/, 2)
+  headers = Hash[header_section.split(/\r\n/).map { |s| s.scan(/^(\S+): (.+)/).first }]
+  body = ERB.new(body_text).result(binding)
 
   stub_request(:post, endpoint_url).to_return(body: body, headers: headers)
 end
