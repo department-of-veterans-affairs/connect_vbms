@@ -14,12 +14,13 @@ module SoapScum
 
   class KeyStore
     CertificateAndKey = Struct.new(:certificate, :key)
-    def all
-      @by_subject.values
-    end
 
     def initialize
       @by_subject = {}
+    end
+
+    def all
+      @by_subject.values
     end
 
     def add_pc12(path, keypass = "")
