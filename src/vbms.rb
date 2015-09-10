@@ -6,6 +6,7 @@ require 'httpi'
 require 'tempfile'
 require 'uri'
 require 'nokogiri'
+require 'mail'
 
 require 'vbms/common'
 require 'vbms/client'

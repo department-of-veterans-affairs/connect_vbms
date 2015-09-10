@@ -6,10 +6,10 @@ module VBMS
   DO_WSSE = File.join(FILEDIR, '../../src/do_wsse.sh')
 
   XML_NAMESPACES = {
-    'v4' => 'http://vbms.vba.va.gov/external/eDocumentService/v4',
-    'ns2' => 'http://vbms.vba.va.gov/cdm/document/v4',
-    'soapenv' => 'http://schemas.xmlsoap.org/soap/envelope/',
-    'wsse' => 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
+    v4: 'http://vbms.vba.va.gov/external/eDocumentService/v4',
+    ns2: 'http://vbms.vba.va.gov/cdm/document/v4',
+    soapenv: 'http://schemas.xmlsoap.org/soap/envelope/',
+    wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
   }
 
   class ClientError < StandardError
@@ -26,6 +26,12 @@ module VBMS
   end
 
   class SOAPError < ClientError
+    attr_reader :body
+
+    def initialize(msg, soap_response = nil)
+      super(msg)
+      @body = soap_response
+    end
   end
 
   class EnvironmentError < ClientError
@@ -68,7 +74,12 @@ module VBMS
             '-p', keypass,
             '-l', logfile,
             ignore_timestamp ? '-t' : '']
-    output, errors, status = Open3.capture3(*args)
+    begin
+      output, errors, status = Open3.capture3(*args)
+    rescue TypeError
+      # sometimes one of the Open3 return values is a nil and it complains about coercion
+      raise ExecutionError.new(DO_WSSE + args.join(' ') + ': DecryptMessage', errors) if status != 0
+    end
 
     fail ExecutionError.new(DO_WSSE + ' DecryptMessage', errors) if status != 0
 

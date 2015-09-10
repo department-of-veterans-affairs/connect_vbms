@@ -14,6 +14,12 @@ require 'equivalent-xml'
 
 require 'byebug' if RUBY_PLATFORM != 'java'
 
+if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
+  puts "WARNING: CONNECT_VBMS_RUN_EXTERNAL_TESTS set, the tests will connect to live VBMS test servers\n"
+else
+  require 'webmock/rspec'
+end
+
 def env_path(env_dir, env_var_name)
   value = ENV[env_var_name]
   if value.nil?
@@ -35,20 +41,61 @@ def parse_strict(xml_string)
   Nokogiri::XML(xml_string, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
 end
 
-def setup_webmock(endpoint_url, response_file, request_name)
-  if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
-    puts 'WARNING: the tests will be connecting to the live VBMS test server'
-    return
-  end
+FILEDIR = File.dirname(File.absolute_path(__FILE__))
+DO_WSSE = File.join(FILEDIR, '../src/do_wsse.sh')
 
-  require 'webmock/rspec'
-  response_path = fixture_path("requests/#{response_file}.xml")
+# Note: these should not be replaced with calls to the similar functions in VBMS, since
+# I want them to continue to call the Java WSSE utility even when encryption/decryption in
+# gem is done in Ruby, so we can check as against Ruby methods
+def encrypted_xml_file(response_path, request_name)
   keystore_path = fixture_path('test_keystore.jks')
 
-  encrypted = VBMS.encrypted_soap_document(response_path, keystore_path, 'importkey', request_name)
-  # encrypt it
+  args = [DO_WSSE,
+          '-e',
+          '-i', response_path,
+          '-k', keystore_path,
+          '-p', 'importkey',
+          '-n', request_name]
+  output, errors, status = Open3.capture3(*args)
 
+  if status != 0
+    fail VBMS::ExecutionError.new(DO_WSSE + ' EncryptSOAPDocument', errors)
+  end
+
+  output
+end
+
+def encrypted_xml_buffer(xml, request_name)
+  Tempfile.open('tmp') do |t|
+    t.write(xml)
+    t.flush
+    return encrypted_xml_file(t.path, request_name)
+  end
+end
+
+def webmock_soap_response(endpoint_url, response_file, request_name)
+  return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
+
+  response_path = fixture_path("requests/#{response_file}.xml")
+
+  encrypted = encrypted_xml_file(response_path, request_name)
   stub_request(:post, endpoint_url).to_return(body: encrypted)
+end
+
+def webmock_multipart_response(endpoint_url, response_file, request_name)
+  return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
+
+  response_path = fixture_path("requests/#{response_file}.xml")
+
+  encrypted_xml = encrypted_xml_file(response_path, request_name)
+  response = File.read("spec/fixtures/requests/#{response_file}.txt")
+
+  # reads the header section from the file and loads into headers
+  header_section, body_text = response.split(/\r\n\r\n/, 2)
+  headers = Hash[header_section.split(/\r\n/).map { |s| s.scan(/^(\S+): (.+)/).first }]
+  body = ERB.new(body_text).result(binding)
+
+  stub_request(:post, endpoint_url).to_return(body: body, headers: headers)
 end
 
 RSpec.configure do |config|
