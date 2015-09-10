@@ -238,10 +238,6 @@ describe VBMS::Client do
           end
         end
       end
-
-      context "when the server sends a MIME multipart response" do
-
-      end
     end
   end
 end
