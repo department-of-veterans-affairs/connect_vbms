@@ -73,26 +73,30 @@ def encrypted_xml_buffer(xml, request_name)
   end
 end
 
+def get_encrypted_file(filename, request_name)
+  encrypted_xml_file(fixture_path("requests/#{filename}.xml"), request_name)
+end
+
 def webmock_soap_response(endpoint_url, response_file, request_name)
   return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
-
-  response_path = fixture_path("requests/#{response_file}.xml")
-
-  encrypted = encrypted_xml_file(response_path, request_name)
+  encrypted = get_encrypted_file(response_file, request_name)
   stub_request(:post, endpoint_url).to_return(body: encrypted)
+end
+
+def split_message(message)
+  header_section, body_text = message.split(/\r\n\r\n/, 2)
+  headers = Hash[header_section.split(/\r\n/).map { |s| s.scan(/^(\S+): (.+)/).first }]
+
+  [headers, body_text]
 end
 
 def webmock_multipart_response(endpoint_url, response_file, request_name)
   return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
 
-  response_path = fixture_path("requests/#{response_file}.xml")
-
-  encrypted_xml = encrypted_xml_file(response_path, request_name)
+  encrypted_xml = get_encrypted_file(response_file, request_name)
   response = File.read("spec/fixtures/requests/#{response_file}.txt")
 
-  # reads the header section from the file and loads into headers
-  header_section, body_text = response.split(/\r\n\r\n/, 2)
-  headers = Hash[header_section.split(/\r\n/).map { |s| s.scan(/^(\S+): (.+)/).first }]
+  headers, body_text = split_message(response)
   body = ERB.new(body_text).result(binding)
 
   stub_request(:post, endpoint_url).to_return(body: body, headers: headers)
