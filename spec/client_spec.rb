@@ -72,7 +72,11 @@ describe VBMS::Client do
   describe "multipart_boundary" do
     it "should extract the boundary from the header" do
       headers = {
-        'Content-Type' => 'multipart/related; type="application/xop+xml"; boundary="uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d"; start="<root.message@cxf.apache.org>"; start-info="text/xml"'
+        'Content-Type' => 'multipart/related; '\
+                          'type="application/xop+xml"; '\
+                          'boundary="uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d"; '\
+                          'start="<root.message@cxf.apache.org>"; '\
+                          'start-info="text/xml"'
       }
 
       expect(@client.multipart_boundary(headers)).to eq('uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d')
@@ -153,7 +157,6 @@ describe VBMS::Client do
       end
     end
 
-
     describe 'process_response' do
       let(:client) do
         VBMS::Client.new('http://test.endpoint.url/',
@@ -196,7 +199,15 @@ describe VBMS::Client do
       end
 
       context "when it is given a document that won't decrypt" do
-        let(:response_body) { encrypted_xml_file(fixture_path('requests/fetch_document.xml'), 'fetchDocumentResponse').gsub(%r{<xenc:CipherValue>.+</xenc:CipherValue>}, '<xenc:CipherValue></xenc:CipherValue>') }
+        let(:response_body) do
+          encrypted_xml_file(
+            fixture_path('requests/fetch_document.xml'),
+            'fetchDocumentResponse'
+          ).gsub(
+            %r{<xenc:CipherValue>.+</xenc:CipherValue>},
+            '<xenc:CipherValue></xenc:CipherValue>'
+          )
+        end
 
         it "should raise a SOAPError" do
           expect { subject }.to raise_error do |error|
@@ -208,7 +219,8 @@ describe VBMS::Client do
       end
 
       context "when it is given a document that contains a SOAP fault" do
-        let(:response_body) do <<-EOF
+        let(:response_body) do
+          <<-EOF
           <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
             <soap:Header/>
             <soap:Body>
@@ -233,7 +245,13 @@ describe VBMS::Client do
       end
 
       context 'when the server sends an HTML response error page' do
-        let(:response_body) { "<html><head><title>An error has occurred</title></head><body><p>I know you were expecting HTML, but sometimes sites do this</p></body></html>"}
+        let(:response_body) do
+          <<-EOF
+            <html><head><title>An error has occurred</title></head>
+            <body><p>I know you were expecting HTML, but sometimes sites do this</p></body>
+            </html>
+          EOF
+        end
 
         it "should raise a SOAPError" do
           expect { subject }.to raise_error do |error|
