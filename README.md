@@ -1,16 +1,18 @@
 # connect_vbms
 
-Connect VBMS is a Ruby library for connecting to VBMS.
+Connect VBMS is a Ruby gem for communicating with the Veteran Benefits Management System at the Department of Veteran Affairs. Although the source code is open source, access to VBMS is restricted only to authorized users.
 
 ![](https://travis-ci.org/department-of-veterans-affairs/connect_vbms.svg?branch=master)
 
 ## Prerequisites
 
+- Ruby 2.2 or above
+	- Bundler 1.10 or above (`gem install bundle`)
 - [Java JDK 1.7 or above](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 - [Python 2.6 or above](https://www.python.org/downloads/)
 	- Sphinx 1.3.1 or above (`pip install sphinx`)
-- Ruby 2.2 or above
-	- Bundler 1.10 or above (`gem install bundle`)
+
+The library currently uses Java for some encryption functionality. When this is replaced, the integration tests will continue to use the Java encryption/decryption utilities as a reference to check against. Python is currently used to generate documentation.
 
 ## Build
 
@@ -26,9 +28,9 @@ For the first run of the tests, install the Ruby dependencies:
 
 Every other time, just run the below from the root directory:
 
-`bundle exec rspec`
+`bundle exec rake default`
 
-The tests are dependent on your network and on the VBMS test server being up and running.
+This will run all the tests and also runs [rubocop](http://batsov.com/rubocop/) to identify any stylistic problems in the code. You must ensure your code passes all tests and has no Rubocop violations before submitting a pull request.
 
 ## Docs
 
