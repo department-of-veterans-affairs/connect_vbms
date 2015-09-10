@@ -1,4 +1,5 @@
 module VBMS
+  # rubocop:disable Metrics/ClassLength
   class Client
     attr_reader :endpoint_url
     
@@ -155,18 +156,47 @@ module VBMS
       xml
     end
 
+    def multipart_boundary(headers)
+      return nil unless headers.key?('Content-Type')
+      Mail::Field.new('Content-Type', headers['Content-Type']).parameters['boundary']
+    end
+
+    def multipart_sections(response)
+      boundary = multipart_boundary(response.headers)
+      return if boundary.nil?
+      Mail::Part.new(
+        headers: response.headers,
+        body: response.body
+      ).body.split!(boundary).parts
+    end
+
+    def get_body(response)
+      if response.multipart?
+        parts = multipart_sections(response)
+        unless parts.nil?
+          # might consider looking for application/xml+xop payload in there
+          return parts.first.body.to_s
+        end
+      end
+
+      # otherwise just return the body
+      response.body
+    end
+
     def process_response(request, response)
+      body = get_body(response)
+
       # we could check the response content-type to make sure it's XML, but they don't seem
       # to send any HTTP headers back, so we'll instead rely on strict XML parsing instead
-      full_doc = parse_xml_strictly(response.body)
+      full_doc = parse_xml_strictly(body)
       check_soap_errors(full_doc, response)
 
       begin
         data = Tempfile.open('log') do |out_t|
-          VBMS.decrypt_message_xml(response.body, @keyfile, @keypass, out_t.path)
+          VBMS.decrypt_message_xml(body, @keyfile, @keypass, out_t.path)
         end
       rescue ExecutionError
-        raise SOAPError.new("Unable to decrypt SOAP response", response.body)
+        raise SOAPError.new("Unable to decrypt SOAP response", body)
       end
 
       log(:decrypted_message, decrypted_data: data, request: request)

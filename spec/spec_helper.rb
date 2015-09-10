@@ -14,6 +14,12 @@ require 'equivalent-xml'
 
 require 'byebug' if RUBY_PLATFORM != 'java'
 
+if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
+  puts "WARNING: CONNECT_VBMS_RUN_EXTERNAL_TESTS set, the tests will connect to live VBMS test servers\n"
+else
+  require 'webmock/rspec'
+end
+
 def env_path(env_dir, env_var_name)
   value = ENV[env_var_name]
   if value.nil?
@@ -66,11 +72,26 @@ end
 def webmock_soap_response(endpoint_url, response_file, request_name)
   return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
 
-  require 'webmock/rspec'
   response_path = fixture_path("requests/#{response_file}.xml")
 
   encrypted = encrypted_xml_file(response_path, request_name)
   stub_request(:post, endpoint_url).to_return(body: encrypted)
+end
+
+def webmock_multipart_response(endpoint_url, response_file, request_name)
+  return if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
+
+  response_path = fixture_path("requests/#{response_file}.xml")
+
+  encrypted_xml = encrypted_xml_file(response_path, request_name)
+  response = File.read("spec/fixtures/requests/#{response_file}.txt")
+
+  # reads the header section from the file and loads into headers
+  header_section, body_text = response.split(/\r\n\r\n/, 2)
+  headers = Hash[header_section.split(/\r\n/).map { |s| s.scan(/^(\S+): (.+)/).first }]
+  body = ERB.new(body_text).result(binding)
+
+  stub_request(:post, endpoint_url).to_return(body: body, headers: headers)
 end
 
 RSpec.configure do |config|
