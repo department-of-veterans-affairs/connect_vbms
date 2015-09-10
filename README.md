@@ -1,6 +1,6 @@
 # connect_vbms
 
-Connect VBMS is a Ruby gem for communicating with the Veteran Benefits Management System at the Department of Veteran Affairs. Although the source code is open source, access to VBMS is restricted only to authorized users.
+Connect VBMS is a Ruby gem for communicating with version 4 of the eDocumentService API provided by Veteran Benefits Management System (VBMS) at the Department of Veteran Affairs. Although the source code is open source, access to VBMS is restricted only to authorized users.
 
 ![](https://travis-ci.org/department-of-veterans-affairs/connect_vbms.svg?branch=master)
 
