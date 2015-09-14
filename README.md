@@ -32,6 +32,8 @@ Every other time, just run the below from the root directory:
 
 This will run all the tests and also runs [rubocop](http://batsov.com/rubocop/) to identify any stylistic problems in the code. You must ensure your code passes all tests and has no Rubocop violations before submitting a pull request.
 
+Tests normally mock all web requests so tests can be run without needing any credentials for VBMS systems. To run the integration tests against a VBMS server, you must specify all the necessary `VBMS_CONNECT` environment variables. You can then execute tests with `CONNECT_VBMS_RUN_EXTERNAL_TESTS=1 bundle exec rake default` and it will not use local webmocks.
+
 ## Docs
 
 From the root directory, run:
