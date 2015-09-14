@@ -22,7 +22,7 @@ To connect to VBMS, you must be supplied credentials by the administrators. Thes
         '<path to client certificate, or nil>',
     )
 
-ALternatively, you can set the values for these fields as environment variables. This approach is preferred since it avoids checking in any credentials to a repository and is one of the requirements for a proper `12-factor application`_ deployment. The environment variables that you must define are:
+Alternatively, you can set the values for these fields as environment variables. This approach is preferred since it avoids checking in any credentials to a repository and is one of the requirements for a proper `12-factor application`_ deployment. The environment variables that you must define are:
 
 .. _12-factor application: http://12factor.net/
 
