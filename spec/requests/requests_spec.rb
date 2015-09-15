@@ -17,19 +17,19 @@ describe VBMS::Requests do
     end
   end
 
-  describe "UploadDocumentWithAssociations" do
-    it "executes succesfully when pointed at VBMS" do
-      Tempfile.open("tmp") do |t|
+  describe 'UploadDocumentWithAssociations' do
+    it 'executes succesfully when pointed at VBMS' do
+      Tempfile.open('tmp') do |t|
         request = VBMS::Requests::UploadDocumentWithAssociations.new(
-          "784449089",
+          '784449089',
           Time.now,
-          "Jane",
-          "Q",
-          "Citizen",
-          "knee",
+          'Jane',
+          'Q',
+          'Citizen',
+          'knee',
           t.path,
-          "356",
-          "Connect VBMS test",
+          '356',
+          'Connect VBMS test',
           true
         )
 
@@ -43,22 +43,22 @@ describe VBMS::Requests do
     end
   end
 
-  describe "ListDocuments" do
-    it "executes succesfully when pointed at VBMS" do
-      request = VBMS::Requests::ListDocuments.new("784449089")
+  describe 'ListDocuments' do
+    it 'executes succesfully when pointed at VBMS' do
+      request = VBMS::Requests::ListDocuments.new('784449089')
 
       webmock_soap_response(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
       @client.send(request)
     end
   end
 
-  describe "FetchDocumentById" do
-    it "executes succesfully when pointed at VBMS" do
+  describe 'FetchDocumentById' do
+    it 'executes succesfully when pointed at VBMS' do
       # Use ListDocuments to find a document to fetch
 
       webmock_soap_response(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
 
-      request = VBMS::Requests::ListDocuments.new("784449089")
+      request = VBMS::Requests::ListDocuments.new('784449089')
       result = @client.send(request)
 
       request = VBMS::Requests::FetchDocumentById.new(result[0].document_id)
@@ -67,8 +67,8 @@ describe VBMS::Requests do
     end
   end
 
-  describe "GetDocumentTypes" do
-    it "executes succesfully when pointed at VBMS" do
+  describe 'GetDocumentTypes' do
+    it 'executes succesfully when pointed at VBMS' do
       request = VBMS::Requests::GetDocumentTypes.new
 
       webmock_soap_response(@client.endpoint_url, 'get_document_types', 'getDocumentTypesResponse')

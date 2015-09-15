@@ -13,24 +13,24 @@ describe VBMS::Requests::UploadDocumentWithAssociations do
       'UDWA new mail')
   end
 
-  describe "render_xml" do
-    it "generates valid XML" do
+  describe 'render_xml' do
+    it 'generates valid XML' do
       xml = subject.render_xml
-      xsd = Nokogiri::XML::Schema(File.read("spec/soap.xsd"))
+      xsd = Nokogiri::XML::Schema(File.read('spec/soap.xsd'))
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
       expect(errors).to eq []
     end
   end
 
-  describe "parsing the XML" do
+  describe 'parsing the XML' do
     before do
       xml = File.read(fixture_path('requests/upload_document_with_associations.xml'))
       @doc = parse_strict(xml)
       @response = subject.handle_response(@doc)
     end
 
-    it "should just return the document" do
+    it 'should just return the document' do
       expect(@response).to eq(@doc)
     end
   end
