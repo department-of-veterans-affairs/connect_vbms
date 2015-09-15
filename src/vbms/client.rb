@@ -158,7 +158,10 @@ module VBMS
 
     def multipart_boundary(headers)
       return nil unless headers.key?('Content-Type')
-      Mail::Field.new('Content-Type', headers['Content-Type']).parameters['boundary']
+      subfields = headers['Content-Type'].split(/;\s+/)
+
+      return nil unless subfields.detect { |x| /^boundary="([^"]+)"/ =~ x }
+      Regexp.last_match(1)
     end
 
     def multipart_sections(response)
