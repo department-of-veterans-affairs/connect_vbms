@@ -25,6 +25,14 @@ module VBMS
         VBMS.load_erb('upload_document_xml_template.xml.erb')
       end
 
+      # received_date returns a string representing the date the document was
+      # created, in the EST time zone
+      #
+      # According to the eDocumentService XSD, the date must be specified in
+      # XML Schema date format. EST is used because that's what VBMS used in
+      # their sample SoapUI projects.
+      #
+      # Date spec: http://www.w3.org/TR/xmlschema-2/#date
       def received_date
         @received_at.getlocal("-05:00").strftime("%Y-%m-%d-05:00")
       end
