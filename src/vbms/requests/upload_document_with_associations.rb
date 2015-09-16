@@ -26,6 +26,10 @@ module VBMS
       end
 
       def received_date
+        # This bizarre code is here because the VBMS code specifies the dates of
+        # documents as full datetimes, even though it is actually only needs the
+        # date. This ensures the document date is set to the correct date in the
+        # Eastern time zone even when EDT is only 4 hours behind UTC
         @received_at.getlocal("-05:00").strftime("%Y-%m-%d-05:00")
       end
 
