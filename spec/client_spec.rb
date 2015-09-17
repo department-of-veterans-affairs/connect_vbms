@@ -66,7 +66,7 @@ describe VBMS::Client do
                                                       response_body: @response.body, 
                                                       request: @request)
 
-      @client.send(@request)
+      @client.send_request(@request)
     end
   end
 

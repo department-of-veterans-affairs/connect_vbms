@@ -36,7 +36,7 @@ describe VBMS::Requests do
         webmock_multipart_response(@client.endpoint_url,
                                    'upload_document_with_associations',
                                    'uploadDocumentWithAssociationsResponse')
-        @client.send(request)
+        @client.send_request(request)
 
         # other tests?
       end
@@ -48,7 +48,7 @@ describe VBMS::Requests do
       request = VBMS::Requests::ListDocuments.new('784449089')
 
       webmock_soap_response(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
-      @client.send(request)
+      @client.send_request(request)
     end
   end
 
@@ -59,11 +59,11 @@ describe VBMS::Requests do
       webmock_soap_response(@client.endpoint_url, 'list_documents', 'listDocumentsResponse')
 
       request = VBMS::Requests::ListDocuments.new('784449089')
-      result = @client.send(request)
+      result = @client.send_request(request)
 
       request = VBMS::Requests::FetchDocumentById.new(result[0].document_id)
       webmock_soap_response(@client.endpoint_url, 'fetch_document', 'fetchDocumentResponse')
-      @client.send(request)
+      @client.send_request(request)
     end
   end
 
@@ -72,7 +72,7 @@ describe VBMS::Requests do
       request = VBMS::Requests::GetDocumentTypes.new
 
       webmock_soap_response(@client.endpoint_url, 'get_document_types', 'getDocumentTypesResponse')
-      result = @client.send(request)
+      result = @client.send_request(request)
 
       expect(result).not_to be_empty
 
