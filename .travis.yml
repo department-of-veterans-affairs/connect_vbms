@@ -9,12 +9,14 @@ matrix:
     - rvm: 2.1.0
       before_install: gem install bundler --no-ri --no-rdoc
       jdk: oraclejdk8
+
     - rvm: 2.2.2
       before_install: gem install bundler --no-ri --no-rdoc
       jdk: oraclejdk7
     - rvm: 2.2.2
       before_install: gem install bundler --no-ri --no-rdoc
       jdk: oraclejdk8
+
     - rvm: jruby-1.7.20
       before_install: gem install bundler --no-ri --no-rdoc
       before_script: export JRUBY_OPTS="$JRUBY_OPTS --2.0"
@@ -22,6 +24,16 @@ matrix:
     - rvm: jruby-1.7.20
       before_install: gem install bundler --no-ri --no-rdoc
       before_script: export JRUBY_OPTS="$JRUBY_OPTS --2.0"
+      jdk: oraclejdk8
+
+    # Forcing installation of latest RVM (master) in order to use jruby 9000
+    - rvm: jruby-9.0.0.0
+      before_install: rvm get master && rvm install jruby-9.0.0.0 && gem install bundler --no-ri --no-rdoc
+      env: JRUBY_OPTS="$JRUBY_OPTS -Xcli.debug=true --debug"
+      jdk: oraclejdk7
+    - rvm: jruby-9.0.0.0
+      before_install: rvm get master && rvm install jruby-9.0.0.0 && gem install bundler --no-ri --no-rdoc
+      env: JRUBY_OPTS="$JRUBY_OPTS -Xcli.debug=true --debug"
       jdk: oraclejdk8
 
   fast_finish: true
