@@ -74,6 +74,7 @@ module SoapScum
       AES128 = 'http://www.w3.org/2001/04/xmlenc#aes128-cbc'
       AES256 = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc'
     end
+    attr_accessor :cipher, :key_id, :symmetric_key, :cipher_algorithm, :encrypted_elements
 
     def initialize(keystore)
       @keystore = keystore
@@ -93,18 +94,20 @@ module SoapScum
     # populate it.
     #
     # TODO(awong): Add mustUnderstand support.
-    # TODO(astone): add ws:Id
     def wrap_in_soap(contents_doc)
-        builder = Nokogiri::XML::Builder.new do |xml|
-          xml['soapenv'].Envelope('xmlns:soapenv' => XMLNamespaces::SOAPENV) do
-            xml['soapenv'].Body do
-              if !contents_doc.nil?
-                xml.parent << contents_doc.root.clone
-              end
+      builder = Nokogiri::XML::Builder.new do |xml|
+        xml['soapenv'].Envelope('xmlns:soapenv' => XMLNamespaces::SOAPENV) do
+          xml['soapenv'].Body(
+              'wsu:Id' => "ID-#{generate_id}",
+              'xmlns:wsu' => XMLNamespaces::WSU
+            ) do
+            if !contents_doc.nil?
+              xml.parent << contents_doc.root.clone
             end
           end
         end
-        builder.doc
+      end
+      builder.doc
     end
 
     def encrypt(soap_doc, certificate, private_key, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt, validity: 5.minutes)
@@ -120,61 +123,105 @@ module SoapScum
         header = envelope.children.first
       end
 
-      nodes_to_sign = soap_doc.at_xpath('/soapenv:Envelope/soapenv:Body',
-                                        soapenv: SoapScum::XMLNamespaces::SOAPENV).children
-      # Create the wsse:Security header.
-      #   * Generate timestammp element.
-      #   * Create xmlenc template
-      #   * Create xmldsig template
+      #    sign Body unless request type == uploadDocumentWithAssociations
+
+      # reference from Java implementation:
+      #    if (requestType.equals("uploadDocumentWithAssociations")) {
+      #   return new WSEncryptionPart("document", VBMS_NAMESPACE, "Element");
+      # } else {
+      #   return new WSEncryptionPart("Body", SOAP_NAMESPACE, "Content");
+      # }
+      
       Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header', soap: XMLNamespaces::SOAPENV)) do |xml|
         xml['wsse'].Security('xmlns:wsse' => XMLNamespaces::WSSE,
                              'xmlns:wsu' => XMLNamespaces::WSU,
-) do
-          add_xmlenc_template(xml, certificate, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt)
-          # TODO(awong): Allow configurable digest and signature methods.
-          add_xmldsig_template(xml, certificate, "http://www.w3.org/2000/09/xmldsig#sha1", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", nodes_to_sign)
-
+                             'xmlns:xenc' => XMLNamespaces::XENC) do
           # Add wsu:Timestamp
           timestamp_id = "TS-#{generate_id}"
-          xml['wsu'].Timestamp('wsu:Id' => timestamp_id) do
+          xml['wsu'].Timestamp('wsu:Id' => timestamp_id,
+                               'xmlns:wsse' => XMLNamespaces::WSSE,
+                               'xmlns:wsu' => XMLNamespaces::WSU
+              ) do
             # Using localtime technically follows spec but seems to break
             # various parsers.
             now = Time.now.utc
             xml['wsu'].Created now.xmlschema
             xml['wsu'].Expires (now + validity).xmlschema
           end
-
         end
       end
 
-      # Ensure IDs exist on elements like body.
-      # Perform actual signature on plaintext.
-      # Perform actual encryption
-      # unsigned_document = Xmldsig::SignedDocument.new(
-      #   soap_doc.serialize(
-      #     encoding: 'UTF-8',
-      #     save_with: Nokogiri::XML::Node::SaveOptions::AS_XML))
-      # unsigned_document.sign(private_key)
-      sign_soap_doc(soap_doc, private_key)
+      nodes_to_encrypt = [body_node(soap_doc), timestamp_node(soap_doc)]
+
+      Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header/wsse:Security',
+                                            soap: XMLNamespaces::SOAPENV,
+                                            'xmlns:wsse' => XMLNamespaces::WSSE,
+                                            'xmlns:wsu' => XMLNamespaces::WSU,
+                                            'xmlns:xenc' => XMLNamespaces::XENC)) do |xml|
+
+        add_xmlenc_template(
+          xml,
+          certificate,
+          keytransport_algorithm,
+          cipher_algorithm,
+          nodes_to_encrypt
+        )
+        # TODO(awong): Allow configurable digest and signature methods.
+        # TODO(astone): Determine which node to sign based on request type
+        add_xmldsig_template(
+          xml,
+          certificate,
+          "http://www.w3.org/2000/09/xmldsig#sha1",
+          "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
+          nodes_to_encrypt
+        )
+
+        encrypt_references(xml, nodes_to_encrypt)
+      end
+
+# 1. build xmlenc template (store cipherdata)
+# 2. build xmldsig template (retain unencyprted elements)
+# 3. sign document.
+# 4. insert cipherdata and remove unencrypted elements
+
+      signed_doc = sign_soap_doc(soap_doc, private_key).document
+
+      # nodes_to_encrypt = [body_node(signed_doc), timestamp_node(signed_doc)]
+      # nodes_to_encrypt.each_with_index do |node,i|
+      #   node.add_previous_sibling(encrypted_elements[i])
+      #   node.remove
+      # end
+      
+
+
+      # debug
+      puts signed_doc.document.serialize(
+              encoding: 'UTF-8',
+              save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
+            )
+
+      signed_doc.document.serialize(
+        encoding: 'UTF-8',
+        save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
+      )
+      
     end
 
    private
 
     def sign_soap_doc(soap_doc, private_key)
-      Xmldsig::SignedDocument.new(
-        soap_doc.serialize(
-          encoding: 'UTF-8',
-          save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
-        )
-      ).sign(private_key)
+      signed_doc = Xmldsig::SignedDocument.new(soap_doc)
+      signed_doc.signatures.reverse.each { |signature| signature.sign(private_key) }
+      signed_doc
     end
 
     def generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm, cipher)
+
       cipher.reset
       cipher.encrypt
       cipher.key = symmetric_key
       iv = cipher.random_iv
-
+# puts node.inspect
       raw_xml = node.serialize(encoding: 'UTF-8', save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
       cipher_text = iv + cipher.update(raw_xml) + cipher.final
       builder = Nokogiri::XML::Builder.new do |xml|
@@ -206,6 +253,21 @@ module SoapScum
       end
     end
 
+    def timestamp_node(soap_doc)
+      soap_doc.at_xpath(
+        '/soapenv:Envelope/soapenv:Header/wsse:Security/wsu:Timestamp',
+        soapenv: SoapScum::XMLNamespaces::SOAPENV,
+        'xmlns:wsse' => XMLNamespaces::WSSE,
+        'xmlns:wsu' => XMLNamespaces::WSU)
+    end
+
+    def body_node(soap_doc)
+      soap_doc.at_xpath(
+        '/soapenv:Envelope/soapenv:Body',
+        soapenv: SoapScum::XMLNamespaces::SOAPENV,
+        'xmlns:wsu' => XMLNamespaces::WSU)
+    end
+
     def generate_id
       SecureRandom.hex(5)
     end
@@ -213,19 +275,20 @@ module SoapScum
     # Takes an XMLBuilder and adds the XML Encryption template.
     def add_xmlenc_template(xml, certificate, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt)
       # #5.4.1 Lists the valid ciphers and block sizes.
-      # Generate a secure key as per ruby docs.
-      cipher = get_block_cipher(cipher_algorithm)
+      # node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm, cipher
+      self.cipher = get_block_cipher(cipher_algorithm)
+      self.key_id = "EK-#{generate_id}"
+      self.symmetric_key = cipher.key = SecureRandom.random_bytes(cipher.key_len)
+      self.cipher_algorithm = cipher_algorithm
       cipher.encrypt
-      symmetric_key = cipher.key = SecureRandom.random_bytes(cipher.key_len)
-
-      key_id = "EK-#{generate_id}"
-      xml['xenc'].EncryptedKey('xmlns:xenc' => 'http://www.w3.org/2001/04/xmlenc#', Id: key_id) do
+      # 
+      xml['xenc'].EncryptedKey('xmlns:xenc' => XMLNamespaces::XENC, Id: key_id) do
         xml['xenc'].EncryptionMethod(Algorithm: keytransport_algorithm)
         xml['ds'].KeyInfo('xmlns:ds' => XMLNamespaces::DS) do
           xml['wsse'].SecurityTokenReference do
             xml['ds'].X509Data do
               xml['ds'].X509IssuerSerial do
-                xml['ds'].X509IssuerName certificate.subject.to_a.map { |name,value,_| "#{name}=#{value}" }.join(',')
+                xml['ds'].X509IssuerName certificate.subject.to_a.reverse.map { |name,value,_| "#{name}=#{value}" }.join(',')
                 xml['ds'].X509SerialNumber certificate.serial.to_s
               end
             end
@@ -236,32 +299,48 @@ module SoapScum
           xml['xenc'].CipherValue Base64.strict_encode64(certificate.public_key.public_encrypt(symmetric_key))
         end
 
-        xml['xenc'].ReferenceList do
-          nodes_to_encrypt.each do |node|
-            encrypted_node_id = "ED-#{generate_id}"
-            encrypted_node = generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm, cipher)
-            xml['xenc'].DataReference(URI: "##{encrypted_node_id}")
-            node.add_previous_sibling(encrypted_node)
-            node.remove
-          end
+        # xml['xenc'].ReferenceList do
+        #   nodes_to_encrypt.each do |node|
+        #     encrypted_node_id = "ED-#{generate_id}"
+        #     encrypted_node = generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm, cipher)
+        #     xml['xenc'].DataReference(URI: "##{encrypted_node_id}")
+        #     node.add_previous_sibling(encrypted_node)
+        #     node.remove
+        #   end
+        # end
+      end
+    end
+
+    def encrypt_references(xml, nodes_to_encrypt)
+      self.encrypted_elements = []
+      xml['xenc'].ReferenceList do
+        nodes_to_encrypt.each do |node|
+          encrypted_node_id = "ED-#{generate_id}"
+          encrypted_node = generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm, cipher)
+          xml['xenc'].DataReference(URI: "##{encrypted_node_id}")
+          # node.add_previous_sibling(encrypted_node)
+          encrypted_elements << encrypted_node
+          # node.remove
         end
       end
     end
 
     def add_xmldsig_template(xml, certificate, digest_method, signature_method, nodes_to_sign)
       xml['ds'].Signature('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', Id: "EK-#{generate_id}") do
-        xml['ds'].SignedInfo do
+        xml['ds'].SignedInfo('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',
+                             'xmlns:soapenv' => XMLNamespaces::SOAPENV
+            ) do
           # TODO(awong): Allow modification of CanonicalizationMethod.
           xml['ds'].CanonicalizationMethod(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
-            xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "soapenv v4")
+            xml['ec'].InclusiveNamespaces('PrefixList' => 'cdm doc soapenv v4 xop',
+                                          'xmlns:ec' => 'http://www.w3.org/2001/10/xml-exc-c14n#')
           end
           xml['ds'].SignatureMethod(Algorithm: signature_method)
-          # [TODO astone]         This still needs to reference nodes to sign.
           nodes_to_sign.each do |node|
             xml['ds'].Reference(URI: "##{node.attr('wsu:Id')}") do
              xml['ds'].Transforms do
                xml['ds'].Transform(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
-                 xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "soapenv v4")
+                 xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "wsse cdm doc soapenv v4 xop")
                end
              end
              xml['ds'].DigestMethod(Algorithm: digest_method)

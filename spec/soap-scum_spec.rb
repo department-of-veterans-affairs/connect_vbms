@@ -52,11 +52,13 @@ describe :SoapScum do
 
     it "Creates basic soap envelope" do
       soap_doc = message_processor.wrap_in_soap(content_document)
-      # TODO(awong): Verify structure.
+      expect(soap_doc.is_a? Nokogiri::XML::Document).to eq(true)
+      # TODO(astone)
+      # add more expectations to validate the structure of the document
     end
 
     it "Encrypts and signs a soap message" do
-      pending "Fix signing!"
+      # pending "Fix signing!"
       
       soap_doc = message_processor.wrap_in_soap(content_document)
       encrypted_xml = message_processor.encrypt(soap_doc,
@@ -67,8 +69,16 @@ describe :SoapScum do
                                                 soap_doc.at_xpath(
                                                   '/soapenv:Envelope/soapenv:Body',
                                                   soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+
+      
+
       decrypted_xml = VBMS.decrypt_message_xml(encrypted_xml, test_jks_keystore,
                                                test_keystore_pass, 'test-logfile')
+
+      encrypted_doc = Nokogiri::XML(encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+      decrypted_doc = Nokogiri::XML(decrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+
+      expect(decrypted_doc).to eq(encrypted_doc)
       # TODO(awong): Verify decrypt_xml matches original soap_doc.
     end
   end
