@@ -151,7 +151,7 @@ module VBMS
           Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET
         )
       rescue Nokogiri::XML::SyntaxError
-        raise SOAPError.new("Unable to parse SOAP message", xml_string)
+        raise SOAPError.new('Unable to parse SOAP message', xml_string)
       end
       xml
     end
@@ -196,7 +196,7 @@ module VBMS
           VBMS.decrypt_message_xml(body, @keyfile, @keypass, out_t.path)
         end
       rescue ExecutionError
-        raise SOAPError.new("Unable to decrypt SOAP response", body)
+        raise SOAPError.new('Unable to decrypt SOAP response', body)
       end
 
       log(:decrypted_message, decrypted_data: data, request: request)
@@ -206,11 +206,11 @@ module VBMS
 
     def check_soap_errors(doc, response)
       # the envelope should be the root node of the document
-      soap = doc.at_xpath("/soapenv:Envelope", VBMS::XML_NAMESPACES)
-      fail SOAPError.new("No SOAP envelope found in response", response.body) if
+      soap = doc.at_xpath('/soapenv:Envelope', VBMS::XML_NAMESPACES)
+      fail SOAPError.new('No SOAP envelope found in response', response.body) if
         soap.nil?
 
-      fail SOAPError.new("SOAP Fault returned", response.body) if
+      fail SOAPError.new('SOAP Fault returned', response.body) if
         soap.at_xpath('//soapenv:Fault', VBMS::XML_NAMESPACES)
     end
   end

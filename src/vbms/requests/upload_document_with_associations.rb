@@ -34,7 +34,7 @@ module VBMS
       #
       # Date spec: http://www.w3.org/TR/xmlschema-2/#date
       def received_date
-        @received_at.getlocal("-05:00").strftime("%Y-%m-%d-05:00")
+        @received_at.getlocal('-05:00').strftime('%Y-%m-%d-05:00')
       end
 
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -44,7 +44,7 @@ module VBMS
         VBMS::Requests.soap do |xml|
           xml['v4'].uploadDocumentWithAssociations do
             xml['v4'].document(
-              externalId: "123",
+              externalId: '123',
               fileNumber: @file_number,
               filename: filename,
               docType: @doc_type,

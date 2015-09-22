@@ -1,19 +1,19 @@
 require 'spec_helper'
 
 describe VBMS::Requests::FetchDocumentById do
-  describe "render_xml" do
-    subject { VBMS::Requests::FetchDocumentById.new("a document id") }
+  describe 'render_xml' do
+    subject { VBMS::Requests::FetchDocumentById.new('a document id') }
 
-    it "generates valid XML" do
+    it 'generates valid XML' do
       xml = subject.render_xml
-      xsd = Nokogiri::XML::Schema(File.read("spec/soap.xsd"))
+      xsd = Nokogiri::XML::Schema(File.read('spec/soap.xsd'))
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
       expect(errors).to eq []
     end
   end
 
-  describe "parsing the XML" do
+  describe 'parsing the XML' do
     before(:all) do
       request = VBMS::Requests::FetchDocumentById.new('')
       xml = File.read(fixture_path('requests/fetch_document.xml'))
@@ -23,11 +23,11 @@ describe VBMS::Requests::FetchDocumentById do
 
     subject { @response }
 
-    it "should return a DocumentWithContent object" do
+    it 'should return a DocumentWithContent object' do
       expect(subject).to be_a(VBMS::DocumentWithContent)
     end
 
-    it "has valid document information" do
+    it 'has valid document information' do
       doc = subject.document
 
       expect(doc.document_id).to eq('{9E364101-AFDD-49A7-A11F-602CCF2E5DB5}')
@@ -37,7 +37,7 @@ describe VBMS::Requests::FetchDocumentById do
       expect(doc.received_at).to eq(Time.parse('2015-05-06-04:00').to_date)
     end
 
-    it "has some associated content" do
+    it 'has some associated content' do
       expect(subject.content).to_not be_nil
     end
   end

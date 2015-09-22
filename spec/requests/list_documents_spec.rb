@@ -1,19 +1,19 @@
 require 'spec_helper'
 
 describe VBMS::Requests::ListDocuments do
-  describe "render_xml" do
-    subject { VBMS::Requests::ListDocuments.new("123456788") }
+  describe 'render_xml' do
+    subject { VBMS::Requests::ListDocuments.new('123456788') }
 
-    it "generates valid XML" do
+    it 'generates valid XML' do
       xml = subject.render_xml
-      xsd = Nokogiri::XML::Schema(File.read("spec/soap.xsd"))
+      xsd = Nokogiri::XML::Schema(File.read('spec/soap.xsd'))
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
       expect(errors).to eq []
     end
   end
 
-  describe "parsing the XML response" do
+  describe 'parsing the XML response' do
     before(:all) do
       request = VBMS::Requests::ListDocuments.new('784449089')
       xml = File.read(fixture_path('requests/list_documents.xml'))
@@ -23,13 +23,13 @@ describe VBMS::Requests::ListDocuments do
 
     subject { @vbms_docs }
 
-    it "should return an array of Document objects" do
+    it 'should return an array of Document objects' do
       expect(subject).to be_an(Array)
       expect(subject).to all(be_a(VBMS::Document))
       expect(subject.count).to eq(179) # how many are in sample file
     end
 
-    it "should load the fields properly into the document record" do
+    it 'should load the fields properly into the document record' do
       doc = subject.first
 
       expect(doc.document_id).to eq('{9E364101-AFDD-49A7-A11F-602CCF2E5DB5}')
@@ -38,7 +38,7 @@ describe VBMS::Requests::ListDocuments do
       expect(doc.source).to eq('VHA_CUI')
     end
 
-    it "should parse the dates correctly" do
+    it 'should parse the dates correctly' do
       expect(subject[0].received_at).to eq(Date.parse('2015-05-06-04:00'))
       expect(subject[1].received_at).to eq(Date.parse('2014-11-13-05:00'))
     end
