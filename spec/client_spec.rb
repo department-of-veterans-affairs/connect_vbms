@@ -82,6 +82,14 @@ describe VBMS::Client do
 
       expect(@client.multipart_boundary(headers)).to eq('uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d')
     end
+
+    it "should return nil if it can't find the header" do
+      headers = {
+        'Content-Type' => 'text/xml'
+      }
+
+      expect(@client.multipart_boundary(headers)).to be_nil
+    end
   end
 
   describe 'from_env_vars' do

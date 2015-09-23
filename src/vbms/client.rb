@@ -158,24 +158,57 @@ module VBMS
 
     def multipart_boundary(headers)
       return nil unless headers.key?('Content-Type')
-      Mail::Field.new('Content-Type', headers['Content-Type']).parameters['boundary']
+      subfields = headers['Content-Type'].split(/;\s+/)
+
+      return nil unless subfields.detect { |x| /^boundary="([^"]+)"/ =~ x }
+      Regexp.last_match(1)
     end
 
+    def split_part_into_headers_and_body(message)
+      return { headers: nil, body: message } unless message =~ /\r\n\r\n/
+
+      header_section, body_text = message.split(/\r\n\r\n/, 2)
+      headers = Hash[header_section.split(/\r\n/).reject(&:blank?).map { |s| s.scan(/^(\S+): (.+)/).first }]
+      { headers: headers, body: body_text }
+    end
+
+    # rubocop:disable Metrics/AbcSize
     def multipart_sections(response)
       boundary = multipart_boundary(response.headers)
-      return if boundary.nil?
-      Mail::Part.new(
-        headers: response.headers,
-        body: response.body
-      ).body.split!(boundary).parts
+      # response.body.split(/(\r\n)?\-\-#{boundary}(\-\-)?(\r\n)?/).map {|p| split_part_into_headers_and_body(p) }
+
+      # useful regexp lifted from the Mail gem
+      parts_regex = /
+        (?:                    # non-capturing group
+          \A                |  # start of string OR
+          \r\n                 # line break
+         )
+        (
+          --#{Regexp.escape(boundary || "")}  # boundary delimiter
+          (?:--)?                             # with non-capturing optional closing
+        )
+        (?=\s*$)                              # lookahead matching zero or more spaces followed by line-ending
+      /x
+
+      # splits string into body, separator pairs; do we care about preamble, conclusion strings
+      parts = response.body.split(parts_regex).each_slice(2).to_a
+
+      if parts.size > 1
+        final_separator = parts[-2].last
+        parts << [""] if final_separator != "--#{boundary}--"
+      end
+
+      parts.map { |p| split_part_into_headers_and_body(p.first) }.reject { |x| x[:body].blank? }
     end
+    # rubocop:enable Metrics/AbcSize
 
     def get_body(response)
       if response.multipart?
         parts = multipart_sections(response)
+
         unless parts.nil?
-          # might consider looking for application/xml+xop payload in there
-          return parts.first.body.to_s
+          # might consider looking for application/xml+xop payload in the headers
+          return parts.first[:body]
         end
       end
 
