@@ -30,8 +30,6 @@ describe 'Ruby Encrypt/Decrypt test vs Java reference impl' do
   end
 
   it 'encrypts in java, and decrypts using ruby' do
-    pending('This spec fails in jruby') if RUBY_PLATFORM == 'java'
-
     encrypted_xml = VBMS.encrypted_soap_document(
       plaintext_xml, test_jks_keystore, test_keystore_pass, plaintext_request_name)
     decrypted_xml = VBMS.decrypt_message_xml_ruby(encrypted_xml, test_pc12_server_key,
