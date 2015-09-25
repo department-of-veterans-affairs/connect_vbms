@@ -16,7 +16,7 @@ file.
 Result
 ~~~~~~
 
-An ``Array`` of ``VBMS::Document`` objects.
+An ``Array`` of ``VBMS::Responses::Document`` objects.
 
 ``FetchDocumentById``
 ---------------------
@@ -31,7 +31,7 @@ identifier.
 Result
 ~~~~~~
 
-A ``VBMS::DocumentWithContent``.
+A ``VBMS::Responses::DocumentWithContent``.
 
 ``GetDocumentTypes``
 --------------------
@@ -46,7 +46,7 @@ supports.
 Result
 ~~~~~~
 
-An ``Array`` of ``VBMS::DocumentType``.
+An ``Array`` of ``VBMS::Responses::DocumentType``.
 
 ``UploadDocumentWithAssociations``
 ----------------------------------
@@ -64,8 +64,8 @@ An ``Array`` of ``VBMS::DocumentType``.
 Responses
 =========
 
-``VBMS::Document``
-------------------
+``VBMS::Responses::Document``
+-----------------------------
 
 Attributes
 ~~~~~~~~~~
@@ -76,17 +76,17 @@ Attributes
 * ``source`` (``String``): where this document came from.
 * ``received_at`` (``Date`` or ``nil``): when the VA received this document.
 
-``VBMS::DocumentWithContent``
------------------------------
+``VBMS::Responses::DocumentWithContent``
+----------------------------------------
 
 Attributes
 ~~~~~~~~~~
 
-* ``document`` (``VBMS::Document``)
+* ``document`` (``VBMS::Responses::Document``)
 * ``content`` (``String``): the contents of the file
 
-``VBMS::DocumentType``
-----------------------
+``VBMS::Responses::DocumentType``
+---------------------------------
 
 Attributes
 ~~~~~~~~~~

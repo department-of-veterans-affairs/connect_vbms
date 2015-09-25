@@ -25,7 +25,7 @@ describe VBMS::Requests::ListDocuments do
 
     it 'should return an array of Document objects' do
       expect(subject).to be_an(Array)
-      expect(subject).to all(be_a(VBMS::Document))
+      expect(subject).to all(be_a(VBMS::Responses::Document))
       expect(subject.count).to eq(179) # how many are in sample file
     end
 
