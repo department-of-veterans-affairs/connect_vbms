@@ -29,7 +29,7 @@ Now you can issue a request, to list the contents of an eFolder:
 
     request = VBMS::Requests::ListDocuments.new("<file number>")
 
-    result = client.send(request)
+    result = client.send_request(request)
 
 Connect VBMS works by creating request objects, which are pure-data objects to
 represent the set of parameters an API call takes. These request objects are

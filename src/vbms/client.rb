@@ -52,7 +52,7 @@ module VBMS
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def send(request)
+    def send_request(request)
       unencrypted_xml = request.render_xml
 
       log(
@@ -95,6 +95,14 @@ module VBMS
       process_response(request, response)
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    def send(request)
+      # the Gem::Deprecate method didn't work because this method was named send
+      msg = "NOTE: Client#send is deprecated and will be removed in version 1.0; use #send_request instead\n" \
+            "Client.send called from #{Gem.location_of_caller.join(':')}\n"
+      warn msg unless Gem::Deprecate.skip
+      send_request(request)
+    end
 
     def inject_saml(doc)
       saml_doc = Nokogiri::XML(File.read(@saml)).root
