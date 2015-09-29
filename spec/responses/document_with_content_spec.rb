@@ -19,4 +19,24 @@ describe VBMS::Responses::DocumentWithContent do
       specify { expect(subject.document.received_at).to eq(Date.parse('2015-05-06')) }
     end
   end
+
+  describe 'serialization' do
+    let(:document) { VBMS::Responses::Document.new }
+    let(:content) { 'foo' }
+    let(:attrs) { { document: document, content: content } }
+    subject { VBMS::Responses::DocumentWithContent.new(attrs) }
+
+    it 'should respond to to_h' do
+      expect(subject.to_h).to be_a(Hash)
+      expect(subject.to_h).to include(attrs)
+    end
+
+    it 'should respond to to_s' do
+      expect(subject.to_s).to be_a(String)
+    end
+
+    it 'should respond to inspect with same response as to_s' do
+      expect(subject.inspect).to eq(subject.to_s)
+    end
+  end
 end

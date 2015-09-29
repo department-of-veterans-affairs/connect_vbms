@@ -14,6 +14,12 @@ module VBMS
         new(document: Document.create_from_xml(document_el),
             content: Base64.decode64(el.at_xpath('//v4:content/ns2:data/text()', VBMS::XML_NAMESPACES).content))
       end
+
+      def to_h
+        { document: document, content: content }
+      end
+
+      alias_method :to_s, :inspect
     end
   end
 end
