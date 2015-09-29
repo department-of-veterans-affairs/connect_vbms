@@ -26,7 +26,7 @@ module VBMS
       def to_h
         # not using metaprogramming to keep it simple
         {
-          document_id: @document_id,
+          document_id: document_id,
           filename: filename,
           doc_type: doc_type,
           source: source,
