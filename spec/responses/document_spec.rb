@@ -32,6 +32,14 @@ describe VBMS::Responses::Document do
       expect(subject.to_s).to be_a(String)
     end
 
+    it 'should contain the attributes in to_s' do
+      s = subject.to_s
+      expect(s).to include(attrs[:document_id])
+      expect(s).to include(attrs[:filename])
+      expect(s).to include(attrs[:doc_type])
+      expect(s).to include(attrs[:source])
+    end
+
     it 'should respond to inspect' do
       expect(subject.inspect).to eq(subject.to_s)
     end

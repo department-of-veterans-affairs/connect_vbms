@@ -35,6 +35,10 @@ describe VBMS::Responses::DocumentWithContent do
       expect(subject.to_s).to be_a(String)
     end
 
+    it 'should contain the attributes in to_s' do
+      expect(subject.to_s).to include(content)
+    end
+
     it 'should respond to inspect with same response as to_s' do
       expect(subject.inspect).to eq(subject.to_s)
     end
