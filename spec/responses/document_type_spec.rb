@@ -11,4 +11,30 @@ describe VBMS::Responses::DocumentType do
     specify { expect(subject.type_id).to eq('431') }
     specify { expect(subject.description).to eq('VA 21-4706c Court Appointed Fiduciarys Accounting') }
   end
+
+  describe 'serialization' do
+    let(:attrs) do
+      { type_id: '431', description: 'VA 21-4706c Court Appointed Fiduciarys Accounting' }
+    end
+    subject { VBMS::Responses::DocumentType.new(attrs) }
+
+    it 'should respond to to_h' do
+      expect(subject.to_h).to be_a(Hash)
+      expect(subject.to_h).to include(attrs)
+    end
+
+    it 'should respond to to_s' do
+      expect(subject.to_s).to be_a(String)
+    end
+
+    it 'should contain the attributes in to_s' do
+      s = subject.to_s
+      expect(s).to include(attrs[:type_id])
+      expect(s).to include(attrs[:description])
+    end
+
+    it 'should respond to inspect' do
+      expect(subject.inspect).to eq(subject.to_s)
+    end
+  end
 end

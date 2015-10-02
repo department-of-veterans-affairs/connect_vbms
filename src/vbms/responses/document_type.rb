@@ -12,6 +12,12 @@ module VBMS
         new(type_id: el['id'],
             description: el['description'])
       end
+
+      def to_h
+        { type_id: type_id, description: description }
+      end
+
+      alias_method :to_s, :inspect
     end
   end
 end
