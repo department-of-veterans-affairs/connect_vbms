@@ -64,6 +64,7 @@ For ``ListDocuments``, the result is a list of ``VBMS::Responses::Document`` obj
 full details on ``ListDocuments`` and all the other API requests, consult the
 :doc:`API requests documentation <requests>`.
 
+
 Contents
 --------
 
@@ -72,3 +73,4 @@ Contents
 
     requests
     crosscompile_java
+    logger
