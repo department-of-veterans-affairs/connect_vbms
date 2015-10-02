@@ -74,6 +74,7 @@ Attributes
 * ``filename`` (``String``): the original filename of this document.
 * ``doc_type`` (``String``): the id for this document type.
 * ``source`` (``String``): where this document came from.
+* ``mime_type`` (``String``): the MIME type of the document.
 * ``received_at`` (``Date`` or ``nil``): when the VA received this document.
 
 ``VBMS::Responses::DocumentWithContent``
