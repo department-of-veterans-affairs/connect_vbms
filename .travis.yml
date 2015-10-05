@@ -15,6 +15,12 @@ matrix:
     - rvm: 2.2.2
       before_install: gem install bundler --no-ri --no-rdoc
       jdk: oraclejdk8
+    - rvm: 2.2.3
+      before_install: gem install bundler --no-ri --no-rdoc
+      jdk: oraclejdk7
+    - rvm: 2.2.3
+      before_install: gem install bundler --no-ri --no-rdoc
+      jdk: oraclejdk8
     - rvm: jruby-1.7.20
       before_install: gem install bundler --no-ri --no-rdoc
       before_script: export JRUBY_OPTS="$JRUBY_OPTS --2.0"
