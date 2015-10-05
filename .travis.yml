@@ -3,16 +3,16 @@ cache: bundler
 
 matrix:
   include:
-    - rvm: 2.1.0
+    - rvm: 2.1.6
       before_install: gem install bundler --no-ri --no-rdoc
       jdk: oraclejdk7
-    - rvm: 2.1.0
+    - rvm: 2.1.6
       before_install: gem install bundler --no-ri --no-rdoc
       jdk: oraclejdk8
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       before_install: gem install bundler --no-ri --no-rdoc
       jdk: oraclejdk7
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       before_install: gem install bundler --no-ri --no-rdoc
       jdk: oraclejdk8
     - rvm: jruby-1.7.20
