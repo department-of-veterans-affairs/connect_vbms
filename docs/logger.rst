@@ -29,7 +29,7 @@ Note that the contents of the ``data`` hash will vary depending on the message. 
 
 This logging callback is called at the beginning of building the request to VBMS, before the XML message is placed within a SOAP envelope and encrypted and signed. 
 
-  * ``:unencrypted_body`` (``String``) the XML of the request
+* ``:unencrypted_body`` (``String``) the XML of the request
 
 **request**
 
