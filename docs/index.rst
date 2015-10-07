@@ -91,7 +91,7 @@ Java Versions
 
 To build with a specific version of Java, use our `building java guide`_.
 
-
+----
 
 .. contents:: Table of Contents
    :depth: 2
@@ -101,4 +101,3 @@ To build with a specific version of Java, use our `building java guide`_.
 .. _contributing guide: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/contributing.rst
 .. _building java guide: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/crosscompile_java.rst
 .. _vagrant guide: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/developing_with_vagrant.rst
->>>>>>> b1cbc25... Fixes rst links and TOC
