@@ -20,8 +20,8 @@ The constructors for the ``VBMS::Client`` class accept an optional argument for 
 
 The ``log`` method must accept two parameters that will be provided with the following values
 
-  * ``event`` (``Symbol``): the type of the event
-  * ``data`` (``Hash``): the specific data associated with the event
+* ``event`` (``Symbol``): the type of the event
+* ``data`` (``Hash``): the specific data associated with the event
 
 Note that the contents of the ``data`` hash will vary depending on the message. Currently, the logger will be called with these types of messages
 
@@ -35,15 +35,15 @@ This logging callback is called at the beginning of building the request to VBMS
 
 This logging callback is invoked immediately after the request is sent to the VBMS API. It includes the following fields in its data hash
 
-  * ``:response_code`` (``Integer``) - the response code returned from the VBMS server
-  * ``:request_body`` (``String``) - the request sent to the VBMS server
-  * ``:response_body`` (``String``) - the raw contents of the response received from VBMS
-  * ``:request`` (``HTTPI::Request``) - the raw HTTPI object used for the request
+* ``:response_code`` (``Integer``) - the response code returned from the VBMS server
+* ``:request_body`` (``String``) - the request sent to the VBMS server
+* ``:response_body`` (``String``) - the raw contents of the response received from VBMS
+* ``:request`` (``HTTPI::Request``) - the raw HTTPI object used for the request
 
 **decrypted_message**
 
 This logging callback is called immediately after the SOAP response from VBMS is decrypted. It provides the following parameters:
 
-  * ``:decrypted_data`` (``String``) - the decrypted XML received from VBMS
-  * ``:request`` (``HTTPI::Request``) - the HTTPI request object
+* ``:decrypted_data`` (``String``) - the decrypted XML received from VBMS
+* ``:request`` (``HTTPI::Request``) - the HTTPI request object
   
