@@ -1,7 +1,12 @@
+
+***********************
 Welcome to Connect VBMS
-=======================
+***********************
 
 Connect VBMS is an SDK for integrating with VBMS from Ruby.
+
+Getting Started
+---------------
 
 To get started, you'll first need to get credentials from the VBMS team.
 You'll also need to make sure you have ``javac`` installed (version 1.7 or higher), and run
@@ -26,7 +31,7 @@ Alternatively, you can set the values for these fields as environment variables.
 
 .. _12-factor application: http://12factor.net/
 
-.. code-block:: zsh
+.. code-block:: bash
 
     CONNECT_VBMS_URL = '<endpoint URL for the environment you want to access>'
     CONNECT_VBMS_ENV_DIR = '<path to directory where VBMS environments are found>'
@@ -60,17 +65,39 @@ Connect VBMS works by creating request objects, which are pure-data objects to
 represent the set of parameters an API call takes. These request objects are
 then passed to the client for execution.
 
+
+Requests Documentation
+----------------------
+
 For ``ListDocuments``, the result is a list of ``VBMS::Responses::Document`` objects. For
-full details on ``ListDocuments`` and all the other API requests, consult the
-:doc:`API requests documentation <requests>`.
+full details on ``ListDocuments`` and all the other API requests, consult the `requests documentation`_.
 
 
-Contents
---------
+Contributing
+------------
 
-.. toctree::
-    :maxdepth: 2
+Contributing Guide
+==================
 
-    requests
-    crosscompile_java
-    logger
+View our `contributing guide`_ for information on contributing to this gem. 
+
+Developing with Vagrant
+=======================
+
+View our `vagrant guide`_ for information on using our prebuilt Vagrant VM for development.
+
+Java Versions
+=============
+
+To build with a specific version of Java, use our `building java guide`_.
+
+----
+
+.. contents:: Table of Contents
+   :depth: 2
+
+
+.. _requests documentation: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/requests.rst#api-requests
+.. _contributing guide: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/contributing.rst
+.. _building java guide: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/crosscompile_java.rst
+.. _vagrant guide: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/developing_with_vagrant.rst

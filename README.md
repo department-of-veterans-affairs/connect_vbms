@@ -40,15 +40,14 @@ From the root directory, run:
 
 `rake docs`
 
-## VM Development
+## Contributing
 
-Requires:
-  - [Vagrant 1.7.2 or above](http://www.vagrantup.com/downloads.html)
-  - [VirtualBox](https://www.virtualbox.org/wiki/Downloads) or [VMWare Fusion](https://www.vmware.com/go/downloadfusion)
+Please read our [Contributing guide](https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/contributing.rst) to get started.
 
-Copy the provided example Vagrantfile and Vagrant up!
-```bash
-$ cp Vagrantfile.example Vagrantfile
-$ vagrant up
-```
+
+## License
+
+[The project is in the public domain](LICENSE.md), and all contributions will also be released in the public domain. By submitting a pull request, you are agreeing to waive all rights to your contribution under the terms of the [CC0 Public Domain Dedication](http://creativecommons.org/publicdomain/zero/1.0/).
+
+This project constitutes an original work of the United States Government.
 
