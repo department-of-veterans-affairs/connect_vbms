@@ -14,12 +14,17 @@ describe VBMS::Responses::Document do
     specify { expect(subject.source).to eq('VHA_CUI') }
     specify { expect(subject.mime_type).to eq('text/plain') }
     specify { expect(subject.received_at).to eq(Date.parse('2015-05-06')) }
+
+    it 'should support the common type coercion used on some elements' do
+      expect(subject.doc_type.to_i).to eq(356)
+      expect(subject.received_at.beginning_of_day).to eq(Date.parse('2015-05-06').beginning_of_day)
+    end
   end
 
   describe 'serialization' do
     let(:attrs) do
       { document_id: '{9E364101-AFDD-49A7-A11F-602CCF2E5DB5}', filename: 'tmp20150506-94244-6zotzp', 
-        doc_type: '356', source: 'VHA_CUI', mime_type: 'text/plan', received_at: Time.now }
+        doc_type: '356', source: 'VHA_CUI', mime_type: 'text/plain', received_at: Time.now }
     end
     subject { VBMS::Responses::Document.new(attrs) }
 
