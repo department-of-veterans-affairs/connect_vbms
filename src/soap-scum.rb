@@ -111,7 +111,12 @@ module SoapScum
     end
 
     def encrypt(soap_doc, certificate, private_key, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt, validity: 5.minutes)
-      envelope = soap_doc.xpath('/soapenv:Envelope', soapenv: XMLNamespaces::SOAPENV)
+      envelope = soap_doc.xpath('/soapenv:Envelope',
+          soapenv: XMLNamespaces::SOAPENV,
+          'xmlns:cdm' => "http://vbms.vba.va.gov/cdm"
+          'xmlns:doc' => "http://vbms.vba.va.gov/cdm/document/v4"
+          'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4"
+          'xmlns:xop' => "http://www.w3.org/2004/08/xop/include")
 
       # Ensure there is a header node.
       header = envelope.at_xpath('/soapenv:Header', soapenv: XMLNamespaces::SOAPENV)
@@ -134,8 +139,7 @@ module SoapScum
       
       Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header', soap: XMLNamespaces::SOAPENV)) do |xml|
         xml['wsse'].Security('xmlns:wsse' => XMLNamespaces::WSSE,
-                             'xmlns:wsu' => XMLNamespaces::WSU,
-                             'xmlns:xenc' => XMLNamespaces::XENC) do
+                             'xmlns:wsu' => XMLNamespaces::WSU) do
           # Add wsu:Timestamp
           timestamp_id = "TS-#{generate_id}"
           xml['wsu'].Timestamp('wsu:Id' => timestamp_id,
@@ -151,8 +155,6 @@ module SoapScum
         end
       end
 
-      nodes_to_encrypt = [body_node(soap_doc), timestamp_node(soap_doc)]
-
       Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header/wsse:Security',
                                             soap: XMLNamespaces::SOAPENV,
                                             'xmlns:wsse' => XMLNamespaces::WSSE,
@@ -164,7 +166,7 @@ module SoapScum
           certificate,
           keytransport_algorithm,
           cipher_algorithm,
-          nodes_to_encrypt
+          body_node(soap_doc).children
         )
         # TODO(awong): Allow configurable digest and signature methods.
         # TODO(astone): Determine which node to sign based on request type
@@ -173,26 +175,33 @@ module SoapScum
           certificate,
           "http://www.w3.org/2000/09/xmldsig#sha1",
           "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
-          nodes_to_encrypt
+          [body_node(soap_doc).children, timestamp_node(soap_doc)]
         )
 
-        encrypt_references(xml, nodes_to_encrypt)
+        
+      end
+
+      Nokogiri::XML::Builder.with(soap_doc.at("*//[Id=#{key_id}]",
+          soap: XMLNamespaces::SOAPENV,
+          'xmlns:wsse' => XMLNamespaces::WSSE,
+          'xmlns:wsu' => XMLNamespaces::WSU,
+          'xmlns:xenc' => XMLNamespaces::XENC)) do |xml|
+        encrypt_references(xml, body_node(soap_doc).children)
       end
 
 # 1. build xmlenc template (store cipherdata)
 # 2. build xmldsig template (retain unencyprted elements)
 # 3. sign document.
 # 4. insert cipherdata and remove unencrypted elements
-
+puts soap_doc.to_xml
       signed_doc = sign_soap_doc(soap_doc, private_key).document
 
-      # nodes_to_encrypt = [body_node(signed_doc), timestamp_node(signed_doc)]
-      # nodes_to_encrypt.each_with_index do |node,i|
-      #   node.add_previous_sibling(encrypted_elements[i])
-      #   node.remove
-      # end
+      nodes_to_encrypt = body_node(signed_doc).children
+      nodes_to_encrypt.each_with_index do |node,i|
+        node.add_previous_sibling(encrypted_elements[i])
+        node.remove
+      end
       
-
 
       # debug
       puts signed_doc.document.serialize(
@@ -340,7 +349,7 @@ module SoapScum
             xml['ds'].Reference(URI: "##{node.attr('wsu:Id')}") do
              xml['ds'].Transforms do
                xml['ds'].Transform(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
-                 xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "wsse cdm doc soapenv v4 xop")
+                 xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "cdm doc v4 xop")
                end
              end
              xml['ds'].DigestMethod(Algorithm: digest_method)
