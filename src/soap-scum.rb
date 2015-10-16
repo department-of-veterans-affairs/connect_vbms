@@ -96,7 +96,11 @@ module SoapScum
     # TODO(awong): Add mustUnderstand support.
     def wrap_in_soap(contents_doc)
       builder = Nokogiri::XML::Builder.new do |xml|
-        xml['soapenv'].Envelope('xmlns:soapenv' => XMLNamespaces::SOAPENV) do
+        xml['soapenv'].Envelope('xmlns:soapenv' => XMLNamespaces::SOAPENV,
+            'xmlns:cdm' => "http://vbms.vba.va.gov/cdm",
+            'xmlns:doc' => "http://vbms.vba.va.gov/cdm/document/v4",
+            'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4",
+            'xmlns:xop' => "http://www.w3.org/2004/08/xop/include") do
           xml['soapenv'].Body(
               'wsu:Id' => "ID-#{generate_id}",
               'xmlns:wsu' => XMLNamespaces::WSU
@@ -111,12 +115,7 @@ module SoapScum
     end
 
     def encrypt(soap_doc, certificate, private_key, keytransport_algorithm, cipher_algorithm, nodes_to_encrypt, validity: 5.minutes)
-      envelope = soap_doc.xpath('/soapenv:Envelope',
-          soapenv: XMLNamespaces::SOAPENV,
-          'xmlns:cdm' => "http://vbms.vba.va.gov/cdm"
-          'xmlns:doc' => "http://vbms.vba.va.gov/cdm/document/v4"
-          'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4"
-          'xmlns:xop' => "http://www.w3.org/2004/08/xop/include")
+      envelope = soap_doc.xpath('/soapenv:Envelope', soapenv: XMLNamespaces::SOAPENV)
 
       # Ensure there is a header node.
       header = envelope.at_xpath('/soapenv:Header', soapenv: XMLNamespaces::SOAPENV)
@@ -128,9 +127,9 @@ module SoapScum
         header = envelope.children.first
       end
 
-      #    sign Body unless request type == uploadDocumentWithAssociations
-
-      # reference from Java implementation:
+      # Java encryption reference:
+      # sign Body unless request type == uploadDocumentWithAssociations
+      # ---------------------------------------------------------------
       #    if (requestType.equals("uploadDocumentWithAssociations")) {
       #   return new WSEncryptionPart("document", VBMS_NAMESPACE, "Element");
       # } else {
@@ -175,7 +174,7 @@ module SoapScum
           certificate,
           "http://www.w3.org/2000/09/xmldsig#sha1",
           "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
-          [body_node(soap_doc).children, timestamp_node(soap_doc)]
+          [timestamp_node(soap_doc), body_node(soap_doc)]
         )
 
         
@@ -193,21 +192,26 @@ module SoapScum
 # 2. build xmldsig template (retain unencyprted elements)
 # 3. sign document.
 # 4. insert cipherdata and remove unencrypted elements
+puts "Pre-signed document: ---------------------"
 puts soap_doc.to_xml
+# /debug
+
       signed_doc = sign_soap_doc(soap_doc, private_key).document
 
       nodes_to_encrypt = body_node(signed_doc).children
       nodes_to_encrypt.each_with_index do |node,i|
-        node.add_previous_sibling(encrypted_elements[i])
+        # node.add_previous_sibling(encrypted_elements[i])
+        node.add_next_sibling(encrypted_elements[i])
         node.remove
       end
       
 
-      # debug
-      puts signed_doc.document.serialize(
-              encoding: 'UTF-8',
-              save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
-            )
+puts "SIGNED document: ==================="
+puts signed_doc.document.serialize(
+        encoding: 'UTF-8',
+        save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
+      )
+# /debug
 
       signed_doc.document.serialize(
         encoding: 'UTF-8',
@@ -225,12 +229,11 @@ puts soap_doc.to_xml
     end
 
     def generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm, cipher)
-
       cipher.reset
       cipher.encrypt
       cipher.key = symmetric_key
       iv = cipher.random_iv
-# puts node.inspect
+
       raw_xml = node.serialize(encoding: 'UTF-8', save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
       cipher_text = iv + cipher.update(raw_xml) + cipher.final
       builder = Nokogiri::XML::Builder.new do |xml|
@@ -308,6 +311,8 @@ puts soap_doc.to_xml
           xml['xenc'].CipherValue Base64.strict_encode64(certificate.public_key.public_encrypt(symmetric_key))
         end
 
+        # moved to #encrypt
+
         # xml['xenc'].ReferenceList do
         #   nodes_to_encrypt.each do |node|
         #     encrypted_node_id = "ED-#{generate_id}"
@@ -335,7 +340,7 @@ puts soap_doc.to_xml
     end
 
     def add_xmldsig_template(xml, certificate, digest_method, signature_method, nodes_to_sign)
-      xml['ds'].Signature('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', Id: "EK-#{generate_id}") do
+      xml['ds'].Signature('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', Id: "SIG-#{generate_id}") do
         xml['ds'].SignedInfo('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',
                              'xmlns:soapenv' => XMLNamespaces::SOAPENV
             ) do
@@ -349,7 +354,8 @@ puts soap_doc.to_xml
             xml['ds'].Reference(URI: "##{node.attr('wsu:Id')}") do
              xml['ds'].Transforms do
                xml['ds'].Transform(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
-                 xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: "cdm doc v4 xop")
+                  prefix_list = (node.name == 'Body' ? 'cdm doc v4 xop' : 'wsse cdm doc soapenv v4 xop')
+                  xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: prefix_list)
                end
              end
              xml['ds'].DigestMethod(Algorithm: digest_method)
