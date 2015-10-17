@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'equivalent-xml', '~> 0.6'
   spec.add_development_dependency 'simplecov', '~> 0.10'
   spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'webmock', '~> 1.21.0'
+  spec.add_development_dependency 'webmock', '~> 1.22.0'
   spec.add_development_dependency 'byebug' if RUBY_PLATFORM != 'java'
 
   spec.add_runtime_dependency 'httpclient', '~> 2.6'
