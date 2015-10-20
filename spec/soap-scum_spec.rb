@@ -41,6 +41,7 @@ describe :SoapScum do
     let (:keystore) {
       keystore = SoapScum::KeyStore.new
       keystore.add_pc12(server_pc12, keypass)
+      keystore.add_pc12(client_pc12, keypass)
       keystore
     }
     let (:message_processor) {
@@ -58,14 +59,25 @@ describe :SoapScum do
     end
 
     it "Encrypts and signs a soap message" do
-      # pending "Fix signing!"
+      pending "Fix signing!"
       
+      crypto_options = {
+        server: {
+            certificate: keystore.all.first.certificate,
+            keytransport_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
+            cipher_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::AES128
+          },
+        client: {
+            certificate: keystore.all.last.certificate,
+            private_key: keystore.all.last.key,
+            keytransport_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1",
+            cipher_algorithm: "http://www.w3.org/2000/09/xmldsig#rsa-sha1"
+          }
+        }
+
       soap_doc = message_processor.wrap_in_soap(content_document)
       encrypted_xml = message_processor.encrypt(soap_doc,
-                                                keystore.all.first.certificate,
-                                                keystore.all.first.key,
-                                                SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
-                                                SoapScum::MessageProcessor::CryptoAlgorithms::AES128,
+                                                crypto_options,
                                                 soap_doc.at_xpath(
                                                   '/soapenv:Envelope/soapenv:Body',
                                                   soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
@@ -80,6 +92,11 @@ describe :SoapScum do
 
       expect(decrypted_doc).to eq(encrypted_doc)
       # TODO(awong): Verify decrypt_xml matches original soap_doc.
+    end
+
+
+    it "can be decrypted with ruby" do
+      skip "pending valid encryption and validation with java"
     end
   end
 
