@@ -70,8 +70,8 @@ describe :SoapScum do
         client: {
             certificate: keystore.all.last.certificate,
             private_key: keystore.all.last.key,
-            keytransport_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1",
-            cipher_algorithm: "http://www.w3.org/2000/09/xmldsig#rsa-sha1"
+            digest_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1",
+            signature_algorithm: "http://www.w3.org/2000/09/xmldsig#rsa-sha1"
           }
         }
 

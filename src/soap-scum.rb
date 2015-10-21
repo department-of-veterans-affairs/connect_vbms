@@ -114,6 +114,20 @@ module SoapScum
     end
 
     def encrypt(soap_doc, crypto_options, nodes_to_encrypt, validity: 5.minutes)
+      # TODO(astone)
+      # improve crypto_options messaging, make it cohesive with keystore
+      # Determine which node to sign based on request type
+      # TODO(awong): Allow configurable digest and signature methods.
+      
+      # Java encryption reference:
+      # sign Body unless request type == uploadDocumentWithAssociations
+      # ---------------------------------------------------------------
+      #    if (requestType.equals("uploadDocumentWithAssociations")) {
+      #   return new WSEncryptionPart("document", VBMS_NAMESPACE, "Element");
+      # } else {
+      #   return new WSEncryptionPart("Body", SOAP_NAMESPACE, "Content");
+      # }
+
       envelope = soap_doc.xpath('/soapenv:Envelope', soapenv: XMLNamespaces::SOAPENV)
 
       # Ensure there is a header node.
@@ -125,15 +139,6 @@ module SoapScum
         envelope.children.first.add_previous_sibling(header_builder.doc.root)
         header = envelope.children.first
       end
-
-      # Java encryption reference:
-      # sign Body unless request type == uploadDocumentWithAssociations
-      # ---------------------------------------------------------------
-      #    if (requestType.equals("uploadDocumentWithAssociations")) {
-      #   return new WSEncryptionPart("document", VBMS_NAMESPACE, "Element");
-      # } else {
-      #   return new WSEncryptionPart("Body", SOAP_NAMESPACE, "Content");
-      # }
       
       Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header', soap: XMLNamespaces::SOAPENV)) do |xml|
         xml['wsse'].Security('xmlns:wsse' => XMLNamespaces::WSSE,
@@ -153,6 +158,7 @@ module SoapScum
         end
       end
 
+
       Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header/wsse:Security',
                                               soap: XMLNamespaces::SOAPENV,
                                               'xmlns:wsse' => XMLNamespaces::WSSE,
@@ -165,13 +171,12 @@ module SoapScum
           crypto_options[:server][:cipher_algorithm],
           body_node(soap_doc).children
         )
-        # TODO(awong): Allow configurable digest and signature methods.
-        # TODO(astone): Determine which node to sign based on request type
+
         add_xmldsig_template(
           xml,
           crypto_options[:client][:certificate],
-          crypto_options[:client][:keytransport_algorithm],
-          crypto_options[:client][:cipher_algorithm],
+          crypto_options[:client][:digest_algorithm],
+          crypto_options[:client][:signature_algorithm],
           [timestamp_node(soap_doc), body_node(soap_doc)]
         )
 
@@ -188,6 +193,7 @@ module SoapScum
 
       signed_doc = sign_soap_doc(soap_doc, crypto_options[:client][:private_key]).document
 
+      # inject ciphertext and remove original nodes
       nodes_to_encrypt = body_node(signed_doc).children
       nodes_to_encrypt.each_with_index do |node, i|
         node.add_previous_sibling(encrypted_elements[i])
@@ -309,7 +315,6 @@ module SoapScum
           encrypted_node_id = "ED-#{generate_id}"
           encrypted_node = generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm, cipher)
           xml['xenc'].DataReference(URI: "##{encrypted_node_id}")
-
           encrypted_elements << encrypted_node
         end
       end
