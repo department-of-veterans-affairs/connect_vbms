@@ -70,7 +70,13 @@ Requests Documentation
 ----------------------
 
 For ``ListDocuments``, the result is a list of ``VBMS::Responses::Document`` objects. For
-full details on ``ListDocuments`` and all the other API requests, consult the `requests documentation`_.
+full details on ``ListDocuments`` and all the other API requests, consult :doc:`requests`
+
+Audit Logging
+-------------
+
+The ``VBMS::Client`` constructors accept an optional Logger argument. This is not the Ruby Logger but a class you define
+to respond to specific messages from the VBMS Client. For more details, see :doc:`logger`
 
 
 Contributing
@@ -79,25 +85,14 @@ Contributing
 Contributing Guide
 ==================
 
-View our `contributing guide`_ for information on contributing to this gem. 
+View :doc:`Contribution Guidelines <contributing>` for information on contributing to this gem. 
 
 Developing with Vagrant
 =======================
 
-View our `vagrant guide`_ for information on using our prebuilt Vagrant VM for development.
+View :doc:`developing_with_vagrant` for information on using our prebuilt Vagrant VM for development.
 
 Java Versions
 =============
 
-To build with a specific version of Java, use our `building java guide`_.
-
-----
-
-.. contents:: Table of Contents
-   :depth: 2
-
-
-.. _requests documentation: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/requests.rst#api-requests
-.. _contributing guide: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/contributing.rst
-.. _building java guide: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/crosscompile_java.rst
-.. _vagrant guide: https://github.com/department-of-veterans-affairs/connect_vbms/blob/master/docs/developing_with_vagrant.rst
+To build with a specific version of Java, see :doc:`crosscompile_java`.
