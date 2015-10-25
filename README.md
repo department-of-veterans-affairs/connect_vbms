@@ -18,7 +18,10 @@ The library currently uses Java for some encryption functionality. When this is 
 
 From the root directory, run:
 
-`rake build`
+```
+> bundle install
+> bundle exec rake build
+```
 
 ## Tests
 
@@ -50,4 +53,3 @@ Please read our [Contributing guide](https://github.com/department-of-veterans-a
 [The project is in the public domain](LICENSE.md), and all contributions will also be released in the public domain. By submitting a pull request, you are agreeing to waive all rights to your contribution under the terms of the [CC0 Public Domain Dedication](http://creativecommons.org/publicdomain/zero/1.0/).
 
 This project constitutes an original work of the United States Government.
-
