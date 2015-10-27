@@ -38,12 +38,12 @@ This logging callback is invoked immediately after the request is sent to the VB
 * ``:response_code`` (``Integer``) - the response code returned from the VBMS server
 * ``:request_body`` (``String``) - the request sent to the VBMS server
 * ``:response_body`` (``String``) - the raw contents of the response received from VBMS
-* ``:request`` (``HTTPI::Request``) - the raw HTTPI object used for the request
+* ``:request`` (``VBMS::Requests``) - the ``VBMS::Requests`` object for the request
 
 **decrypted_message**
 
 This logging callback is called immediately after the SOAP response from VBMS is decrypted. It provides the following parameters:
 
 * ``:decrypted_data`` (``String``) - the decrypted XML received from VBMS
-* ``:request`` (``HTTPI::Request``) - the HTTPI request object
+* ``:request`` (``VBMS::Requests``) - the HTTPI request object
   
