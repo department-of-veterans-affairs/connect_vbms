@@ -45,5 +45,5 @@ This logging callback is invoked immediately after the request is sent to the VB
 This logging callback is called immediately after the SOAP response from VBMS is decrypted. It provides the following parameters:
 
 * ``:decrypted_data`` (``String``) - the decrypted XML received from VBMS
-* ``:request`` (``VBMS::Requests``) - the HTTPI request object
+* ``:request`` (``VBMS::Requests``) - the ``VBMS::Requests`` object
   
