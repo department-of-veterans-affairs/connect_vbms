@@ -12,7 +12,7 @@ module VBMS
         document_el = el.at_xpath('//v4:document', VBMS::XML_NAMESPACES)
   
         new(document: Document.create_from_xml(document_el),
-            content: Base64.decode64(el.at_xpath('//v4:content/ns2:data/text()', VBMS::XML_NAMESPACES).content))
+            content: Base64.decode64(el.at_xpath('//v4:content/doc:data/text()', VBMS::XML_NAMESPACES).content))
       end
 
       def to_h

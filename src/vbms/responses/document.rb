@@ -13,7 +13,7 @@ module VBMS
       end
   
       def self.create_from_xml(el)
-        received_date = el.at_xpath('ns2:receivedDt/text()', VBMS::XML_NAMESPACES)
+        received_date = el.at_xpath('doc:receivedDt/text()', VBMS::XML_NAMESPACES)
         
         new(document_id: el['id'],
             filename: el['filename'],

@@ -7,9 +7,24 @@ module VBMS
 
   XML_NAMESPACES = {
     v4: 'http://vbms.vba.va.gov/external/eDocumentService/v4',
-    ns2: 'http://vbms.vba.va.gov/cdm/document/v4',
+    doc: 'http://vbms.vba.va.gov/cdm/document/v4',
     soapenv: 'http://schemas.xmlsoap.org/soap/envelope/',
-    wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
+    wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd',
+    cdm: 'http://vbms.vba.va.gov/cdm',
+    xop: 'http://www.w3.org/2004/08/xop/include',
+    wsse11: 'http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd',
+    wsu: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd',
+    ds: 'http://www.w3.org/2000/09/xmldsig#',
+    xenc: 'http://www.w3.org/2001/04/xmlenc#'
+  }
+
+  # Useful namespaces to declare at the top of a soap:Envelope
+  ENVELOPE_NAMESPACE_DECLARATIONS = {
+    'xmlns:soapenv' => XML_NAMESPACES[:soapenv],
+    'xmlns:v4' => XML_NAMESPACES[:v4],
+    'xmlns:doc' => XML_NAMESPACES[:doc],
+    'xmlns:cdm' => XML_NAMESPACES[:cdm],
+    'xmlns:xop' => XML_NAMESPACES[:xop]
   }
 
   class ClientError < StandardError

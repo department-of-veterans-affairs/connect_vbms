@@ -3,15 +3,6 @@ require 'nokogiri'
 require 'xmldsig'
 
 module SoapScum
-  module XMLNamespaces
-    SOAPENV = "http://schemas.xmlsoap.org/soap/envelope/"
-    WSSE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
-    WSSE11 = "http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd"
-    WSU = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-    DS = "http://www.w3.org/2000/09/xmldsig#"
-    XENC = "http://www.w3.org/2001/04/xmlenc#"
-  end
-
   class KeyStore
     CertificateAndKey = Struct.new(:certificate, :key)
 
@@ -52,12 +43,10 @@ module SoapScum
     def keyinfo_to_normalized_subject(keyinfo_node)
       subject = keyinfo_node.at(
         '/ds:KeyInfo/wsse:SecurityTokenReference/ds:X509Data/ds:X509IssuerSerial/ds:X509IssuerName',
-        ds: XMLNamespaces::DS,
-        wsse: XMLNamespaces::WSSE)
+        VBMS::XML_NAMESPACES)
       serial = keyinfo_node.at(
         '/ds:KeyInfo/wsse:SecurityTokenReference/ds:X509Data/ds:X509IssuerSerial/ds:X509SerialNumber',
-        ds: XMLNamespaces::DS,
-        wsse: XMLNamespaces::WSSE)
+        VBMS::XML_NAMESPACES)
 
       normalized_subject = subject.inner_text.split(',').map { |x| x.split('=') }.sort_by { |x| x[0] }
       normalized_subject << ['SerialNumber', serial.inner_text]
@@ -97,14 +86,10 @@ module SoapScum
     # TODO(awong): Add mustUnderstand support.
     def wrap_in_soap(contents_doc)
       builder = Nokogiri::XML::Builder.new do |xml|
-        xml['soapenv'].Envelope('xmlns:soapenv' => XMLNamespaces::SOAPENV,
-                                'xmlns:cdm' => "http://vbms.vba.va.gov/cdm",
-                                'xmlns:doc' => "http://vbms.vba.va.gov/cdm/document/v4",
-                                'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4",
-                                'xmlns:xop' => "http://www.w3.org/2004/08/xop/include") do
+        xml['soapenv'].Envelope(VBMS::ENVELOPE_NAMESPACE_DECLARATIONS) do
           xml['soapenv'].Body(
             'wsu:Id' => "ID-#{generate_id}",
-            'xmlns:wsu' => XMLNamespaces::WSU
+            'xmlns:wsu' => VBMS::XML_NAMESPACES[:wsu]
           ) do
             xml.parent << contents_doc.root.clone unless contents_doc.nil?
           end
@@ -128,26 +113,27 @@ module SoapScum
       #   return new WSEncryptionPart("Body", SOAP_NAMESPACE, "Content");
       # }
 
-      envelope = soap_doc.xpath('/soapenv:Envelope', soapenv: XMLNamespaces::SOAPENV)
+      envelope = soap_doc.xpath('/soapenv:Envelope', VBMS::XML_NAMESPACES)
 
       # Ensure there is a header node.
-      header = envelope.at_xpath('/soapenv:Header', soapenv: XMLNamespaces::SOAPENV)
+      header = envelope.at_xpath('/soapenv:Header', VBMS::XML_NAMESPACES)
       if header.nil?
         header_builder = Nokogiri::XML::Builder.new do |xml|
-          xml["soapenv"].Header('xmlns:soapenv' => XMLNamespaces::SOAPENV)
+          xml["soapenv"].Header('xmlns:soapenv' => VBMS::XML_NAMESPACES[:soapenv])
         end
         envelope.children.first.add_previous_sibling(header_builder.doc.root)
         header = envelope.children.first
       end
       
-      Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header', soap: XMLNamespaces::SOAPENV)) do |xml|
-        xml['wsse'].Security('xmlns:wsse' => XMLNamespaces::WSSE,
-                             'xmlns:wsu' => XMLNamespaces::WSU) do
+      Nokogiri::XML::Builder.with(soap_doc.at('/soapenv:Envelope/soap:Header', VBMS::XML_NAMESPACES)) do |xml|
+        xml['wsse'].Security('xmlns:wsse' => VBMS::XML_NAMESPACES[:wsse],
+                             'xmlns:wsu' => VBMS::XML_NAMESPACES[:wsu]) do
           # Add wsu:Timestamp
           timestamp_id = "TS-#{generate_id}"
+          # FIXME: redundant namespace declarations
           xml['wsu'].Timestamp('wsu:Id' => timestamp_id,
-                               'xmlns:wsse' => XMLNamespaces::WSSE,
-                               'xmlns:wsu' => XMLNamespaces::WSU
+                               'xmlns:wsse' => VBMS::XML_NAMESPACES[:wsse],
+                               'xmlns:wsu' => VBMS::XML_NAMESPACES[:wsu]
                               ) do
             # Using localtime technically follows spec but seems to break
             # various parsers.
@@ -158,12 +144,11 @@ module SoapScum
         end
       end
 
-
-      Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header/wsse:Security',
-                                              soap: XMLNamespaces::SOAPENV,
-                                              'xmlns:wsse' => XMLNamespaces::WSSE,
-                                              'xmlns:wsu' => XMLNamespaces::WSU,
-                                              'xmlns:xenc' => XMLNamespaces::XENC)) do |xml|
+      Nokogiri::XML::Builder.with(soap_doc.at('/soapenv:Envelope/soap:Header/wsse:Security',
+                                              soapenv: VBMS::XML_NAMESPACES[:soapenv],
+                                              'xmlns:wsse' => VBMS::XML_NAMESPACES[:wsse],
+                                              'xmlns:wsu' => VBMS::XML_NAMESPACES[:wsu],
+                                              'xmlns:xenc' => VBMS::XML_NAMESPACES[:xenc])) do |xml|
         add_xmlenc_template(
           xml,
           crypto_options[:server][:certificate],
@@ -184,10 +169,10 @@ module SoapScum
       end
 
       Nokogiri::XML::Builder.with(soap_doc.at("*//[Id=#{key_id}]",
-                                              soap: XMLNamespaces::SOAPENV,
-                                              'xmlns:wsse' => XMLNamespaces::WSSE,
-                                              'xmlns:wsu' => XMLNamespaces::WSU,
-                                              'xmlns:xenc' => XMLNamespaces::XENC)) do |xml|
+                                              soapenv: VBMS::XML_NAMESPACES[:soapenv],
+                                              'xmlns:wsse' => VBMS::XML_NAMESPACES[:wsse],
+                                              'xmlns:wsu' => VBMS::XML_NAMESPACES[:wsu],
+                                              'xmlns:xenc' => VBMS::XML_NAMESPACES[:xenc])) do |xml|
         encrypt_references(xml, body_node(soap_doc).children)
       end
 
