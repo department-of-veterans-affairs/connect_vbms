@@ -9,7 +9,6 @@ module Xmldsig
   end
 
   class Reference
-
     def digest_value=(digest_value)
       reference.at_xpath("descendant::ds:DigestValue", NAMESPACES).content =
           Base64.strict_encode64(digest_value).chomp

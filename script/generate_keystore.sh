@@ -66,7 +66,7 @@ keytool -importcert \
 openssl pkcs12 -export -name vbms_server_key -in "$DIR/server.crt" -inkey "$DIR/server.key" \
   -out "$DIR/keystore.p12"
 keytool -importkeystore -destkeystore "$DIR/keystore.jks" -srckeystore "$DIR/keystore.p12" \
-  -srcstoretype pkcs12 -alias vbms_server_key -storepass "importkey"
+  -srcstoretype pkcs12 -alias "vbms_server_key" -storepass "importkey"
 
 # move server key
 if [ -f "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12" ] ; then

@@ -26,8 +26,14 @@ module SoapScum
     def add_pc12(path, keypass = "")
       pkcs12 = OpenSSL::PKCS12.new(File.read(path), keypass)
       entry = CertificateAndKey.new(pkcs12.certificate, pkcs12.key)
-
       @by_subject[x509_to_normalized_subject(pkcs12.certificate)] = entry
+    end
+
+    def add_pubkey(path)
+      certificate = OpenSSL::X509::Certificate.new(File.read(path))
+      entry = CertificateAndKey.new(certificate)
+      # @by_subject['pubkey'] = entry
+      @by_subject[x509_to_normalized_subject(certificate)] = entry
     end
 
     def get_key(keyinfo_node)
@@ -45,7 +51,7 @@ module SoapScum
     # Takes an x509 certificate and returns an array sorted in an order that
     # allows for matching against other normalized subjects.
     def x509_to_normalized_subject(certificate)
-      normalized_subject = certificate.subject.to_a.map { |name, value, _| [name, value] }.sort_by { |x| x[0] }
+      normalized_subject = certificate.subject.to_a.reverse.map { |name, value, _| [name, value] }.sort_by { |x| x[0] }
       normalized_subject << ['SerialNumber', certificate.serial.to_s]
     end
 
@@ -143,7 +149,6 @@ module SoapScum
       Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header', soap: XMLNamespaces::SOAPENV)) do |xml|
         xml['wsse'].Security('xmlns:wsse' => XMLNamespaces::WSSE,
                              'xmlns:wsu' => XMLNamespaces::WSU) do
-          # Add wsu:Timestamp
           timestamp_id = "TS-#{generate_id}"
           xml['wsu'].Timestamp('wsu:Id' => timestamp_id,
                                'xmlns:wsse' => XMLNamespaces::WSSE,
@@ -169,7 +174,8 @@ module SoapScum
           crypto_options[:server][:certificate],
           crypto_options[:server][:keytransport_algorithm],
           crypto_options[:server][:cipher_algorithm],
-          body_node(soap_doc).children
+          # body_node(soap_doc).children
+          [body_node(soap_doc)]
         )
 
         add_xmldsig_template(
@@ -183,16 +189,15 @@ module SoapScum
         
       end
 
-      Nokogiri::XML::Builder.with(soap_doc.at("*//[Id=#{key_id}]",
+      signed_doc = sign_soap_doc(soap_doc, crypto_options[:client][:private_key]).document
+
+      Nokogiri::XML::Builder.with(signed_doc.at("*//[Id=#{key_id}]",
                                               soap: XMLNamespaces::SOAPENV,
                                               'xmlns:wsse' => XMLNamespaces::WSSE,
                                               'xmlns:wsu' => XMLNamespaces::WSU,
                                               'xmlns:xenc' => XMLNamespaces::XENC)) do |xml|
-        encrypt_references(xml, body_node(soap_doc).children)
+        encrypt_references(xml, body_node(signed_doc).children)
       end
-
-      signed_doc = sign_soap_doc(soap_doc, crypto_options[:client][:private_key]).document
-
       # inject ciphertext and remove original nodes
       nodes_to_encrypt = body_node(signed_doc).children
       nodes_to_encrypt.each_with_index do |node, i|
@@ -219,7 +224,8 @@ module SoapScum
 
     def sign_soap_doc(soap_doc, private_key)
       signed_doc = Xmldsig::SignedDocument.new(soap_doc)
-      signed_doc.signatures.reverse_each { |signature| signature.sign(private_key) }
+      # signed_doc.signatures.reverse_each { |signature| signature.sign(private_key) }
+      signed_doc.sign(private_key)
       signed_doc
     end
 
@@ -276,7 +282,7 @@ module SoapScum
     end
 
     def generate_id
-      SecureRandom.hex(5)
+      SecureRandom.hex(5).upcase
     end
 
     # Takes an XMLBuilder and adds the XML Encryption template.
@@ -295,7 +301,7 @@ module SoapScum
           xml['wsse'].SecurityTokenReference do
             xml['ds'].X509Data do
               xml['ds'].X509IssuerSerial do
-                xml['ds'].X509IssuerName certificate.subject.to_a.map { |name, value, _| "#{name}=#{value}" }.join(',')
+                xml['ds'].X509IssuerName certificate.issuer.to_a.reverse.map { |name, value, _| "#{name}=#{value}" }.join(',')
                 xml['ds'].X509SerialNumber certificate.serial.to_s
               end
             end
@@ -349,7 +355,8 @@ module SoapScum
           xml['wsse'].SecurityTokenReference('wsu:Id' => "STR-#{generate_id}") do
             xml['ds'].X509Data do
               xml['ds'].X509IssuerSerial do
-                xml['ds'].X509IssuerName certificate.subject.to_a.map { |name, value, _| "#{name}=#{value}" }.join(',')
+                xml['ds'].X509IssuerName certificate.subject.to_a.reverse.map { |name, value, _| "#{name}=#{value}" }.join(',')
+                # xml['ds'].X509IssuerName certificate.issuer.to_a.reverse.map { |name, value, _| "#{name}=#{value}" }.join(',')
                 xml['ds'].X509SerialNumber certificate.serial.to_s
               end
             end

@@ -1,3 +1,5 @@
+require 'soap-scum'
+
 module VBMS
   # rubocop:disable Metrics/ClassLength
   class Client
@@ -7,14 +9,38 @@ module VBMS
       env_dir = File.join(get_env('CONNECT_VBMS_ENV_DIR'), env_name)
       VBMS::Client.new(
         get_env('CONNECT_VBMS_URL'),
-        env_path(env_dir, 'CONNECT_VBMS_KEYFILE'),
-        env_path(env_dir, 'CONNECT_VBMS_SAML'),
-        env_path(env_dir, 'CONNECT_VBMS_KEY', allow_empty: true),
-        get_env('CONNECT_VBMS_KEYPASS'),
-        env_path(env_dir, 'CONNECT_VBMS_CACERT', allow_empty: true),
-        env_path(env_dir, 'CONNECT_VBMS_CERT', allow_empty: true),
+        env_path(env_dir, 'CONNECT_VBMS_SAML_FILE'),
+        env_path(env_dir, 'CONNECT_VBMS_SERVER_KEY_FILE'),
+        env_path(env_dir, 'CONNECT_VBMS_IMPORT_KEY_FILE'),
+        get_env('CONNECT_VBMS_IMPORT_KEY_PASS'),
+        # security in transport
+        env_path(env_dir, 'CONNECT_VBMS_HTTPS_KEY_FILE', allow_empty: true),
+        get_env('CONNECT_VBMS_HTTPS_KEY_PASS', allow_empty: true),
+        env_path(env_dir, 'CONNECT_VBMS_HTTPS_CERT_FILE', allow_empty: true),
+        env_path(env_dir, 'CONNECT_VBMS_HTTPS_CACERT_FILE', allow_empty: true),
         logger
       )
+    end
+
+    def initialize(endpoint_url, saml, server_key, client_key, client_keypass, 
+                   https_key, https_keypass, https_cert, https_cacert, logger = nil)
+      @endpoint_url = endpoint_url
+      @saml = saml
+      @server_key = server_key
+      @client_key = client_key
+      @client_keypass = client_keypass
+      
+      @keystore = SoapScum::KeyStore.new
+      @keystore.add_pubkey(@server_key)
+      @keystore.add_pc12(@client_key, @client_keypass)
+
+      @processor = SoapScum::MessageProcessor.new(@keystore)
+
+      @https_key = https_key
+      @https_keypass = https_keypass
+      @https_cacert = https_cacert
+
+      @logger = logger
     end
 
     def self.get_env(env_var_name, allow_empty: false)
@@ -34,19 +60,6 @@ module VBMS
       end
     end
 
-    def initialize(endpoint_url, keyfile, saml, key, keypass, cacert,
-                   client_cert, logger = nil)
-      @endpoint_url = endpoint_url
-      @keyfile = keyfile
-      @saml = saml
-      @key = key
-      @keypass = keypass
-      @cacert = cacert
-      @client_cert = client_cert
-
-      @logger = logger
-    end
-
     def log(event, data)
       @logger.log(event, data) if @logger
     end
@@ -60,11 +73,25 @@ module VBMS
         unencrypted_body: unencrypted_xml
       )
 
-      output = VBMS.encrypted_soap_document_xml(
-        unencrypted_xml,
-        @keyfile,
-        @keypass,
-        request.name)
+      # output = VBMS.encrypted_soap_document_xml(
+      #   unencrypted_xml,
+      #   @keyfile,
+      #   @keypass,
+      #   request.name)
+      # ---------------------
+
+
+      # soap_doc = @processor.wrap_in_soap(Nokogiri::XML(unencrypted_xml))
+      # soap_doc = @processor.wrap_in_soap(Nokogiri::XML(unencrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT))
+      unencrypted_doc = parse_xml_strictly(unencrypted_xml)
+      soap_doc = @processor.wrap_in_soap(unencrypted_doc)
+      output = @processor.encrypt(soap_doc,
+        crypto_options,
+        soap_doc.at_xpath(
+          '/soapenv:Envelope/soapenv:Body',
+          soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+
+      # -------------------------
       doc = Nokogiri::XML(output)
       inject_saml(doc)
       remove_must_understand(doc)
@@ -113,10 +140,11 @@ module VBMS
     end
 
     def remove_must_understand(doc)
-      doc.at_xpath(
+      node = doc.at_xpath(
         '//wsse:Security',
         wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
-      ).attributes['mustUnderstand'].remove
+      ).attributes['mustUnderstand']
+      node.remove if node
     end
 
     def create_body(request, doc)
@@ -133,11 +161,11 @@ module VBMS
     # rubocop:disable Metrics/AbcSize
     def build_request(body, headers)
       request = HTTPI::Request.new(@endpoint_url)
-      if @key
-        request.auth.ssl.cert_key_file = @key
-        request.auth.ssl.cert_key_password = @keypass
-        request.auth.ssl.cert_file = @client_cert
-        request.auth.ssl.ca_cert_file = @cacert
+      if @https_key
+        request.auth.ssl.cert_key_file = @https_key
+        request.auth.ssl.cert_key_password = @https_keypass
+        request.auth.ssl.cert_file = @https_cert
+        request.auth.ssl.ca_cert_file = @https_cacert
         request.auth.ssl.verify_mode = :peer
       else
         # TODO: this can't really be correct
@@ -149,6 +177,22 @@ module VBMS
       request
     end
     # rubocop:enable Metrics/AbcSize
+
+    def crypto_options
+      {
+        server: {
+            certificate: @keystore.all.first.certificate,
+            keytransport_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
+            cipher_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::AES128
+        },
+        client: {
+            certificate: @keystore.all.last.certificate,
+            private_key: @keystore.all.last.key,
+            digest_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1",
+            signature_algorithm: "http://www.w3.org/2000/09/xmldsig#rsa-sha1"
+        }
+      }
+    end
 
     def parse_xml_strictly(xml_string)
       begin

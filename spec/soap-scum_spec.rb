@@ -7,6 +7,7 @@ describe :SoapScum do
   let (:client_x509_subject) { Nokogiri::XML(fixture('soap-scum/client_x509_subject_keyinfo.xml')) }
   let (:server_pc12) { fixture_path('test_keystore_vbms_server_key.p12') }
   let (:client_pc12) { fixture_path('test_keystore_importkey.p12') }
+
   let (:test_jks_keystore) { fixture_path('test_keystore.jks') }
   let (:test_keystore_pass) { "importkey" }
   let (:keypass) { 'importkey' }
@@ -51,11 +52,13 @@ describe :SoapScum do
       Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc /></hi-mom>')
     }
 
-    it "Creates basic soap envelope" do
-      soap_doc = message_processor.wrap_in_soap(content_document)
-      expect(soap_doc.is_a? Nokogiri::XML::Document).to eq(true)
-      # TODO(astone)
-      # add more expectations to validate the structure of the document
+    describe "#wrap_in_soap" do
+      it "Creates basic soap envelope" do
+        soap_doc = message_processor.wrap_in_soap(content_document)
+        expect(soap_doc.is_a? Nokogiri::XML::Document).to eq(true)
+        # TODO(astone)
+        # add more expectations to validate the structure of the document
+      end
     end
 
     it "Encrypts and signs a soap message" do
