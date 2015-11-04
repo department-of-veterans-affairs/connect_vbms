@@ -36,7 +36,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'byebug' if RUBY_PLATFORM != 'java'
 
   spec.add_runtime_dependency 'httpclient', '~> 2.6'
-  spec.add_runtime_dependency 'httpi', '~> 2.4'
   spec.add_runtime_dependency 'nokogiri', '~> 1.6'
   spec.add_runtime_dependency 'xmlenc', '~> 0.3.0'
   spec.add_runtime_dependency 'mail'

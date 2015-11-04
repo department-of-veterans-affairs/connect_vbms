@@ -45,6 +45,19 @@ module VBMS
       @client_cert = client_cert
 
       @logger = logger
+
+      http_client = HTTPClient.new
+      if @key
+        http_client.ssl_config.set_client_cert_file(
+          @client_cert, @key, @keypass
+        )
+        http_client.ssl_config.set_trust_ca(@cacert)
+        http_client.ssl_config.verify_mode = :peer
+      else
+        http_client.ssl_config.verify_mode = :none
+      end
+
+      @http_client = http_client
     end
 
     def log(event, data)
@@ -71,14 +84,15 @@ module VBMS
 
       body = create_body(request, doc)
 
-      http_request = build_request(
-        body,
-        'Content-Type' => 'Multipart/Related; '\
-                  'type="application/xop+xml"; '\
-                  'start-info="application/soap+xml"; '\
-                  'boundary="boundary_1234"')
-      HTTPI.log = false
-      response = HTTPI.post(http_request)
+      response = @http_client.post(
+        @endpoint_url, body: body, header: [
+          [
+            'Content-Type',
+            'Multipart/Related; type="application/xop+xml"; '\
+              'start-info="application/soap+xml"; boundary="boundary_1234"'
+          ],
+        ]
+      )
 
       log(
         :request,
@@ -130,26 +144,6 @@ module VBMS
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
-    def build_request(body, headers)
-      request = HTTPI::Request.new(@endpoint_url)
-      if @key
-        request.auth.ssl.cert_key_file = @key
-        request.auth.ssl.cert_key_password = @keypass
-        request.auth.ssl.cert_file = @client_cert
-        request.auth.ssl.ca_cert_file = @cacert
-        request.auth.ssl.verify_mode = :peer
-      else
-        # TODO: this can't really be correct
-        request.auth.ssl.verify_mode = :none
-      end
-
-      request.body = body
-      request.headers = headers
-      request
-    end
-    # rubocop:enable Metrics/AbcSize
-
     def parse_xml_strictly(xml_string)
       begin
         xml = Nokogiri::XML(
@@ -188,7 +182,7 @@ module VBMS
       end
 
       # otherwise just return the body
-      response.body
+      response.content
     end
 
     def process_response(request, response)
