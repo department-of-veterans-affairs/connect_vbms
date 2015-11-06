@@ -168,12 +168,16 @@ module VBMS
       return if boundary.nil?
       Mail::Part.new(
         headers: response.headers,
-        body: response.body
+        body: response.content
       ).body.split!(boundary).parts
     end
 
+    def multipart?(response)
+      !(response.headers['Content-Type'] =~ /^multipart/im).nil?
+    end
+    
     def get_body(response)
-      if response.multipart?
+      if multipart?(response)
         parts = multipart_sections(response)
         unless parts.nil?
           # might consider looking for application/xml+xop payload in there
@@ -209,10 +213,10 @@ module VBMS
     def check_soap_errors(doc, response)
       # the envelope should be the root node of the document
       soap = doc.at_xpath('/soapenv:Envelope', VBMS::XML_NAMESPACES)
-      fail SOAPError.new('No SOAP envelope found in response', response.body) if
+      fail SOAPError.new('No SOAP envelope found in response', response.content) if
         soap.nil?
 
-      fail SOAPError.new('SOAP Fault returned', response.body) if
+      fail SOAPError.new('SOAP Fault returned', response.content) if
         soap.at_xpath('//soapenv:Fault', VBMS::XML_NAMESPACES)
     end
   end
