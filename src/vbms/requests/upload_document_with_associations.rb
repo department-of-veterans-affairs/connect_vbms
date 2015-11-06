@@ -21,10 +21,6 @@ module VBMS
         'uploadDocumentWithAssociations'
       end
 
-      def template
-        VBMS.load_erb('upload_document_xml_template.xml.erb')
-      end
-
       # received_date returns a string representing the date the document was
       # created, in the EST time zone
       #

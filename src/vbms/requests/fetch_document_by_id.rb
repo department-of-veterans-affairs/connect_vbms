@@ -9,10 +9,6 @@ module VBMS
         'fetchDocumentById'
       end
 
-      def template
-        VBMS.load_erb('fetch_document_by_id_xml_template.xml.erb')
-      end
-
       def render_xml
         VBMS::Requests.soap do |xml|
           xml['v4'].fetchDocumentById do

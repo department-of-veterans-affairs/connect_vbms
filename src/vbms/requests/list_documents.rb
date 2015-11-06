@@ -9,10 +9,6 @@ module VBMS
         'listDocuments'
       end
 
-      def template
-        VBMS.load_erb('list_documents_xml_template.xml.erb')
-      end
-
       def render_xml
         VBMS::Requests.soap do |xml|
           xml['v4'].listDocuments do
