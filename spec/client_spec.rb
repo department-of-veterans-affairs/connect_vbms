@@ -52,7 +52,7 @@ describe VBMS::Client do
 
     it 'creates two log messages' do
       body = Nokogiri::XML('<xml>body</xml')
-      HTTPClient.any_instance.stub(:post).and_return(@response)
+      allow_any_instance_of(HTTPClient).to receive(:post).and_return(@response)
       allow(@client).to receive(:process_response).and_return(nil)
       allow(VBMS).to receive(:encrypted_soap_document_xml).and_return(body.to_s)
       allow(@client).to receive(:inject_saml)
@@ -97,8 +97,8 @@ describe VBMS::Client do
     end
 
     before(:each) do
-      HTTPClient::SSLConfig.any_instance.stub(:set_trust_ca)
-      HTTPClient::SSLConfig.any_instance.stub(:set_client_cert_file)
+      allow_any_instance_of(HTTPClient::SSLConfig).to receive(:set_trust_ca)
+      allow_any_instance_of(HTTPClient::SSLConfig).to receive(:set_client_cert_file)
     end
     
     it 'smoke test that it initializes when all environment variables are set' do
