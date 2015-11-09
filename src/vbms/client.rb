@@ -90,7 +90,7 @@ module VBMS
             'Content-Type',
             'Multipart/Related; type="application/xop+xml"; '\
               'start-info="application/soap+xml"; boundary="boundary_1234"'
-          ],
+          ]
         ]
       )
 
