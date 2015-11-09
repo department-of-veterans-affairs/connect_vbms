@@ -52,9 +52,9 @@ module VBMS
           @client_cert, @key, @keypass
         )
         http_client.ssl_config.set_trust_ca(@cacert)
-        http_client.ssl_config.verify_mode = :peer
+        http_client.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_PEER
       else
-        http_client.ssl_config.verify_mode = :none
+        http_client.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
 
       @http_client = http_client
