@@ -57,13 +57,11 @@ module VBMS
   def self.decrypt_message(infile,
                            keyfile,
                            keypass,
-                           logfile,
                            ignore_timestamp = false)
     args = [DO_WSSE,
             '-i', infile,
             '-k', keyfile,
             '-p', keypass,
-            '-l', logfile,
             ignore_timestamp ? '-t' : '']
     begin
       output, errors, status = Open3.capture3(*args)
@@ -80,12 +78,11 @@ module VBMS
   def self.decrypt_message_xml(in_xml,
                                keyfile,
                                keypass,
-                               logfile,
                                ignore_timestamp = false)
     Tempfile.open('tmp') do |t|
       t.write(in_xml)
       t.flush
-      return decrypt_message(t.path, keyfile, keypass, logfile,
+      return decrypt_message(t.path, keyfile, keypass,
                              ignore_timestamp: ignore_timestamp)
     end
   end

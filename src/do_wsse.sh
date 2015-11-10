@@ -42,16 +42,13 @@ MY_CLASSPATH="${SCRIPT_ROOT}/classes:${SCRIPT_ROOT}/lib/*:${SCRIPT_ROOT}/lib:${S
 if [ "$MODE" = EncryptSOAPDocument ]; then
   [ -z "$REQNAME" ] && echo "Specify request name in -n" >&2 && exit 1
   ARG="$REQNAME"
-  LOGFILE="${SCRIPT_ROOT}/log/upload.log"
-elif [ "$MODE" = DecryptMessage ]; then
-  [ -z "$LOGFILE" ] && echo "Specify outfile with -l" >&2 && exit 1
-else
+fi
+  
+if [ "$MODE" != DecryptMessage -a "$MODE" != EncryptSOAPDocument ]; then
   echo "Unknown Mode...how did that happen??" >&2
   exit 1
 fi
 
-LOGFILE_ARG="-Dlogfilename=${LOGFILE}"
-
-CMD="java -classpath $MY_CLASSPATH $LOGFILE_ARG $DECRYPT_IGNORE_TIMESTAMP $MODE $INFILE $KEYFILE $KEYPASS $ARG"
+CMD="java -classpath $MY_CLASSPATH $DECRYPT_IGNORE_TIMESTAMP $MODE $INFILE $KEYFILE $KEYPASS $ARG"
 echo "Command: $CMD" >&2
 exec $CMD
