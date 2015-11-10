@@ -45,6 +45,19 @@ module VBMS
       @client_cert = client_cert
 
       @logger = logger
+
+      http_client = HTTPClient.new
+      if @key
+        http_client.ssl_config.set_client_cert_file(
+          @client_cert, @key, @keypass
+        )
+        http_client.ssl_config.set_trust_ca(@cacert)
+        http_client.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      else
+        http_client.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+
+      @http_client = http_client
     end
 
     def log(event, data)
@@ -71,14 +84,15 @@ module VBMS
 
       body = create_body(request, doc)
 
-      http_request = build_request(
-        body,
-        'Content-Type' => 'Multipart/Related; '\
-                  'type="application/xop+xml"; '\
-                  'start-info="application/soap+xml"; '\
-                  'boundary="boundary_1234"')
-      HTTPI.log = false
-      response = HTTPI.post(http_request)
+      response = @http_client.post(
+        @endpoint_url, body: body, header: [
+          [
+            'Content-Type',
+            'Multipart/Related; type="application/xop+xml"; '\
+              'start-info="application/soap+xml"; boundary="boundary_1234"'
+          ]
+        ]
+      )
 
       log(
         :request,
@@ -130,26 +144,6 @@ module VBMS
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
-    def build_request(body, headers)
-      request = HTTPI::Request.new(@endpoint_url)
-      if @key
-        request.auth.ssl.cert_key_file = @key
-        request.auth.ssl.cert_key_password = @keypass
-        request.auth.ssl.cert_file = @client_cert
-        request.auth.ssl.ca_cert_file = @cacert
-        request.auth.ssl.verify_mode = :peer
-      else
-        # TODO: this can't really be correct
-        request.auth.ssl.verify_mode = :none
-      end
-
-      request.body = body
-      request.headers = headers
-      request
-    end
-    # rubocop:enable Metrics/AbcSize
-
     def parse_xml_strictly(xml_string)
       begin
         xml = Nokogiri::XML(
@@ -174,12 +168,16 @@ module VBMS
       return if boundary.nil?
       Mail::Part.new(
         headers: response.headers,
-        body: response.body
+        body: response.content
       ).body.split!(boundary).parts
     end
 
+    def multipart?(response)
+      !(response.headers['Content-Type'] =~ /^multipart/im).nil?
+    end
+    
     def get_body(response)
-      if response.multipart?
+      if multipart?(response)
         parts = multipart_sections(response)
         unless parts.nil?
           # might consider looking for application/xml+xop payload in there
@@ -188,7 +186,7 @@ module VBMS
       end
 
       # otherwise just return the body
-      response.body
+      response.content
     end
 
     def process_response(request, response)
@@ -215,10 +213,10 @@ module VBMS
     def check_soap_errors(doc, response)
       # the envelope should be the root node of the document
       soap = doc.at_xpath('/soapenv:Envelope', VBMS::XML_NAMESPACES)
-      fail SOAPError.new('No SOAP envelope found in response', response.body) if
+      fail SOAPError.new('No SOAP envelope found in response', response.content) if
         soap.nil?
 
-      fail SOAPError.new('SOAP Fault returned', response.body) if
+      fail SOAPError.new('SOAP Fault returned', response.content) if
         soap.at_xpath('//soapenv:Fault', VBMS::XML_NAMESPACES)
     end
   end

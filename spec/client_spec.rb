@@ -52,7 +52,7 @@ describe VBMS::Client do
 
     it 'creates two log messages' do
       body = Nokogiri::XML('<xml>body</xml')
-      allow(HTTPI).to receive(:post).and_return(@response)
+      allow_any_instance_of(HTTPClient).to receive(:post).and_return(@response)
       allow(@client).to receive(:process_response).and_return(nil)
       allow(VBMS).to receive(:encrypted_soap_document_xml).and_return(body.to_s)
       allow(@client).to receive(:inject_saml)
@@ -96,6 +96,11 @@ describe VBMS::Client do
         'CONNECT_VBMS_CERT' => 'fake_cert' }
     end
 
+    before(:each) do
+      allow_any_instance_of(HTTPClient::SSLConfig).to receive(:set_trust_ca)
+      allow_any_instance_of(HTTPClient::SSLConfig).to receive(:set_client_cert_file)
+    end
+    
     it 'smoke test that it initializes when all environment variables are set' do
       stub_const('ENV', vbms_env_vars)
       expect(VBMS::Client.from_env_vars).not_to be_nil
@@ -170,7 +175,7 @@ describe VBMS::Client do
 
       let(:request) { double('request') }
       let(:response_body) { '' }
-      let(:response) { double('response', body: response_body, multipart?: false) }
+      let(:response) { double('response', content: response_body, headers: {}) }
 
       subject { client.process_response(request, response) }
 

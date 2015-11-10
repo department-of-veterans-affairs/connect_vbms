@@ -2,7 +2,6 @@
 require 'base64'
 require 'erb'
 require 'httpclient'
-require 'httpi'
 require 'tempfile'
 require 'uri'
 require 'nokogiri'
