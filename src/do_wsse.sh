@@ -41,14 +41,22 @@ MY_CLASSPATH="${SCRIPT_ROOT}/classes:${SCRIPT_ROOT}/lib/*:${SCRIPT_ROOT}/lib:${S
 
 if [ "$MODE" = EncryptSOAPDocument ]; then
   [ -z "$REQNAME" ] && echo "Specify request name in -n" >&2 && exit 1
+  LOGFILE="/tmp/vbms_encrypt.log"
   ARG="$REQNAME"
-fi
-  
-if [ "$MODE" != DecryptMessage -a "$MODE" != EncryptSOAPDocument ]; then
+elif [ "$MODE" = DecryptMessage ]; then
+  LOGFILE="/tmp/vbms_decrypt.log"
+else
   echo "Unknown Mode...how did that happen??" >&2
   exit 1
 fi
 
-CMD="java -classpath $MY_CLASSPATH $DECRYPT_IGNORE_TIMESTAMP $MODE $INFILE $KEYFILE $KEYPASS $ARG"
+# To activate debug logging for WSSE encryption and decryption, edit the lib/log4j.properties file to read
+#   log4j.rootCategory=DEBUG, R
+# instead of ERROR, R. This will write out debug messages. Otherwise, it will write only ERROR messages
+# which means the files will still exist on your filesystem, but they will be blank.
+
+LOGFILE_ARG="-Dlogfilename=${LOGFILE}"
+
+CMD="java -classpath $MY_CLASSPATH $LOGFILE_ARG $DECRYPT_IGNORE_TIMESTAMP $MODE $INFILE $KEYFILE $KEYPASS $ARG"
 echo "Command: $CMD" >&2
 exec $CMD
