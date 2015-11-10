@@ -37,6 +37,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'httpclient', '~> 2.6'
   spec.add_runtime_dependency 'nokogiri', '~> 1.6'
-  spec.add_runtime_dependency 'xmlenc', '~> 0.3.0'
+  spec.add_runtime_dependency 'xmlenc', '~> 0.5.0'
   spec.add_runtime_dependency 'mail'
 end
