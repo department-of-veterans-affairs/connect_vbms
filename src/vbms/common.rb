@@ -104,7 +104,9 @@ module VBMS
                                ignore_timestamp = false)
     if RUBY_PLATFORM == 'java'
       begin
-        return Java::DecryptMessage.decrypt(in_xml, keyfile, keypass)
+        return Java::DecryptMessage.decrypt(
+          in_xml, keyfile, keypass, ignore_timestamp
+        )
       rescue Java::OrgApacheWsSecurity::WSSecurityException => e
         raise ExecutionError.new('DecryptMessage.decrypt', e.backtrace)
       end
