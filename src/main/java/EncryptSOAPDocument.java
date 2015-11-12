@@ -65,8 +65,8 @@ public class EncryptSOAPDocument
 
     Crypto crypto = CryptoFactory.getInstance(properties);
 
-    document = addTimestamp(document);
-    document = addSignature(document, crypto, keyFilePass, requestName);
+    TimestampResult tsResult = addTimestamp(document);
+    document = addSignature(tsResult, crypto, keyFilePass, requestName);
     document = addEncryption(document, crypto, requestName);
     return document;
   }
@@ -81,7 +81,7 @@ public class EncryptSOAPDocument
     return doc;
   }
 
-  public static String addTimestamp(String document) throws Exception
+  public static TimestampResult addTimestamp(String document) throws Exception
   {
     Document doc = getSOAPDoc(document);
     WSSecHeader secHeader = new WSSecHeader();
@@ -89,23 +89,26 @@ public class EncryptSOAPDocument
     WSSecTimestamp timestamp = new WSSecTimestamp();
     timestamp.setTimeToLive(300);
     Document createdDoc = timestamp.build(doc, secHeader);
-    return XMLUtils.PrettyDocumentToString(createdDoc);
+    String tsID = timestamp.getId();
+    return new EncryptSOAPDocument.TimestampResult(
+      XMLUtils.PrettyDocumentToString(createdDoc), tsID
+    );
   }
 
-  public static String addSignature(String document, Crypto crypto,
+  public static String addSignature(TimestampResult tsResult, Crypto crypto,
                                     String keypass, String requestType)
                                     throws Exception
   {
     WSSecSignature builder = new WSSecSignature();
     builder.setUserInfo("importkey", keypass);
-    Document doc = getSOAPDoc(document);
+    Document doc = getSOAPDoc(tsResult.document);
     SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(doc.getDocumentElement());
     WSSecHeader secHeader = new WSSecHeader();
     secHeader.setMustUnderstand(false);
     secHeader.insertSecurityHeader(doc);
 
     List<WSEncryptionPart> references = new ArrayList<WSEncryptionPart>();
-    references.add(new WSEncryptionPart("TS-1"));
+    references.add(new WSEncryptionPart(tsResult.tsID));
 
     references.add(encryptPartForRequest(requestType));
 
@@ -156,4 +159,14 @@ public class EncryptSOAPDocument
 
   // Properties file with default crypto configuration for the test environment.
   private static final String VBMS_PROPERTIES = "vbms.properties";
+
+  static class TimestampResult {
+    public String document;
+    public String tsID;
+
+    TimestampResult(String document, String tsID) {
+      this.document = document;
+      this.tsID = tsID;
+    }
+  }
 }
