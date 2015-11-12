@@ -43,17 +43,13 @@ public class EncryptSOAPDocument
 
     try
     {
-      Properties properties = loadCryptoProperties(keyFileName);
-
       String document = new String(
         Files.readAllBytes(Paths.get(inFileName)), Charset.defaultCharset()
       );
 
-      Crypto crypto = CryptoFactory.getInstance(properties);
-
-      document = addTimestamp(document);
-      document = addSignature(document, crypto, keyFilePass, requestName);
-      document = addEncryption(document, crypto, requestName);
+      document = encrypt(
+        document, keyFileName, keyFilePass, requestName
+      );
       System.out.println(document);
     }
     catch (Exception e)
@@ -61,6 +57,18 @@ public class EncryptSOAPDocument
       e.printStackTrace();
       System.exit(255);
     }
+  }
+
+  public static String encrypt(String document, String keyFileName,
+                               String keyFilePass, String requestName) throws Exception {
+    Properties properties = loadCryptoProperties(keyFileName);
+
+    Crypto crypto = CryptoFactory.getInstance(properties);
+
+    document = addTimestamp(document);
+    document = addSignature(document, crypto, keyFilePass, requestName);
+    document = addEncryption(document, crypto, requestName);
+    return document;
   }
 
   public static Document getSOAPDoc(String document) throws Exception
@@ -141,7 +149,7 @@ public class EncryptSOAPDocument
     properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyfile);
     return properties;
   }
-  
+
   private static void printUsage() {
     System.err.println("java EncryptSOAPDocument INFILE KEYFILE KEYPASS REQUESTNAME");
   }

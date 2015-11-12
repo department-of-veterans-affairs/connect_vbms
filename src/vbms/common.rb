@@ -1,9 +1,26 @@
 require 'open3'
 require 'xmlenc'
 
+
 module VBMS
   FILEDIR = File.dirname(File.absolute_path(__FILE__))
   DO_WSSE = File.join(FILEDIR, '../../src/do_wsse.sh')
+
+  if RUBY_PLATFORM == "java"
+    require 'java'
+
+    PROJECT_ROOT = File.dirname(File.dirname(FILEDIR))
+    ["classes", "lib/*", "lib", "src/main/properties"].each do |p|
+      $CLASSPATH << File.join(PROJECT_ROOT, p)
+    end
+
+    ['wss4j-1.6.7.jar', 'log4j-1.2.14.jar', 'commons-logging-1.1.1.jar', 'xmlsec-1.5.2.jar', 'bcprov-jdk15-144.jar', 'commons-codec-1.3.jar'].each do |jar|
+      require File.join(PROJECT_ROOT, 'lib', jar)
+    end
+    java_import 'EncryptSOAPDocument'
+    java_import java.lang.System
+    System.setProperty("logfilename", "/dev/stderr")
+  end
 
   XML_NAMESPACES = {
     v4: 'http://vbms.vba.va.gov/external/eDocumentService/v4',
@@ -122,10 +139,14 @@ module VBMS
   end
 
   def self.encrypted_soap_document_xml(in_xml, keyfile, keypass, request_name)
-    Tempfile.open('tmp') do |t|
-      t.write(in_xml)
-      t.flush
-      return encrypted_soap_document(t.path, keyfile, keypass, request_name)
+    if RUBY_PLATFORM == "java"
+      return Java::EncryptSOAPDocument.encrypt(in_xml, keyfile, keypass, request_name)
+    else
+      Tempfile.open('tmp') do |t|
+        t.write(in_xml)
+        t.flush
+        return encrypted_soap_document(t.path, keyfile, keypass, request_name)
+      end
     end
   end
 end
