@@ -105,9 +105,9 @@ module VBMS
                                ignore_timestamp = false)
     if RUBY_PLATFORM == 'java'
       begin
-        return Java::DecryptMessage.decrypt(in_xml, keyfile, keypass);
+        return Java::DecryptMessage.decrypt(in_xml, keyfile, keypass)
       rescue Java::OrgApacheWsSecurity::WSSecurityException => e
-        fail ExecutionError.new("DecryptMessage.decrypt", e.backtrace)
+        raise ExecutionError.new('DecryptMessage.decrypt', e.backtrace)
       end
     else
       Tempfile.open('tmp') do |t|
@@ -151,7 +151,7 @@ module VBMS
   end
 
   def self.encrypted_soap_document_xml(in_xml, keyfile, keypass, request_name)
-    if RUBY_PLATFORM == "java"
+    if RUBY_PLATFORM == 'java'
       return Java::EncryptSOAPDocument.encrypt(in_xml, keyfile, keypass, request_name)
     else
       Tempfile.open('tmp') do |t|
