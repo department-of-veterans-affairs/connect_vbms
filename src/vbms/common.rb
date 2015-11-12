@@ -18,6 +18,7 @@ module VBMS
       require File.join(PROJECT_ROOT, 'lib', jar)
     end
     java_import 'EncryptSOAPDocument'
+    java_import 'DecryptMessage'
     java_import java.lang.System
     System.setProperty("logfilename", "/dev/stderr")
   end
@@ -99,11 +100,19 @@ module VBMS
                                keypass,
                                logfile,
                                ignore_timestamp = false)
-    Tempfile.open('tmp') do |t|
-      t.write(in_xml)
-      t.flush
-      return decrypt_message(t.path, keyfile, keypass, logfile,
-                             ignore_timestamp: ignore_timestamp)
+    if RUBY_PLATFORM == "java"
+      begin
+        return Java::DecryptMessage.decrypt(in_xml, keyfile, keypass);
+      rescue Java::OrgApacheWsSecurity::WSSecurityException => e
+        fail ExecutionError.new("DecryptMessage.decrypt", e.backtrace)
+      end
+    else
+      Tempfile.open('tmp') do |t|
+        t.write(in_xml)
+        t.flush
+        return decrypt_message(t.path, keyfile, keypass, logfile,
+                               ignore_timestamp: ignore_timestamp)
+      end
     end
   end
 
