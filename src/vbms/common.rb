@@ -14,9 +14,7 @@ module VBMS
     end
 
     Dir.entries(File.join(PROJECT_ROOT, 'lib')).each do |p|
-      if p.ends_with?('.jar')
-        require File.join(PROJECT_ROOT, 'lib', p)
-      end
+      require File.join(PROJECT_ROOT, 'lib', p) if p.ends_with?('.jar')
     end
 
     java_import 'EncryptSOAPDocument'
