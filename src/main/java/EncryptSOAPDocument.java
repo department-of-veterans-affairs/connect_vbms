@@ -90,9 +90,7 @@ public class EncryptSOAPDocument
     timestamp.setTimeToLive(300);
     Document createdDoc = timestamp.build(doc, secHeader);
     String tsID = timestamp.getId();
-    return new EncryptSOAPDocument.TimestampResult(
-      XMLUtils.PrettyDocumentToString(createdDoc), tsID
-    );
+    return new EncryptSOAPDocument.TimestampResult(createdDoc, tsID);
   }
 
   public static String addSignature(TimestampResult tsResult, Crypto crypto,
@@ -101,7 +99,7 @@ public class EncryptSOAPDocument
   {
     WSSecSignature builder = new WSSecSignature();
     builder.setUserInfo("importkey", keypass);
-    Document doc = getSOAPDoc(tsResult.document);
+    Document doc = tsResult.document;
     SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(doc.getDocumentElement());
     WSSecHeader secHeader = new WSSecHeader();
     secHeader.setMustUnderstand(false);
@@ -161,10 +159,10 @@ public class EncryptSOAPDocument
   private static final String VBMS_PROPERTIES = "vbms.properties";
 
   static class TimestampResult {
-    public String document;
+    public Document document;
     public String tsID;
 
-    TimestampResult(String document, String tsID) {
+    TimestampResult(Document document, String tsID) {
       this.document = document;
       this.tsID = tsID;
     }
