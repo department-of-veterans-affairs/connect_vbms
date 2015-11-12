@@ -21,8 +21,6 @@ module VBMS
 
     java_import 'EncryptSOAPDocument'
     java_import 'DecryptMessage'
-    java_import java.lang.System
-    System.setProperty('logfilename', '/dev/stderr')
   end
 
   XML_NAMESPACES = {
