@@ -8,10 +8,10 @@ describe VBMS::Requests do
       @client = VBMS::Client.from_env_vars
     else
       @client = VBMS::Client.new(
-        'http://test.endpoint.url/',
-        fixture_path('test_keystore.jks'),
-        fixture_path('test_samltoken.xml'),
-        nil,
+        'http://test.endpoint.url/', 
+        fixture_path('test_keystore.jks'), 
+        fixture_path('test_samltoken.xml'), 
+        nil, 
         'importkey', nil, nil, nil
       )
     end
