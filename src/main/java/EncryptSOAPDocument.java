@@ -43,17 +43,13 @@ public class EncryptSOAPDocument
 
     try
     {
-      Properties properties = loadCryptoProperties(keyFileName);
-
       String document = new String(
         Files.readAllBytes(Paths.get(inFileName)), Charset.defaultCharset()
       );
 
-      Crypto crypto = CryptoFactory.getInstance(properties);
-
-      document = addTimestamp(document);
-      document = addSignature(document, crypto, keyFilePass, requestName);
-      document = addEncryption(document, crypto, requestName);
+      document = encrypt(
+        document, keyFileName, keyFilePass, requestName
+      );
       System.out.println(document);
     }
     catch (Exception e)
@@ -61,6 +57,18 @@ public class EncryptSOAPDocument
       e.printStackTrace();
       System.exit(255);
     }
+  }
+
+  public static String encrypt(String document, String keyFileName,
+                               String keyFilePass, String requestName) throws Exception {
+    Properties properties = loadCryptoProperties(keyFileName);
+
+    Crypto crypto = CryptoFactory.getInstance(properties);
+
+    TimestampResult tsResult = addTimestamp(document);
+    document = addSignature(tsResult, crypto, keyFilePass, requestName);
+    document = addEncryption(document, crypto, requestName);
+    return document;
   }
 
   public static Document getSOAPDoc(String document) throws Exception
@@ -73,7 +81,7 @@ public class EncryptSOAPDocument
     return doc;
   }
 
-  public static String addTimestamp(String document) throws Exception
+  public static TimestampResult addTimestamp(String document) throws Exception
   {
     Document doc = getSOAPDoc(document);
     WSSecHeader secHeader = new WSSecHeader();
@@ -81,23 +89,24 @@ public class EncryptSOAPDocument
     WSSecTimestamp timestamp = new WSSecTimestamp();
     timestamp.setTimeToLive(300);
     Document createdDoc = timestamp.build(doc, secHeader);
-    return XMLUtils.PrettyDocumentToString(createdDoc);
+    String tsID = timestamp.getId();
+    return new EncryptSOAPDocument.TimestampResult(createdDoc, tsID);
   }
 
-  public static String addSignature(String document, Crypto crypto,
+  public static String addSignature(TimestampResult tsResult, Crypto crypto,
                                     String keypass, String requestType)
                                     throws Exception
   {
     WSSecSignature builder = new WSSecSignature();
     builder.setUserInfo("importkey", keypass);
-    Document doc = getSOAPDoc(document);
+    Document doc = tsResult.document;
     SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(doc.getDocumentElement());
     WSSecHeader secHeader = new WSSecHeader();
     secHeader.setMustUnderstand(false);
     secHeader.insertSecurityHeader(doc);
 
     List<WSEncryptionPart> references = new ArrayList<WSEncryptionPart>();
-    references.add(new WSEncryptionPart("TS-1"));
+    references.add(new WSEncryptionPart(tsResult.tsID));
 
     references.add(encryptPartForRequest(requestType));
 
@@ -141,11 +150,21 @@ public class EncryptSOAPDocument
     properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyfile);
     return properties;
   }
-  
+
   private static void printUsage() {
     System.err.println("java EncryptSOAPDocument INFILE KEYFILE KEYPASS REQUESTNAME");
   }
 
   // Properties file with default crypto configuration for the test environment.
   private static final String VBMS_PROPERTIES = "vbms.properties";
+
+  static class TimestampResult {
+    public Document document;
+    public String tsID;
+
+    TimestampResult(Document document, String tsID) {
+      this.document = document;
+      this.tsID = tsID;
+    }
+  }
 }
