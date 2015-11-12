@@ -6,21 +6,24 @@ module VBMS
   FILEDIR = File.dirname(File.absolute_path(__FILE__))
   DO_WSSE = File.join(FILEDIR, '../../src/do_wsse.sh')
 
-  if RUBY_PLATFORM == "java"
+  if RUBY_PLATFORM == 'java'
     require 'java'
 
     PROJECT_ROOT = File.dirname(File.dirname(FILEDIR))
-    ["classes", "lib/*", "lib", "src/main/properties"].each do |p|
+    ['classes', 'lib/*', 'lib', 'src/main/properties'].each do |p|
       $CLASSPATH << File.join(PROJECT_ROOT, p)
     end
 
-    ['wss4j-1.6.7.jar', 'log4j-1.2.14.jar', 'commons-logging-1.1.1.jar', 'xmlsec-1.5.2.jar', 'bcprov-jdk15-144.jar', 'commons-codec-1.3.jar'].each do |jar|
+    [
+      'wss4j-1.6.7.jar', 'log4j-1.2.14.jar', 'commons-logging-1.1.1.jar',
+      'xmlsec-1.5.2.jar', 'bcprov-jdk15-144.jar', 'commons-codec-1.3.jar'
+    ].each do |jar|
       require File.join(PROJECT_ROOT, 'lib', jar)
     end
     java_import 'EncryptSOAPDocument'
     java_import 'DecryptMessage'
     java_import java.lang.System
-    System.setProperty("logfilename", "/dev/stderr")
+    System.setProperty('logfilename', '/dev/stderr')
   end
 
   XML_NAMESPACES = {
@@ -100,7 +103,7 @@ module VBMS
                                keypass,
                                logfile,
                                ignore_timestamp = false)
-    if RUBY_PLATFORM == "java"
+    if RUBY_PLATFORM == 'java'
       begin
         return Java::DecryptMessage.decrypt(in_xml, keyfile, keypass);
       rescue Java::OrgApacheWsSecurity::WSSecurityException => e
