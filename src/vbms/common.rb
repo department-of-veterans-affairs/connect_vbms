@@ -13,12 +13,12 @@ module VBMS
       $CLASSPATH << File.join(PROJECT_ROOT, p)
     end
 
-    [
-      'wss4j-1.6.7.jar', 'log4j-1.2.14.jar', 'commons-logging-1.1.1.jar',
-      'xmlsec-1.5.2.jar', 'bcprov-jdk15-144.jar', 'commons-codec-1.3.jar'
-    ].each do |jar|
-      require File.join(PROJECT_ROOT, 'lib', jar)
+    Dir.entries(File.join(PROJECT_ROOT, 'lib')).each do |p|
+      if p.ends_with?('.jar')
+        require File.join(PROJECT_ROOT, 'lib', p)
+      end
     end
+
     java_import 'EncryptSOAPDocument'
     java_import 'DecryptMessage'
     java_import java.lang.System
