@@ -34,13 +34,16 @@ public class DecryptMessage
     String inFileName = args[0];
     String keyFileName = args[1];
     String keyFilePass = args[2];
+    boolean ignoreTimestamp = Boolean.getBoolean("decrypt_ignore_wsse_timestamp");
 
     try
     {
       String encrypted_xml = new String(
         Files.readAllBytes(Paths.get(inFileName)), Charset.defaultCharset()
       );
-      String document = decrypt(encrypted_xml, keyFileName, keyFilePass);
+      String document = decrypt(
+        encrypted_xml, keyFileName, keyFilePass, ignoreTimestamp
+      );
       System.out.println(document);
     }
     catch (Exception e)
@@ -70,25 +73,26 @@ public class DecryptMessage
     properties.setProperty("org.apache.ws.security.crypto.merlin.keystore.file", keyfile);
     return properties;
   }
-  
+
   public static Crypto getCrypto(String keyfile) throws Exception {
     Properties properties = loadCryptoProperties(keyfile);
     return CryptoFactory.getInstance(properties);
   }
 
-  public static String decrypt(String encryptedXml, String keyfile, String keypass) throws Exception {
+  public static String decrypt(String encryptedXml, String keyfile,
+                               String keypass, boolean ignoreTimestamp) throws Exception {
     Crypto signCrypto = getCrypto(keyfile);
     Crypto deCrypto = getCrypto(keyfile);
     CallbackHandler handler = new WSSCallbackHandler(keypass);
     WSSecurityEngine secEngine = new WSSecurityEngine();
-    if (Boolean.getBoolean("decrypt_ignore_wsse_timestamp")) {
+    if (ignoreTimestamp) {
       WSSConfig config = WSSConfig.getNewInstance();
       config.setTimeStampStrict(false);
       config.setTimeStampFutureTTL(Integer.MAX_VALUE);
       config.setTimeStampTTL(Integer.MAX_VALUE);
       secEngine.setWssConfig(config);
     }
- 
+
     Document doc = getSOAPDoc(encryptedXml);
     java.util.List<WSSecurityEngineResult> results = secEngine.processSecurityHeader(doc, null, handler, signCrypto, deCrypto);
     return XMLUtils.PrettyDocumentToString(doc);
