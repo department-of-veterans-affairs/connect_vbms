@@ -1,7 +1,6 @@
 require 'open3'
 require 'xmlenc'
 
-
 module VBMS
   FILEDIR = File.dirname(File.absolute_path(__FILE__))
   DO_WSSE = File.join(FILEDIR, '../../src/do_wsse.sh')
