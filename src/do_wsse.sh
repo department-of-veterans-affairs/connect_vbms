@@ -41,14 +41,19 @@ MY_CLASSPATH="${SCRIPT_ROOT}/classes:${SCRIPT_ROOT}/lib/*:${SCRIPT_ROOT}/lib:${S
 
 if [ "$MODE" = EncryptSOAPDocument ]; then
   [ -z "$REQNAME" ] && echo "Specify request name in -n" >&2 && exit 1
+  LOGFILE="/tmp/vbms_encrypt.log"
   ARG="$REQNAME"
-  LOGFILE="${SCRIPT_ROOT}/log/upload.log"
 elif [ "$MODE" = DecryptMessage ]; then
-  [ -z "$LOGFILE" ] && echo "Specify outfile with -l" >&2 && exit 1
+  LOGFILE="/tmp/vbms_decrypt.log"
 else
   echo "Unknown Mode...how did that happen??" >&2
   exit 1
 fi
+
+# To activate debug logging for WSSE encryption and decryption, edit the lib/log4j.properties file to read
+#   log4j.rootCategory=DEBUG, R
+# instead of ERROR, R. This will write out debug messages. Otherwise, it will write only ERROR messages
+# which means the files will still exist on your filesystem, but they will be blank.
 
 LOGFILE_ARG="-Dlogfilename=${LOGFILE}"
 

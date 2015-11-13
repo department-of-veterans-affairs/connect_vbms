@@ -198,9 +198,7 @@ module VBMS
       check_soap_errors(full_doc, response)
 
       begin
-        data = Tempfile.open('log') do |out_t|
-          VBMS.decrypt_message_xml(body, @keyfile, @keypass, out_t.path)
-        end
+        data = VBMS.decrypt_message_xml(body, @keyfile, @keypass)
       rescue ExecutionError
         raise SOAPError.new('Unable to decrypt SOAP response', body)
       end
