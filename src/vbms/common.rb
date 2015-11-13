@@ -1,9 +1,26 @@
 require 'open3'
 require 'xmlenc'
 
+# rubocop:disable Metrics/ModuleLength
 module VBMS
   FILEDIR = File.dirname(File.absolute_path(__FILE__))
   DO_WSSE = File.join(FILEDIR, '../../src/do_wsse.sh')
+
+  if RUBY_PLATFORM == 'java'
+    require 'java'
+
+    PROJECT_ROOT = File.dirname(File.dirname(FILEDIR))
+    ['classes', 'lib/*', 'lib', 'src/main/properties'].each do |p|
+      $CLASSPATH << File.join(PROJECT_ROOT, p)
+    end
+
+    Dir.entries(File.join(PROJECT_ROOT, 'lib')).each do |p|
+      require File.join(PROJECT_ROOT, 'lib', p) if p.ends_with?('.jar')
+    end
+
+    java_import 'EncryptSOAPDocument'
+    java_import 'DecryptMessage'
+  end
 
   XML_NAMESPACES = {
     v4: 'http://vbms.vba.va.gov/external/eDocumentService/v4',
@@ -82,11 +99,21 @@ module VBMS
                                keypass,
                                logfile,
                                ignore_timestamp = false)
-    Tempfile.open('tmp') do |t|
-      t.write(in_xml)
-      t.flush
-      return decrypt_message(t.path, keyfile, keypass, logfile,
-                             ignore_timestamp: ignore_timestamp)
+    if RUBY_PLATFORM == 'java'
+      begin
+        return Java::DecryptMessage.decrypt(
+          in_xml, keyfile, keypass, ignore_timestamp
+        )
+      rescue Java::OrgApacheWsSecurity::WSSecurityException => e
+        raise ExecutionError.new('DecryptMessage.decrypt', e.backtrace)
+      end
+    else
+      Tempfile.open('tmp') do |t|
+        t.write(in_xml)
+        t.flush
+        return decrypt_message(t.path, keyfile, keypass, logfile,
+                               ignore_timestamp: ignore_timestamp)
+      end
     end
   end
 
@@ -122,10 +149,14 @@ module VBMS
   end
 
   def self.encrypted_soap_document_xml(in_xml, keyfile, keypass, request_name)
-    Tempfile.open('tmp') do |t|
-      t.write(in_xml)
-      t.flush
-      return encrypted_soap_document(t.path, keyfile, keypass, request_name)
+    if RUBY_PLATFORM == 'java'
+      return Java::EncryptSOAPDocument.encrypt(in_xml, keyfile, keypass, request_name)
+    else
+      Tempfile.open('tmp') do |t|
+        t.write(in_xml)
+        t.flush
+        return encrypted_soap_document(t.path, keyfile, keypass, request_name)
+      end
     end
   end
 end
