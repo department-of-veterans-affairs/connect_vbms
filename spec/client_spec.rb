@@ -58,7 +58,8 @@ describe VBMS::Client do
       # allow(@client).to receive(:parse_xml_strictly).and_return(body.to_s)
       # allow(@client).to receive(:inject_saml)
       # allow(@client).to receive(:remove_must_understand)
-      allow(@client).to receive(:create_body).and_return(body.to_s)
+      allow(@client).to receive(:create_body)
+      allow(@client).to receive(:serialize_document).and_return(body.to_s)
       allow(@client).to receive(:process_body)
 
       expect(@client).to receive(:log).with(:unencrypted_xml, unencrypted_body: @request.render_xml)

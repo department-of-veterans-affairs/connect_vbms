@@ -95,10 +95,7 @@ module VBMS
       inject_saml(encrypted_doc)
       remove_must_understand(encrypted_doc)
 
-      serialized_doc = encrypted_doc.serialize(
-        encoding: 'UTF-8',
-        save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
-      )
+      serialized_doc = serialize_document(encrypted_doc)
 
 File.open('saml_request.xml', 'w') do |file|
   file.truncate(0)
@@ -216,6 +213,13 @@ end
         raise SOAPError.new('Unable to parse SOAP message', xml_string)
       end
       xml
+    end
+
+    def serialize_document(doc)
+      doc.serialize(
+        encoding: 'UTF-8',
+        save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
+      )
     end
 
     def parse_body(xml)
