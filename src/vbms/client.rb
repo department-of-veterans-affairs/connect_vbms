@@ -84,17 +84,18 @@ module VBMS
 
       body = create_body(request, doc)
 
-      start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      response = @http_client.post(
-        @endpoint_url, body: body, header: [
-          [
-            'Content-Type',
-            'Multipart/Related; type="application/xop+xml"; '\
-              'start-info="application/soap+xml"; boundary="boundary_1234"'
+      response = nil
+      duration = Benchmark.realtime do
+        response = @http_client.post(
+          @endpoint_url, body: body, header: [
+            [
+              'Content-Type',
+              'Multipart/Related; type="application/xop+xml"; '\
+                'start-info="application/soap+xml"; boundary="boundary_1234"'
+            ]
           ]
-        ]
-      )
-      duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
+        )
+      end
 
       log(
         :request,

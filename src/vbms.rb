@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'base64'
+require 'benchmark'
 require 'erb'
 require 'httpclient'
 require 'tempfile'
