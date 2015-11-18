@@ -3,7 +3,7 @@ require 'spec_helper'
 describe VBMS::Client do
   before(:example) do
     @client = VBMS::Client.new(
-      'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil
+      'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil, nil, nil
     )
   end
 
@@ -29,9 +29,7 @@ describe VBMS::Client do
 
   describe '#send' do
     before do
-      @client = VBMS::Client.new(
-        'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil
-      )
+      @client = new_test_client
 
       @request = double('request',
                         file_number: '123456788',
@@ -54,9 +52,12 @@ describe VBMS::Client do
       body = Nokogiri::XML('<xml>body</xml')
       allow(HTTPI).to receive(:post).and_return(@response)
       allow(@client).to receive(:process_response).and_return(nil)
-      allow(VBMS).to receive(:encrypted_soap_document_xml).and_return(body.to_s)
-      allow(@client).to receive(:inject_saml)
-      allow(@client).to receive(:remove_must_understand)
+      # allow(VBMS).to receive(:encrypted_soap_document_xml).and_return(body.to_s)
+      allow(@client).to receive(:wrap_in_soap).and_return(body.to_s)
+      allow(@client).to receive(:encrypt).and_return(body.to_s)
+      # allow(@client).to receive(:parse_xml_strictly).and_return(body.to_s)
+      # allow(@client).to receive(:inject_saml)
+      # allow(@client).to receive(:remove_must_understand)
       allow(@client).to receive(:create_body).and_return(body.to_s)
       allow(@client).to receive(:process_body)
 
@@ -88,12 +89,15 @@ describe VBMS::Client do
     let(:vbms_env_vars) do
       { 'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
         'CONNECT_VBMS_URL' => 'http://example.com/fake_vbms',
-        'CONNECT_VBMS_KEYFILE' => 'fake_keyfile.some_ext',
+        'CONNECT_VBMS_CLIENT_KEY_FILE' => 'fake_keyfile.some_ext',
         'CONNECT_VBMS_SAML' => 'fake_saml_token',
         'CONNECT_VBMS_KEY' => 'fake_keyname',
         'CONNECT_VBMS_KEYPASS' => 'fake_keypass',
         'CONNECT_VBMS_CACERT' => 'fake_cacert',
-        'CONNECT_VBMS_CERT' => 'fake_cert' }
+        'CONNECT_VBMS_CERT' => 'fake_cert',
+        'CONNECT_VBMS_SERVER_KEY_FILE' => 'some_keyfile.some_ext',
+        'CONNECT_VBMS_JAVA_KEYFILE' => 'some_java_keystore.some_ext' }
+
     end
 
     it 'smoke test that it initializes when all environment variables are set' do
@@ -160,12 +164,7 @@ describe VBMS::Client do
 
     describe 'process_response' do
       let(:client) do
-        VBMS::Client.new('http://test.endpoint.url/',
-                         fixture_path('test_keystore.jks'),
-                         fixture_path('test_samltoken.xml'),
-                         nil,
-                         'importkey',
-                         nil, nil, nil)
+        new_test_client
       end
 
       let(:request) { double('request') }

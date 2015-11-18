@@ -92,7 +92,6 @@ module VBMS
 
   def self.decrypt_message_xml_ruby(encrypted_xml, keyfile_p12, keypass)
     encrypted_doc = Xmlenc::EncryptedDocument.new(encrypted_xml)
-
     # TODO(awong): Associate a keystore class with this API instead of
     # passing path per request. The keystore client should take in a ds:KeyInfo
     # node and know how to find the associated private key.

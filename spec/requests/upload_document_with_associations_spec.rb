@@ -16,7 +16,7 @@ describe VBMS::Requests::UploadDocumentWithAssociations do
   describe 'render_xml' do
     it 'generates valid XML' do
       xml = subject.render_xml
-      xsd = Nokogiri::XML::Schema(File.read('spec/soap.xsd'))
+      xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
       expect(errors).to eq []
@@ -25,7 +25,7 @@ describe VBMS::Requests::UploadDocumentWithAssociations do
 
   describe 'parsing the XML' do
     before do
-      xml = File.read(fixture_path('requests/upload_document_with_associations.xml'))
+      xml = fixture('requests/upload_document_with_associations.xml')
       @doc = parse_strict(xml)
       @response = subject.handle_response(@doc)
     end

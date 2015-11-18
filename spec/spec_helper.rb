@@ -11,8 +11,12 @@ require 'vbms'
 require 'nokogiri'
 require 'rspec/matchers'
 require 'equivalent-xml'
+# TODO remove
+# debug
 require 'pry'
 require 'httplog'
+# /remove
+# /debug
 require 'byebug' if RUBY_PLATFORM != 'java'
 
 if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
@@ -120,4 +124,19 @@ RSpec.configure do |config|
     # (e.g. via a command-line flag).
     config.default_formatter = :documentation
   end
+end
+
+def new_test_client
+  VBMS::Client.new(
+    'http://test.endpoint.url/', 
+    fixture_path('test_keystore_importkey.p12'),
+    fixture_path('test_samltoken.xml'),
+    nil,
+    'importkey',
+    nil,
+    nil,
+    fixture_path('test_keystore_vbms_server_key.p12'),
+    nil,
+    fixture_path('test_keystore.jks')
+  )
 end

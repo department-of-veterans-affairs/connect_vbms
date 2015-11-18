@@ -79,6 +79,23 @@ if [ -f "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12" ] ; then
   else
     mv keystore.p12 test_keystore_vbms_server_key.p12
   fi
+else
+  mv keystore.p12 "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12"
+fi
+
+# move server cert
+if [ -f "$DIR/../spec/fixtures/test_server.crt" ] ; then
+  read -p "Overwrite existing test_server.crt? [y/n]" -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    rm "$DIR/../spec/fixtures/test_server.crt"
+    mv server.crt "$DIR/../spec/fixtures/test_server.crt"
+  else
+    mv server.crt test_server.crt
+  fi
+else
+  mv server.crt "$DIR/../spec/fixtures/test_server.crt"
 fi
 
 # move keystore
@@ -89,9 +106,11 @@ if [ -f "$DIR/../spec/fixtures/test_keystore.jks" ] ; then
   then
     rm "$DIR/../spec/fixtures/test_keystore.jks"
     mv keystore.jks "$DIR/../spec/fixtures/test_keystore.jks"
-    # cleanup
-    rm import.crt import.csr import.key server.crt server.key
-    # view information for generated keystore    
-    keytool -list -v -keystore "$DIR/../spec/fixtures/test_keystore.jks"
   fi
+else
+  mv keystore.jks "$DIR/../spec/fixtures/test_keystore.jks"
 fi
+
+rm import.crt import.csr import.key server.key
+echo "CURRENT KEYSTORE INFO:"
+keytool -list -v -keystore "$DIR/../spec/fixtures/test_keystore.jks"

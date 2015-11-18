@@ -16,5 +16,12 @@ module VBMS
         end
       end.to_xml
     end
+
+    def self.body
+      Nokogiri::XML::Builder.new do |xml|
+        # xml['soapenv'].Body { yield(xml) }
+        yield xml
+      end
+    end
   end
 end
