@@ -27,7 +27,7 @@ Note that the contents of the ``data`` hash will vary depending on the message. 
 
 **unencrypted_xml**
 
-This logging callback is called at the beginning of building the request to VBMS, before the XML message is placed within a SOAP envelope and encrypted and signed. 
+This logging callback is called at the beginning of building the request to VBMS, before the XML message is placed within a SOAP envelope and encrypted and signed.
 
 * ``:unencrypted_body`` (``String``) the XML of the request
 
@@ -39,6 +39,7 @@ This logging callback is invoked immediately after the request is sent to the VB
 * ``:request_body`` (``String``) - the request sent to the VBMS server
 * ``:response_body`` (``String``) - the raw contents of the response received from VBMS
 * ``:request`` (``VBMS::Requests``) - the ``VBMS::Requests`` object for the request
+* ``:duration`` (``Float``) - the length of time, in seconds, that the request took
 
 **decrypted_message**
 
@@ -46,4 +47,3 @@ This logging callback is called immediately after the SOAP response from VBMS is
 
 * ``:decrypted_data`` (``String``) - the decrypted XML received from VBMS
 * ``:request`` (``VBMS::Requests``) - the ``VBMS::Requests`` object
-  

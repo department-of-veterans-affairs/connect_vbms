@@ -61,10 +61,11 @@ describe VBMS::Client do
       allow(@client).to receive(:process_body)
 
       expect(@client).to receive(:log).with(:unencrypted_xml, unencrypted_body: @request.render_xml)
-      expect(@client).to receive(:log).with(:request, response_code: @response.code, 
-                                                      request_body: body.to_s, 
-                                                      response_body: @response.body, 
-                                                      request: @request)
+      expect(@client).to receive(:log).with(:request, response_code: @response.code,
+                                                      request_body: body.to_s,
+                                                      response_body: @response.body,
+                                                      request: @request,
+                                                      duration: Float)
 
       @client.send_request(@request)
     end
@@ -100,7 +101,7 @@ describe VBMS::Client do
       allow_any_instance_of(HTTPClient::SSLConfig).to receive(:set_trust_ca)
       allow_any_instance_of(HTTPClient::SSLConfig).to receive(:set_client_cert_file)
     end
-    
+
     it 'smoke test that it initializes when all environment variables are set' do
       stub_const('ENV', vbms_env_vars)
       expect(VBMS::Client.from_env_vars).not_to be_nil

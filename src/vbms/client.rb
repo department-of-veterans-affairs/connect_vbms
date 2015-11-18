@@ -84,22 +84,26 @@ module VBMS
 
       body = create_body(request, doc)
 
-      response = @http_client.post(
-        @endpoint_url, body: body, header: [
-          [
-            'Content-Type',
-            'Multipart/Related; type="application/xop+xml"; '\
-              'start-info="application/soap+xml"; boundary="boundary_1234"'
+      response = nil
+      duration = Benchmark.realtime do
+        response = @http_client.post(
+          @endpoint_url, body: body, header: [
+            [
+              'Content-Type',
+              'Multipart/Related; type="application/xop+xml"; '\
+                'start-info="application/soap+xml"; boundary="boundary_1234"'
+            ]
           ]
-        ]
-      )
+        )
+      end
 
       log(
         :request,
         response_code: response.code,
         request_body: doc.to_s,
         response_body: response.body,
-        request: request
+        request: request,
+        duration: duration
       )
 
       if response.code != 200
@@ -175,7 +179,7 @@ module VBMS
     def multipart?(response)
       !(response.headers['Content-Type'] =~ /^multipart/im).nil?
     end
-    
+
     def get_body(response)
       if multipart?(response)
         parts = multipart_sections(response)
