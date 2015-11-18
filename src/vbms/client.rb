@@ -84,6 +84,7 @@ module VBMS
 
       body = create_body(request, doc)
 
+      start = Time.now
       response = @http_client.post(
         @endpoint_url, body: body, header: [
           [
@@ -93,6 +94,7 @@ module VBMS
           ]
         ]
       )
+      duration = Time.now - start
 
       log(
         :request,
@@ -100,6 +102,7 @@ module VBMS
         request_body: doc.to_s,
         response_body: response.body,
         request: request
+        duration: duration
       )
 
       if response.code != 200
@@ -175,7 +178,7 @@ module VBMS
     def multipart?(response)
       !(response.headers['Content-Type'] =~ /^multipart/im).nil?
     end
-    
+
     def get_body(response)
       if multipart?(response)
         parts = multipart_sections(response)
