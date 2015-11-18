@@ -84,7 +84,7 @@ module VBMS
 
       body = create_body(request, doc)
 
-      start = Time.now
+      start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
       response = @http_client.post(
         @endpoint_url, body: body, header: [
           [
@@ -94,7 +94,7 @@ module VBMS
           ]
         ]
       )
-      duration = Time.now - start
+      duration = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
 
       log(
         :request,
