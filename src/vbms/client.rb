@@ -101,8 +101,8 @@ module VBMS
         response_code: response.code,
         request_body: doc.to_s,
         response_body: response.body,
-        request: request
-        duration: duration
+        request: request,
+        duration: duration,
       )
 
       if response.code != 200
