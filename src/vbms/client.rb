@@ -19,9 +19,9 @@ module VBMS
       @java_keyfile = java_keyfile || nil
       # TODO remove @keystore and improve access via processor
       @keystore = SoapScum::KeyStore.new
+
       @keystore.add_pc12(@keyfile, @keypass) if @keyfile
-      # TODO FIX FIX FIX FIX FIX BROKEEEN
-      @keystore.add_cert(@server_key) if @server_key and @server_key.match(/cer/)
+      @keystore.add_cert(@server_key) if @server_key and @server_key.match(/.crt/)
 
       @processor = SoapScum::MessageProcessor.new(@keystore)
 
@@ -97,11 +97,13 @@ module VBMS
 
       serialized_doc = serialize_document(encrypted_doc)
 
+# debug
 File.open('saml_request.xml', 'w') do |file|
   file.truncate(0)
   file.write serialized_doc
 end
 `gorgeous -i saml_request.xml`
+# /debug
 
       body = create_body(request, serialized_doc)
 

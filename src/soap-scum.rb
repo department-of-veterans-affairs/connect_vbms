@@ -237,23 +237,20 @@ module SoapScum
     end
 
     def generate_id
-      SecureRandom.hex(5).upcase
+      SecureRandom.hex(5)
     end
 
     # Takes an XMLBuilder and adds the XML Encryption template.
     def add_xmlenc_template(xml, certificate, keytransport_algorithm, cipher_algorithm)
       # #5.4.1 Lists the valid ciphers and block sizes.
-      # self.key_id = "EK-#{generate_id}"
-      self.key_id = "EK-FC99CA112F8354F13214460542840994"
+      self.key_id = "EK-#{generate_id}"
       self.cipher_algorithm = cipher_algorithm
       self.cipher = get_block_cipher(cipher_algorithm)    # instantiate a new Cipher
-      cipher.encrypt                                      # set mode for Cipher
-
+      self.cipher.encrypt                                      # set mode for Cipher
+      self.iv = cipher.random_iv
       self.symmetric_key = cipher.key = SecureRandom.random_bytes(cipher.key_len)
       # self.symmetric_key = cipher.random_key # LESS secure. see 
       # https://github.com/department-of-veterans-affairs/connect_vbms-old/pull/36/files#r33154220
-
-      self.iv = SecureRandom.random_bytes(cipher.key_len)
 
       xml['xenc'].EncryptedKey('xmlns:xenc' => XMLNamespaces::XENC, Id: key_id) do
         xml['xenc'].EncryptionMethod(Algorithm: keytransport_algorithm)
@@ -297,8 +294,16 @@ module SoapScum
 # /debug
 # binding.pry
       # raw_xml = node.children.collect(&:canonicalize).join
-      raw_xml = node.children.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
-      # raw_xml = raw_xml.chomp.squish.gsub("> <","><") # FURTHER STRIPPING. EW. 
+      raw_xml = ''
+      node.children.each do |n|
+        # raw_xml << n.canonicalize(0, ['soapenv'])
+        raw_xml << n.canonicalize(Nokogiri::XML::XML_C14N_EXCLUSIVE_1_0, [])
+      end
+
+
+      # raw_xml = node.children.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+      raw_xml = raw_xml.chomp.squish
+      raw_xml = raw_xml.gsub("> <","><") # FURTHER STRIPPING. EW. 
 # debug
 puts "raw_xml to be encrypted ----------------------------"
 puts raw_xml
@@ -352,11 +357,9 @@ puts raw_xml
           end
         end
         xml['ds'].SignatureValue
-        ki_id= "KI-FC99CA112F8354F13214460542833722"
-        # ki_id = "KI-#{generate_id}"
+        ki_id = "KI-#{generate_id}"
         xml['ds'].KeyInfo('xmlns:ds' => XMLNamespaces::DS, Id: ki_id) do
-          str_id = "STR-FC99CA112F8354F13214460542833743"
-          # str_id = "STR-#{generate_id}"
+          str_id = "STR-#{generate_id}"
           xml['wsse'].SecurityTokenReference('wsu:Id' => str_id) do
             xml['ds'].X509Data do
               xml['ds'].X509IssuerSerial do
