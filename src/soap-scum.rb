@@ -134,17 +134,9 @@ module SoapScum
     def encrypt(soap_doc, request_name, crypto_options, nodes_to_encrypt, validity: 5.minutes)
       # TODO(astone)
       # improve crypto_options messaging, make it cohesive with keystore
-      # Determine which nodes to sign/encrypt based on request type
       # TODO(awong): Allow configurable digest and signature methods.
-      
-      # Java encryption reference:
-      # sign Body unless request type == uploadDocumentWithAssociations
-      # ---------------------------------------------------------------
-      # if (requestType.equals("uploadDocumentWithAssociations")) {
-      #   return new WSEncryptionPart("document", VBMS_NAMESPACE, "Element");
-      # } else {
-      #   return new WSEncryptionPart("Body", SOAP_NAMESPACE, "Content");
-      # }
+      # TODO(astone) update encryption parts per request
+
       verify_header_node(soap_doc)
       add_timestamp_node(soap_doc, validity)
 
@@ -168,17 +160,15 @@ module SoapScum
         )        
       end
 
-      # 
       signed_doc = sign_soap_doc(soap_doc, crypto_options[:client][:private_key]).document
 
       # TODO
       # this could be optimized
       # The timestamp is injected before signature is applied and therefore is
-      # the first node in the Security element. The convention is to place the
-      # timestamp at the end of Security node.
+      # the first node in the Security element. The WS spec says that elements 
+      # should be prepended to existing elements
       relocate_timestamp(signed_doc)
 
-      # we are actually encrypting the child elements of Body
       nodes_to_encrypt = [body_node(signed_doc)]
       Nokogiri::XML::Builder.with(signed_doc.at("*//[Id=#{key_id}]",
                                               soap: XMLNamespaces::SOAPENV,
@@ -188,8 +178,8 @@ module SoapScum
         encrypt_references(xml, nodes_to_encrypt)
       end
 
-# puts serialize_xml_strictly(signed_doc.document)
-# puts signed_doc.serialize(
+      # puts serialize_xml_strictly(signed_doc.document)
+      # puts signed_doc.serialize(
         # encoding: 'UTF-8',
         # save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
       # )
