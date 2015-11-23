@@ -176,7 +176,7 @@ module SoapScum
       # The timestamp is injected before signature is applied and therefore is
       # the first node in the Security element. The convention is to place the
       # timestamp at the end of Security node.
-      relocate_timestamp!(signed_doc)
+      relocate_timestamp(signed_doc)
 
       # we are actually encrypting the child elements of Body
       nodes_to_encrypt = [body_node(signed_doc)]
@@ -195,9 +195,6 @@ module SoapScum
       # )
       # rtnstr = signed_doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
       signed_doc.root.serialize(save_with:0)
-# puts rtnstr
-
-      # return rtnstr
     end
 
     private
@@ -291,19 +288,16 @@ module SoapScum
 
       # body children to_xml
       # raw_xml = node.children.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
-# /debug
-# binding.pry
+
       # raw_xml = node.children.collect(&:canonicalize).join
+# /debug
+      # new canonicalize approach. 
       raw_xml = ''
       node.children.each do |n|
-        # raw_xml << n.canonicalize(0, ['soapenv'])
-        raw_xml << n.canonicalize(Nokogiri::XML::XML_C14N_EXCLUSIVE_1_0, [])
+        raw_xml << n.canonicalize(Nokogiri::XML::XML_C14N_EXCLUSIVE_1_0, ['soapenv'])
       end
-
-
-      # raw_xml = node.children.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
-      raw_xml = raw_xml.chomp.squish
-      raw_xml = raw_xml.gsub("> <","><") # FURTHER STRIPPING. EW. 
+      # raw_xml = raw_xml.chomp.squish
+      # raw_xml = raw_xml.gsub("> <","><") # FURTHER STRIPPING. EW. 
 # debug
 puts "raw_xml to be encrypted ----------------------------"
 puts raw_xml
@@ -420,7 +414,7 @@ puts raw_xml
       )
     end
 
-    def relocate_timestamp!(doc)
+    def relocate_timestamp(doc)
       timestamp = timestamp_node(doc)
       dsig = doc.at('/soap:Envelope/soap:Header/wsse:Security/ds:Signature',
                                               soap: XMLNamespaces::SOAPENV,
