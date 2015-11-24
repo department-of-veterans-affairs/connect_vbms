@@ -11,7 +11,7 @@ require 'vbms'
 require 'nokogiri'
 require 'rspec/matchers'
 require 'equivalent-xml'
-
+require 'pry'
 require 'byebug' if RUBY_PLATFORM != 'java'
 
 if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
