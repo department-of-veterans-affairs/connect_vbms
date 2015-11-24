@@ -94,7 +94,10 @@ describe VBMS::Client do
         'CONNECT_VBMS_CERT' => 'fake_cert',
         'CONNECT_VBMS_SERVER_KEY_FILE' => 'some_keyfile.some_ext',
         'CONNECT_VBMS_JAVA_KEYFILE' => 'some_java_keystore.some_ext' }
+    end
 
+    before do
+      allow_any_instance_of(SoapScum::KeyStore).to receive(:add_pc12)
     end
 
     it 'smoke test that it initializes when all environment variables are set' do
@@ -117,11 +120,11 @@ describe VBMS::Client do
                                                              /CONNECT_VBMS_URL must be set/)
       end
 
-      it 'needs CONNECT_VBMS_KEYFILE set' do
-        vbms_env_vars.delete('CONNECT_VBMS_KEYFILE')
+      it 'needs CONNECT_VBMS_CLIENT_KEY_FILE set' do
+        vbms_env_vars.delete('CONNECT_VBMS_CLIENT_KEY_FILE')
         stub_const('ENV', vbms_env_vars)
         expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                             /CONNECT_VBMS_KEYFILE must be set/)
+                                                             /CONNECT_VBMS_CLIENT_KEY_FILE must be set/)
       end
 
       it 'needs CONNECT_VBMS_SAML set' do
