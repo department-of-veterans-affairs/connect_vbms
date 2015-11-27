@@ -107,12 +107,6 @@ module SoapScum
     # TODO(awong): Add mustUnderstand support.
     def wrap_in_soap(contents_doc)
       contents_doc = parse_xml_strictly(contents_doc) if contents_doc.is_a?(String)
-      if body_node(contents_doc)
-        # compatibilty with current Request
-        body_xml = body_node(contents_doc).clone.children.to_xml
-      else
-        body_xml = contents_doc.to_xml
-      end
 
       builder = Nokogiri::XML::Builder.new do |xml|
         xml['soapenv'].Envelope('xmlns:soapenv' => XMLNamespaces::SOAPENV,
@@ -124,7 +118,16 @@ module SoapScum
             'wsu:Id' => "ID-#{generate_id}",
             'xmlns:wsu' => XMLNamespaces::WSU
           ) do
-            xml.parent << body_xml unless contents_doc.nil?
+            unless contents_doc.nil?
+              if body_node(contents_doc)
+                # compatibilty with current Request
+                body_node(contents_doc).clone.children.each do |c|
+                  xml.parent << c
+                end
+              else
+                xml.parent << contents_doc.root
+              end
+            end
           end
         end
       end
