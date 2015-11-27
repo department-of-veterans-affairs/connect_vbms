@@ -79,22 +79,30 @@ describe :SoapScum do
     let (:content_document) do
       Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc /></hi-mom>')
     end
+    let (:soap_document) do
+      message_processor.wrap_in_soap(content_document)
+    end
+    let(:java_encrypted_xml) do
+      VBMS.encrypted_soap_document_xml(soap_document,
+                                       test_jks_keystore,
+                                       test_keystore_pass,
+                                       'listDocuments')
+    end
+    let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) }
 
     describe '#wrap_in_soap' do
       it 'creates a valid SOAP document' do
-        soap_doc = message_processor.wrap_in_soap(content_document)
         xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
-        expect(xsd.validate(soap_doc).size).to eq(0)
+        expect(xsd.validate(soap_document).size).to eq(0)
       end
     end
 
     describe '#encrypt' do
       it 'returns valid SOAP' do
-        soap_doc = message_processor.wrap_in_soap(content_document)
-        ruby_encrypted_xml = message_processor.encrypt(soap_doc,
+        ruby_encrypted_xml = message_processor.encrypt(soap_document,
                                                        'listDocuments',
                                                        crypto_options,
-                                                       soap_doc.at_xpath(
+                                                       soap_document.at_xpath(
                                                          '/soapenv:Envelope/soapenv:Body',
                                                          soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
@@ -104,60 +112,42 @@ describe :SoapScum do
         expect(xsd.validate(doc).size).to eq(0)
       end
 
-      it 'creates an encrypted soap doc' do
-        soap_doc = message_processor.wrap_in_soap(content_document)
-        ruby_encrypted_xml = message_processor.encrypt(soap_doc,
-                                                       'listDocuments',
-                                                       crypto_options,
-                                                       soap_doc.at_xpath(
-                                                         '/soapenv:Envelope/soapenv:Body',
-                                                         soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
-
-        xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
-        doc = Nokogiri::XML(ruby_encrypted_xml)
-
-        expect(xsd.validate(doc).size).to eq(0)
-        # TODO(awong): Verify decrypt_xml matches original soap_doc.
-      end
-
-      def parsed_timestamp(xml)
-        x = xml.at_xpath('//wsu:Timestamp', VBMS::XML_NAMESPACES)
-        
-        {
-          created: x.at_xpath('//wsu:Created', VBMS::XML_NAMESPACES).text,
-          expires: x.at_xpath('//wsu:Expires', VBMS::XML_NAMESPACES).text
-        }
-      end
-
-      it 'encrypts the same as java' do
-        soap_doc = message_processor.wrap_in_soap(content_document)
-
-        java_encrypted_xml = VBMS.encrypted_soap_document_xml(soap_doc,
-                                                              test_jks_keystore,
-                                                              test_keystore_pass,
-                                                              'listDocuments')
-        parsed_java_xml = Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
-        java_timestamp = parsed_timestamp(parsed_java_xml)
-
-        time = Time.parse(java_timestamp[:created])
-        ruby_encrypted_xml = nil
+      context "compared to the Java version" do
+        def parsed_timestamp(xml)
+          x = xml.at_xpath('//wsu:Timestamp', VBMS::XML_NAMESPACES)
           
-        Timecop.freeze(time) do
-          ruby_encrypted_xml = message_processor.encrypt(soap_doc,
-                                                         'listDocuments',
-                                                         crypto_options,
-                                                         soap_doc.at_xpath(
-                                                           '/soapenv:Envelope/soapenv:Body',
-                                                           soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+          {
+            created: x.at_xpath('//wsu:Created', VBMS::XML_NAMESPACES).text,
+            expires: x.at_xpath('//wsu:Expires', VBMS::XML_NAMESPACES).text
+          }
         end
-          
-        parsed_ruby_xml = Nokogiri::XML(ruby_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
 
-        # expect some fields to be the same
-        ruby_timestamp = parsed_timestamp(parsed_ruby_xml)
-        
-        expect(ruby_timestamp[:created]).to eq(java_timestamp[:created])
-        expect(ruby_timestamp[:expires]).to eq(java_timestamp[:expires])
+        before(:all) do
+          java_timestamp = parsed_timestamp(parsed_java_xml)
+
+          time = Time.parse(java_timestamp[:created])
+          ruby_encrypted_xml = nil
+          
+          Timecop.freeze(time) do
+            @ruby_encrypted_xml = message_processor.encrypt(soap_document,
+                                                            'listDocuments',
+                                                            crypto_options,
+                                                            soap_document.at_xpath(
+                                                              '/soapenv:Envelope/soapenv:Body',
+                                                              soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+
+            @parsed_ruby_xml = Nokogiri::XML(ruby_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+          end
+          
+
+          it 'should have the same timestamps' do
+            # expect some fields to be the same
+            ruby_timestamp = parsed_timestamp(parsed_ruby_xml)
+            
+            expect(ruby_timestamp[:created]).to eq(java_timestamp[:created])
+            expect(ruby_timestamp[:expires]).to eq(java_timestamp[:expires])            
+          end
+        end
       end
 
       it 'can be decrypted with ruby' do
