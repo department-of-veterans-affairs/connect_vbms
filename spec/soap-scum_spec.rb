@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'soap-scum'
 require 'xmlenc'
+require 'timecop'
 
 describe :SoapScum do
   let (:server_x509_subject) { Nokogiri::XML(fixture('soap-scum/server_x509_subject_keyinfo.xml')) }
@@ -119,22 +120,44 @@ describe :SoapScum do
         # TODO(awong): Verify decrypt_xml matches original soap_doc.
       end
 
+      def parsed_timestamp(xml)
+        x = xml.at_xpath('//wsu:Timestamp', VBMS::XML_NAMESPACES)
+        
+        {
+          created: x.at_xpath('//wsu:Created', VBMS::XML_NAMESPACES).text,
+          expires: x.at_xpath('//wsu:Expires', VBMS::XML_NAMESPACES).text
+        }
+      end
+
       it 'encrypts the same as java' do
         soap_doc = message_processor.wrap_in_soap(content_document)
-        ruby_encrypted_xml = message_processor.encrypt(soap_doc,
-                                                       'listDocuments',
-                                                       crypto_options,
-                                                       soap_doc.at_xpath(
-                                                         '/soapenv:Envelope/soapenv:Body',
-                                                         soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+
         java_encrypted_xml = VBMS.encrypted_soap_document_xml(soap_doc,
                                                               test_jks_keystore,
                                                               test_keystore_pass,
                                                               'listDocuments')
-
-        parsed_ruby_xml = Nokogiri::XML(ruby_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
         parsed_java_xml = Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
-        expect(parsed_ruby_xml.to_xml).to eq(parsed_java_xml.to_xml)
+        java_timestamp = parsed_timestamp(parsed_java_xml)
+
+        time = Time.parse(java_timestamp[:created])
+        ruby_encrypted_xml = nil
+          
+        Timecop.freeze(time) do
+          ruby_encrypted_xml = message_processor.encrypt(soap_doc,
+                                                         'listDocuments',
+                                                         crypto_options,
+                                                         soap_doc.at_xpath(
+                                                           '/soapenv:Envelope/soapenv:Body',
+                                                           soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+        end
+          
+        parsed_ruby_xml = Nokogiri::XML(ruby_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+
+        # expect some fields to be the same
+        ruby_timestamp = parsed_timestamp(parsed_ruby_xml)
+        
+        expect(ruby_timestamp[:created]).to eq(java_timestamp[:created])
+        expect(ruby_timestamp[:expires]).to eq(java_timestamp[:expires])
       end
 
       it 'can be decrypted with ruby' do
