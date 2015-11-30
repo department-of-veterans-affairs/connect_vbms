@@ -122,6 +122,7 @@ describe :SoapScum do
         end
 
         it 'should encrypt in a similar way to the Java version' do
+          raise @soap_document.to_xml.to_s
           @java_timestamp = parsed_timestamp(@parsed_java_xml)
           time = Time.parse(@java_timestamp[:created])
 
