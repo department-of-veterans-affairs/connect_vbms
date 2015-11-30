@@ -125,12 +125,17 @@ describe :SoapScum do
           @java_timestamp = parsed_timestamp(@parsed_java_xml)
           time = Time.parse(@java_timestamp[:created])
 
+          body_id = @parsed_java_xml.at_xpath("//soapenv:Body", VBMS::XML_NAMESPACES)['wsu:Id']
+          
           # This forces the Ruby encryption to be at the exact same
           # time as the Java encryption. You can't just wrap both in a
           # single Timecop declaration because Java code exists
           # outside of mocking reach
           Timecop.freeze(time) do
+            # mock the Ruby to return the same IDs as the Java
             allow(@message_processor).to receive(:timestamp_id).and_return(@java_timestamp[:id])
+            allow(@message_processor).to receive(:soap_body_id).and_return(body_id)
+            
             @ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
                                                              'listDocuments',
                                                              @crypto_options,
@@ -154,7 +159,13 @@ describe :SoapScum do
           java_signed_info = @parsed_java_xml.at_xpath("//ds:Reference[@URI='##{ruby_timestamp[:id]}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(java_signed_info).to_not be_nil
           expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
-           
+
+          # check the signed info for the encrypted part
+          ruby_signed_info = @parsed_ruby_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
+          expect(ruby_signed_info).to_not be_nil
+          java_signed_info = @parsed_java_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
+          expect(java_signed_info).to_not be_nil
+          expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
         end
       end
       

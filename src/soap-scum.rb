@@ -115,7 +115,7 @@ module SoapScum
                                 'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4",
                                 'xmlns:xop' => "http://www.w3.org/2004/08/xop/include") do
           xml['soapenv'].Body(
-            'wsu:Id' => "ID-#{generate_id}",
+            'wsu:Id' => soap_body_id,
             'xmlns:wsu' => XMLNamespaces::WSU
           ) do
             unless contents_doc.nil?
@@ -232,6 +232,10 @@ module SoapScum
 
     def timestamp_id
       "TS-#{generate_id}"
+    end
+
+    def soap_body_id
+      "ID-#{generate_id}"
     end
     
     # Takes an XMLBuilder and adds the XML Encryption template.
