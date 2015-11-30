@@ -101,7 +101,7 @@ describe :SoapScum do
                                                         @crypto_options,
                                                         @soap_document.at_xpath(
                                                           '/soapenv:Envelope/soapenv:Body',
-                                                         soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+                                                          soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
         xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
         doc = Nokogiri::XML(ruby_encrypted_xml)
@@ -110,19 +110,19 @@ describe :SoapScum do
       end
 
       context "compared to the Java version" do
+
         def parsed_timestamp(xml)
           x = xml.at_xpath('//wsu:Timestamp', VBMS::XML_NAMESPACES)
-          
+
           {
-            id: x.attribute_with_ns('Id', VBMS::XML_NAMESPACES['wsu']),
+            id: x['wsu:Id'],
             created: x.at_xpath('//wsu:Created', VBMS::XML_NAMESPACES).text,
             expires: x.at_xpath('//wsu:Expires', VBMS::XML_NAMESPACES).text
           }
         end
 
-        before(:all) do
+        it 'should encrypt in a similar way to the Java version' do
           @java_timestamp = parsed_timestamp(@parsed_java_xml)
-          
           time = Time.parse(@java_timestamp[:created])
 
           # This forces the Ruby encryption to be at the exact same
@@ -130,30 +130,34 @@ describe :SoapScum do
           # single Timecop declaration because Java code exists
           # outside of mocking reach
           Timecop.freeze(time) do
+            allow(@message_processor).to receive(:timestamp_id).and_return(@java_timestamp[:id])
             @ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
                                                              'listDocuments',
                                                              @crypto_options,
                                                              @soap_document.at_xpath(
                                                                '/soapenv:Envelope/soapenv:Body',
                                                                soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
-
+            
             @parsed_ruby_xml = Nokogiri::XML(@ruby_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
           end
-        end
-          
-        it 'should have the same timestamps' do
-          # expect some fields to be the same
+
+          # expect some timestamp fields to be the same
           ruby_timestamp = parsed_timestamp(@parsed_ruby_xml)
-          
+
+          expect(ruby_timestamp[:id]).to eq(@java_timestamp[:id])
           expect(ruby_timestamp[:created]).to eq(@java_timestamp[:created])
           expect(ruby_timestamp[:expires]).to eq(@java_timestamp[:expires])            
-        end
-        
-        it 'should have the same' do
-            
+
+          # Check the signed info for the timestamp
+          ruby_signed_info = @parsed_ruby_xml.at_xpath("//ds:Reference[@URI='##{ruby_timestamp[:id]}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
+          expect(ruby_signed_info).to_not be_nil
+          java_signed_info = @parsed_java_xml.at_xpath("//ds:Reference[@URI='##{ruby_timestamp[:id]}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
+          expect(java_signed_info).to_not be_nil
+          expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
+           
         end
       end
-
+      
       it 'can be decrypted with ruby' do
         skip 'pending valid encryption and validation with java'
       end

@@ -14,7 +14,7 @@ module SoapScum
 
   class KeyStore
     CertStruct = Struct.new(:certificate, :key)
-
+    
     def initialize
       @by_subject = {}
     end
@@ -44,7 +44,7 @@ module SoapScum
       needle = keyinfo_to_normalized_subject(keyinfo_node)
       @by_subject[needle].key
     end
-
+    
     def get_certificate(keyinfo_node)
       needle = keyinfo_to_normalized_subject(keyinfo_node)
       @by_subject[needle].certificate
@@ -219,17 +219,21 @@ module SoapScum
 
     def body_node(doc)
       doc.at_xpath('/soapenv:Envelope/soapenv:Body',
-                        soapenv: XMLNamespaces::SOAPENV,
-                        'xmlns:cdm' => "http://vbms.vba.va.gov/cdm",
-                        'xmlns:doc' => "http://vbms.vba.va.gov/cdm/document/v4",
-                        'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4",
-                        'xmlns:xop' => "http://www.w3.org/2004/08/xop/include")
+                   soapenv: XMLNamespaces::SOAPENV,
+                   'xmlns:cdm' => "http://vbms.vba.va.gov/cdm",
+                   'xmlns:doc' => "http://vbms.vba.va.gov/cdm/document/v4",
+                   'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4",
+                   'xmlns:xop' => "http://www.w3.org/2004/08/xop/include")
     end
 
     def generate_id
       SecureRandom.hex(5)
     end
 
+    def timestamp_id
+      "TS-#{generate_id}"
+    end
+    
     # Takes an XMLBuilder and adds the XML Encryption template.
     def add_xmlenc_template(xml, certificate, keytransport_algorithm, cipher_algorithm)
       # #5.4.1 Lists the valid ciphers and block sizes.
@@ -377,7 +381,6 @@ puts raw_xml
       Nokogiri::XML::Builder.with(soap_doc.at('/soap:Envelope/soap:Header', soap: XMLNamespaces::SOAPENV)) do |xml|
         xml['wsse'].Security('xmlns:wsse' => XMLNamespaces::WSSE,
                              'xmlns:wsu' => XMLNamespaces::WSU) do
-          timestamp_id = "TS-#{generate_id}"
           xml['wsu'].Timestamp('wsu:Id' => timestamp_id,
                                'xmlns:wsse' => XMLNamespaces::WSSE,
                                'xmlns:wsu' => XMLNamespaces::WSU
