@@ -59,9 +59,9 @@ describe VBMS::Client do
       allow(@client).to receive(:process_body)
 
       expect(@client).to receive(:log).with(:unencrypted_xml, unencrypted_body: @request.render_xml)
-      expect(@client).to receive(:log).with(:request, response_code: @response.code, 
-                                                      request_body: body.to_s, 
-                                                      response_body: @response.body, 
+      expect(@client).to receive(:log).with(:request, response_code: @response.code,
+                                                      request_body: body.to_s,
+                                                      response_body: @response.body,
                                                       request: @request)
 
       @client.send_request(@request)
