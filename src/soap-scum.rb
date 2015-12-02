@@ -237,11 +237,31 @@ module SoapScum
     def soap_body_id
       "ID-#{generate_id}"
     end
+
+    def signature_id
+      "SIG-#{generate_id}"
+    end
+
+    def key_info_id
+      "KI-#{generate_id}"
+    end
+
+    def security_token_id
+      "STR-#{generate_id}"
+    end
+
+    def encrypted_key_id
+      "EK-#{generate_id}"
+    end
+
+    def encrypted_data_id
+      "ED-#{generate_id}"
+    end
     
     # Takes an XMLBuilder and adds the XML Encryption template.
     def add_xmlenc_template(xml, certificate, keytransport_algorithm, cipher_algorithm)
       # #5.4.1 Lists the valid ciphers and block sizes.
-      self.key_id = "EK-#{generate_id}"
+      self.key_id = encrypted_key_id
       self.cipher_algorithm = cipher_algorithm
       self.cipher = get_block_cipher(cipher_algorithm)    # instantiate a new Cipher
       self.cipher.encrypt                                      # set mode for Cipher
@@ -273,7 +293,7 @@ module SoapScum
       self.encrypted_elements = []
       xml['xenc'].ReferenceList do
         nodes_to_encrypt.each do |node|
-          encrypted_node_id = "ED-#{generate_id}"
+          encrypted_node_id = encrypted_data_id
           encrypted_node = generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
           node.children.each {|child_node| child_node.remove } # remove unencrypted node
           node << encrypted_node
@@ -328,7 +348,7 @@ puts raw_xml
     end
 
     def add_xmldsig_template(xml, certificate, digest_method, signature_method, nodes_to_sign)
-      xml['ds'].Signature('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', Id: "SIG-#{generate_id}") do
+      xml['ds'].Signature('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', Id: signature_id) do
         xml['ds'].SignedInfo('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',
                              'xmlns:soapenv' => XMLNamespaces::SOAPENV
                             ) do
@@ -352,9 +372,9 @@ puts raw_xml
           end
         end
         xml['ds'].SignatureValue
-        ki_id = "KI-#{generate_id}"
+        ki_id = key_info_id
         xml['ds'].KeyInfo('xmlns:ds' => XMLNamespaces::DS, Id: ki_id) do
-          str_id = "STR-#{generate_id}"
+          str_id = security_token_id
           xml['wsse'].SecurityTokenReference('wsu:Id' => str_id) do
             xml['ds'].X509Data do
               xml['ds'].X509IssuerSerial do

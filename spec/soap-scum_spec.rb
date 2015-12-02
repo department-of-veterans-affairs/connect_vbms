@@ -75,7 +75,7 @@ describe :SoapScum do
       }
 
       @message_processor = SoapScum::MessageProcessor.new(@keystore)
-      @content_document = Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc /></hi-mom>')
+      @content_document = Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc/></hi-mom>')
 
       @soap_document = @message_processor.wrap_in_soap(@content_document)
 
@@ -84,7 +84,7 @@ describe :SoapScum do
                                                              @test_keystore_pass,
                                                              'listDocuments')
 
-      @parsed_java_xml =  Nokogiri::XML(@java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+      @parsed_java_xml =  Nokogiri::XML(@java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) { |x| x.noblanks }
     end
 
     describe '#wrap_in_soap' do
@@ -126,6 +126,11 @@ describe :SoapScum do
           time = Time.parse(@java_timestamp[:created])
 
           body_id = @parsed_java_xml.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES)['wsu:Id']
+          signature_id = @parsed_java_xml.at_xpath('//ds:Signature', VBMS::XML_NAMESPACES)['Id']
+          key_info_id = @parsed_java_xml.at_xpath('//ds:Signature/ds:KeyInfo', VBMS::XML_NAMESPACES)['Id']
+          str_id = @parsed_java_xml.at_xpath('//ds:Signature/ds:KeyInfo/wsse:SecurityTokenReference', VBMS::XML_NAMESPACES)['wsu:Id']
+          ek_id = @parsed_java_xml.at_xpath('//xenc:EncryptedKey', VBMS::XML_NAMESPACES)['Id']
+          ed_id = @parsed_java_xml.at_xpath('//xenc:EncryptedData', VBMS::XML_NAMESPACES)['Id']
 
           # This forces the Ruby encryption to be at the exact same
           # time as the Java encryption. You can't just wrap both in a
@@ -135,7 +140,12 @@ describe :SoapScum do
             # mock the Ruby to return the same IDs as the Java
             allow(@message_processor).to receive(:timestamp_id).and_return(@java_timestamp[:id])
             allow(@message_processor).to receive(:soap_body_id).and_return(body_id)
-
+            allow(@message_processor).to receive(:signature_id).and_return(signature_id)
+            allow(@message_processor).to receive(:key_info_id).and_return(key_info_id)
+            allow(@message_processor).to receive(:security_token_id).and_return(str_id)
+            allow(@message_processor).to receive(:encrypted_key_id).and_return(ek_id)
+            allow(@message_processor).to receive(:encrypted_data_id).and_return(ed_id)
+            
             @ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
                                                              'listDocuments',
                                                              @crypto_options,
@@ -143,7 +153,7 @@ describe :SoapScum do
                                                                '/soapenv:Envelope/soapenv:Body',
                                                                soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
-            @parsed_ruby_xml = Nokogiri::XML(@ruby_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+            @parsed_ruby_xml = Nokogiri::XML(@ruby_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) { |x| x.noblanks }
           end
 
           # expect some timestamp fields to be the same
@@ -161,11 +171,21 @@ describe :SoapScum do
           expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
 
           # check the signed info for the encrypted part
-          ruby_signed_info = @parsed_ruby_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
-          expect(ruby_signed_info).to_not be_nil
-          java_signed_info = @parsed_java_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
-          expect(java_signed_info).to_not be_nil
-          expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
+          # ruby_signed_info = @parsed_ruby_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
+          # expect(ruby_signed_info).to_not be_nil
+          # java_signed_info = @parsed_java_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
+          # expect(java_signed_info).to_not be_nil
+          # expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
+
+          expect(@parsed_ruby_xml.to_xml).to eq(@parsed_java_xml.to_xml)
+          
+          ruby_signature = @parsed_ruby_xml.at_xpath('//ds:Signature', ds: 'http://www.w3.org/2000/09/xmldsig#')
+          expect(ruby_signature).to_not be_nil
+          java_signature = @parsed_java_xml.at_xpath('//ds:Signature', ds: 'http://www.w3.org/2000/09/xmldsig#')
+          expect(java_signature).to_not be_nil
+
+          puts java_signature.to_xml
+          expect(ruby_signature.to_xml).to eq(java_signature.to_xml)
         end
       end
 
