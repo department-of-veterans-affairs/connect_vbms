@@ -41,5 +41,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'nokogiri', '~> 1.6'
   spec.add_runtime_dependency 'xmlenc', '~> 0.3.0'
   spec.add_runtime_dependency 'mail'
-  spec.add_runtime_dependency 'xmldsig', '~> 0.2.9'
+  spec.add_runtime_dependency 'xmldsig', '~> 0.3.1'
 end
