@@ -75,7 +75,7 @@ describe :SoapScum do
       }
 
       @message_processor = SoapScum::MessageProcessor.new(@keystore)
-      @content_document = Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc/></hi-mom>')
+      @content_document = Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>')
 
       @soap_document = @message_processor.wrap_in_soap(@content_document)
 
@@ -84,7 +84,7 @@ describe :SoapScum do
                                                              @test_keystore_pass,
                                                              'listDocuments')
 
-      @parsed_java_xml =  Nokogiri::XML(@java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) { |x| x.noblanks }
+      @parsed_java_xml =  Nokogiri::XML(@java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) { |x| x.noblanks } # for some reason, this is needed for to_xml to prettyprint
     end
 
     describe '#wrap_in_soap' do
@@ -92,22 +92,37 @@ describe :SoapScum do
         xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
         expect(xsd.validate(@soap_document).size).to eq(0)
       end
+
+      it 'should not reassign a namespace if the parent has no namespaces' do
+        raise @soap_document.to_xml
+        expect(@soap_document.at_xpath('//hi-mom')).to_not be_nil
+        expect(@soap_document.at_xpath('//hi-mom/e:a-doc', e: 'http://example.com')).to_not be_nil
+        expect(@soap_document.at_xpath('//hi-mom/b-doc')).to_not be_nil
+      end
+
+      it 'should not reassign a namespace if the root has a namespace' do
+        cd = Nokogiri::XML('<example:hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>')
+        soap_document = @message_processor.wrap_in_soap(@content_document)
+        expect(soap_document.at_xpath('//e:hi-mom', e: 'http://example.com')).to_not be_nil
+        expect(soap_document.at_xpath('//e:hi-mom/e:a-doc', e: 'http://example.com')).to_not be_nil
+        expect(soap_document.at_xpath('//e:hi-mom/b-doc', e: 'http://example.com')).to_not be_nil        
+      end
     end
 
     describe '#encrypt' do
-      it 'returns valid SOAP' do
-        ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
-                                                        'listDocuments',
-                                                        @crypto_options,
-                                                        @soap_document.at_xpath(
-                                                          '/soapenv:Envelope/soapenv:Body',
-                                                          soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+      # it 'returns valid SOAP' do
+      #   ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
+      #                                                   'listDocuments',
+      #                                                   @crypto_options,
+      #                                                   @soap_document.at_xpath(
+      #                                                     '/soapenv:Envelope/soapenv:Body',
+      #                                                     soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
-        xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
-        doc = Nokogiri::XML(ruby_encrypted_xml)
+      #   xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
+      #   doc = Nokogiri::XML(ruby_encrypted_xml)
 
-        expect(xsd.validate(doc).size).to eq(0)
-      end
+      #   expect(xsd.validate(doc).size).to eq(0)
+      # end
 
       context 'compared to the Java version' do
         # helper method for manipulating the timestamp
