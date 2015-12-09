@@ -14,7 +14,7 @@ module SoapScum
 
   class KeyStore
     CertStruct = Struct.new(:certificate, :key)
-    
+
     def initialize
       @by_subject = {}
     end
@@ -44,7 +44,7 @@ module SoapScum
       needle = keyinfo_to_normalized_subject(keyinfo_node)
       @by_subject[needle].key
     end
-    
+
     def get_certificate(keyinfo_node)
       needle = keyinfo_to_normalized_subject(keyinfo_node)
       @by_subject[needle].certificate
@@ -114,24 +114,36 @@ module SoapScum
                                 'xmlns:doc' => "http://vbms.vba.va.gov/cdm/document/v4",
                                 'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4",
                                 'xmlns:xop' => "http://www.w3.org/2004/08/xop/include") do
-          xml['soapenv'].Body(
-            'wsu:Id' => soap_body_id,
-            'xmlns:wsu' => XMLNamespaces::WSU
-          ) do
-            unless contents_doc.nil?
-              if body_node(contents_doc)
-                # compatibilty with current Request
-                body_node(contents_doc).clone.children.each do |c|
-                  xml.parent << c
-                end
-              else
-                xml.parent << contents_doc.root
-              end
-            end
+          xml['soapenv'].Body('wsu:Id' => soap_body_id, 'xmlns:wsu' => XMLNamespaces::WSU) do
+            xml.REPLACEME unless contents_doc.nil?
           end
         end
       end
-      builder.doc
+
+      # This bit of terrible code (and the REPLACEME node above) are
+      # here because Nokogiri has a longstanding bug where it will
+      # forcibly reassign elements without explicit namespaces to be
+      # in the parent namespace, so adding a node like <ListDocuments>
+      # will be changed to <soapenv:ListDocuments>. So, to do this
+      # instead, we have to make the XML tree, output it to a string,
+      # replace the REPLACEME node with the child tree string and
+      # reparse. Ugh, Nokogiri. Why?
+      # See https://github.com/sparklemotion/nokogiri/issues/425 for
+      # more details on the Nokogiri bug
+      if contents_doc.nil?
+        builder.doc
+      else
+        if body_node(contents_doc)
+          # compatibilty with current Request
+          inner_str = body_node(contents_doc).children.map {|c| serialize_xml_strictly(c, false)}.join('')
+        else
+          inner_str = serialize_xml_strictly(contents_doc.root, false)
+        end
+
+        xml_str = serialize_xml_strictly(builder.doc)
+        xml_str.gsub!('<soapenv:REPLACEME/>', inner_str)
+        parse_xml_strictly(xml_str)
+      end
     end
 
     def encrypt(soap_doc, request_name, crypto_options, nodes_to_encrypt, validity: 5.minutes)
@@ -160,7 +172,7 @@ module SoapScum
           crypto_options[:client][:digest_algorithm],
           crypto_options[:client][:signature_algorithm],
           [timestamp_node(soap_doc), body_node(soap_doc)]
-        )        
+        )
       end
 
       signed_doc = sign_soap_doc(soap_doc, crypto_options[:client][:private_key]).document
@@ -168,7 +180,7 @@ module SoapScum
       # TODO
       # this could be optimized
       # The timestamp is injected before signature is applied and therefore is
-      # the first node in the Security element. The WS spec says that elements 
+      # the first node in the Security element. The WS spec says that elements
       # should be prepended to existing elements
       relocate_timestamp(signed_doc)
 
@@ -312,13 +324,13 @@ module SoapScum
 
       # raw_xml = node.children.collect(&:canonicalize).join
 # /debug
-      # new canonicalize approach. 
+      # new canonicalize approach.
       raw_xml = ''
       node.children.each do |n|
         raw_xml << n.canonicalize(Nokogiri::XML::XML_C14N_EXCLUSIVE_1_0, ['soapenv'])
       end
       # raw_xml = raw_xml.chomp.squish
-      # raw_xml = raw_xml.gsub("> <","><") # FURTHER STRIPPING. EW. 
+      # raw_xml = raw_xml.gsub("> <","><") # FURTHER STRIPPING. EW.
 # debug
 puts "raw_xml to be encrypted ----------------------------"
 puts raw_xml
@@ -427,10 +439,13 @@ puts raw_xml
       Nokogiri::XML(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
     end
 
-    def serialize_xml_strictly(xmldoc)
+    def serialize_xml_strictly(xmldoc, preamble=true)
+      options = Nokogiri::XML::Node::SaveOptions::AS_XML
+      options |= Nokogiri::XML::Node::SaveOptions::NO_DECLARATION if !preamble
+
       xmldoc.serialize(
         encoding: 'UTF-8',
-        save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
+        save_with: options
       )
     end
 

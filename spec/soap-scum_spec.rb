@@ -94,7 +94,6 @@ describe :SoapScum do
       end
 
       it 'should not reassign a namespace if the parent has no namespaces' do
-        raise @soap_document.to_xml
         expect(@soap_document.at_xpath('//hi-mom')).to_not be_nil
         expect(@soap_document.at_xpath('//hi-mom/e:a-doc', e: 'http://example.com')).to_not be_nil
         expect(@soap_document.at_xpath('//hi-mom/b-doc')).to_not be_nil
@@ -102,10 +101,10 @@ describe :SoapScum do
 
       it 'should not reassign a namespace if the root has a namespace' do
         cd = Nokogiri::XML('<example:hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>')
-        soap_document = @message_processor.wrap_in_soap(@content_document)
+        soap_document = @message_processor.wrap_in_soap(cd)
         expect(soap_document.at_xpath('//e:hi-mom', e: 'http://example.com')).to_not be_nil
         expect(soap_document.at_xpath('//e:hi-mom/e:a-doc', e: 'http://example.com')).to_not be_nil
-        expect(soap_document.at_xpath('//e:hi-mom/b-doc', e: 'http://example.com')).to_not be_nil        
+        expect(soap_document.at_xpath('//e:hi-mom/b-doc', e: 'http://example.com')).to_not be_nil
       end
     end
 
@@ -192,8 +191,11 @@ describe :SoapScum do
           # expect(java_signed_info).to_not be_nil
           # expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
 
+          # puts @parsed_java_xml.to_xml
+          # puts "!!!!!"
+          # puts @parsed_ruby_xml.to_xml
           expect(@parsed_ruby_xml.to_xml).to eq(@parsed_java_xml.to_xml)
-          
+
           ruby_signature = @parsed_ruby_xml.at_xpath('//ds:Signature', ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(ruby_signature).to_not be_nil
           java_signature = @parsed_java_xml.at_xpath('//ds:Signature', ds: 'http://www.w3.org/2000/09/xmldsig#')
