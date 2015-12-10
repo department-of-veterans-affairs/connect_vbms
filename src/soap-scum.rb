@@ -207,6 +207,7 @@ module SoapScum
     def sign_soap_doc(soap_doc, private_key)
       signed_doc = Xmldsig::SignedDocument.new(soap_doc)
       signed_doc.sign(private_key)
+
       signed_doc
     end
 
@@ -269,7 +270,11 @@ module SoapScum
     def encrypted_data_id
       "ED-#{generate_id}"
     end
-    
+
+    def get_symmetric_key(key_len)
+      SecureRandom.random_bytes(key_len)
+    end
+
     # Takes an XMLBuilder and adds the XML Encryption template.
     def add_xmlenc_template(xml, certificate, keytransport_algorithm, cipher_algorithm)
       # #5.4.1 Lists the valid ciphers and block sizes.
@@ -278,8 +283,8 @@ module SoapScum
       self.cipher = get_block_cipher(cipher_algorithm)    # instantiate a new Cipher
       self.cipher.encrypt                                      # set mode for Cipher
       self.iv = cipher.random_iv
-      self.symmetric_key = cipher.key = SecureRandom.random_bytes(cipher.key_len)
-      # self.symmetric_key = cipher.random_key # LESS secure. see 
+      self.symmetric_key = cipher.key = get_symmetric_key(cipher.key_len)
+      # self.symmetric_key = cipher.random_key # LESS secure. see
       # https://github.com/department-of-veterans-affairs/connect_vbms-old/pull/36/files#r33154220
 
       xml['xenc'].EncryptedKey('xmlns:xenc' => XMLNamespaces::XENC, Id: key_id) do
@@ -327,7 +332,8 @@ module SoapScum
       # new canonicalize approach.
       raw_xml = ''
       node.children.each do |n|
-        raw_xml << n.canonicalize(Nokogiri::XML::XML_C14N_EXCLUSIVE_1_0, ['soapenv'])
+        out = n.canonicalize(Nokogiri::XML::XML_C14N_EXCLUSIVE_1_0)
+        raw_xml << out unless out =~ /^\s+$/ # skip blank
       end
       # raw_xml = raw_xml.chomp.squish
       # raw_xml = raw_xml.gsub("> <","><") # FURTHER STRIPPING. EW.
@@ -405,7 +411,7 @@ puts raw_xml
       # Ensure there is a header node.
       header = envelope.at_xpath('/soapenv:Header', soapenv: XMLNamespaces::SOAPENV)
       if header.nil?
-        header_builder = Nokogiri::XML::Builder.new do |xml|
+        header_builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
           xml["soapenv"].Header('xmlns:soapenv' => XMLNamespaces::SOAPENV)
         end
         envelope.children.first.add_previous_sibling(header_builder.doc.root)

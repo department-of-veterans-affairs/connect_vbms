@@ -125,7 +125,8 @@ module VBMS
 
   def self.encrypted_soap_document_xml(in_xml, keyfile, keypass, request_name)
     Tempfile.open('tmp') do |t|
-      t.write(in_xml)
+      out = in_xml.serialize(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+      t.write(out)
       t.flush
       return encrypted_soap_document(t.path, keyfile, keypass, request_name)
     end
