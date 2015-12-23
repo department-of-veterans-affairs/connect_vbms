@@ -59,17 +59,6 @@ keytool -importkeystore \
 
 # move import keystore
 ask_for_overwrite keystore.p12 test_keystore_importkey.p12
-# if [ -f "$DIR/../spec/fixtures/test_keystore_importkey.p12" ] ; then
-#   read -p "Overwrite existing test_keystore_importkey.p12? [y/n]" -n 1 -r
-#   echo
-#   if [[ $REPLY =~ ^[Yy]$ ]]
-#   then
-#     rm "$DIR/../spec/fixtures/test_keystore_importkey.p12"
-#     mv keystore.p12 "$DIR/../spec/fixtures/test_keystore_importkey.p12"
-#   else
-#     mv keystore.p12 test_keystore_importkey.p12
-#   fi
-# fi
 
 keytool -importcert \
   -keystore "$DIR/keystore.jks" \
