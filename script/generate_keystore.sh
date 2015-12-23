@@ -81,11 +81,8 @@ ask_for_overwrite server.crt test_server.crt
 # move java keystore
 ask_for_overwrite keystore.jks test_keystore.jks
 
-# move server private key
-ask_for_overwrite server.key test_server_key.key
-
 # cleanup
-rm -f import.crt import.csr import.key
+rm -f import.crt import.csr import.key server.key
 
 echo "*****************************************************"
 echo "*****************************************************"
