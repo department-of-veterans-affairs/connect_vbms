@@ -4,6 +4,20 @@ set -x
 # this script is meant to be run from the project's /script folder
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+function ask_for_overwrite {
+  if [ -f "$DIR/../spec/fixtures/$2" ] ; then
+    read -p "Overwrite existing $2? [y/n]" -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+      rm "$DIR/../spec/fixtures/$2"
+      mv $1 "$DIR/../spec/fixtures/$2"
+    fi
+  else
+    mv $1 "$DIR/../spec/fixtures/$2"
+  fi
+}
+
 # generate import (client) key
 openssl genrsa -des3 -out import.key -passout pass:importkey 2048
 openssl req -new -key import.key -out import.csr \
@@ -44,17 +58,18 @@ keytool -importkeystore \
   -storepass "importkey"
 
 # move import keystore
-if [ -f "$DIR/../spec/fixtures/test_keystore_importkey.p12" ] ; then
-  read -p "Overwrite existing test_keystore_importkey.p12? [y/n]" -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]
-  then
-    rm "$DIR/../spec/fixtures/test_keystore_importkey.p12"
-    mv keystore.p12 "$DIR/../spec/fixtures/test_keystore_importkey.p12"
-  else
-    mv keystore.p12 test_keystore_importkey.p12
-  fi
-fi
+ask_for_overwrite keystore.p12 test_keystore_importkey.p12
+# if [ -f "$DIR/../spec/fixtures/test_keystore_importkey.p12" ] ; then
+#   read -p "Overwrite existing test_keystore_importkey.p12? [y/n]" -n 1 -r
+#   echo
+#   if [[ $REPLY =~ ^[Yy]$ ]]
+#   then
+#     rm "$DIR/../spec/fixtures/test_keystore_importkey.p12"
+#     mv keystore.p12 "$DIR/../spec/fixtures/test_keystore_importkey.p12"
+#   else
+#     mv keystore.p12 test_keystore_importkey.p12
+#   fi
+# fi
 
 keytool -importcert \
   -keystore "$DIR/keystore.jks" \
@@ -68,49 +83,22 @@ openssl pkcs12 -export -name vbms_server_key -in "$DIR/server.crt" -inkey "$DIR/
 keytool -importkeystore -destkeystore "$DIR/keystore.jks" -srckeystore "$DIR/keystore.p12" \
   -srcstoretype pkcs12 -alias "vbms_server_key" -storepass "importkey"
 
-# move server key
-if [ -f "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12" ] ; then
-  read -p "Overwrite existing test_keystore_vbms_server_key.p12? [y/n]" -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]
-  then
-    rm "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12"
-    mv keystore.p12 "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12"
-  else
-    mv keystore.p12 test_keystore_vbms_server_key.p12
-  fi
-else
-  mv keystore.p12 "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12"
-fi
+# move server keystore
+ask_for_overwrite keystore.p12 test_keystore_vbms_server_key.p12
 
 # move server cert
-if [ -f "$DIR/../spec/fixtures/test_server.crt" ] ; then
-  read -p "Overwrite existing test_server.crt? [y/n]" -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]
-  then
-    rm "$DIR/../spec/fixtures/test_server.crt"
-    mv server.crt "$DIR/../spec/fixtures/test_server.crt"
-  else
-    mv server.crt test_server.crt
-  fi
-else
-  mv server.crt "$DIR/../spec/fixtures/test_server.crt"
-fi
+ask_for_overwrite server.crt test_server.crt
 
-# move keystore
-if [ -f "$DIR/../spec/fixtures/test_keystore.jks" ] ; then
-  read -p "Overwrite existing test_keystore.jks? [y/n]" -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]
-  then
-    rm "$DIR/../spec/fixtures/test_keystore.jks"
-    mv keystore.jks "$DIR/../spec/fixtures/test_keystore.jks"
-  fi
-else
-  mv keystore.jks "$DIR/../spec/fixtures/test_keystore.jks"
-fi
+# move java keystore
+ask_for_overwrite keystore.jks test_keystore.jks
 
-rm import.crt import.csr import.key server.key
+# move server private key
+ask_for_overwrite server.key test_server_key.key
+
+# cleanup
+rm -f import.crt import.csr import.key
+
+echo "*****************************************************"
+echo "*****************************************************"
 echo "CURRENT KEYSTORE INFO:"
 keytool -list -v -keystore "$DIR/../spec/fixtures/test_keystore.jks"
