@@ -7,9 +7,10 @@ describe :SoapScum do
   before(:all) do
     @server_x509_subject = Nokogiri::XML(fixture('soap-scum/server_x509_subject_keyinfo.xml'))
     @client_x509_subject = Nokogiri::XML(fixture('soap-scum/client_x509_subject_keyinfo.xml'))
-    # let (:server_pc12) { fixture_path('test_keystore_vbms_server_key.p12') }
     @client_pc12 = fixture_path('test_keystore_importkey.p12')
     @server_cert = fixture_path('test_server.crt')
+    @server_p12_key = fixture_path('test_keystore_vbms_server_key.p12')
+    @server_key = fixture_path('test_server_key.key')
     @test_jks_keystore = fixture_path('test_keystore.jks')
     @test_keystore_pass = 'importkey'
     @keypass = 'importkey'
@@ -55,7 +56,7 @@ describe :SoapScum do
   describe 'MessageProcessor' do
     # These should be lets in normal circumstances, but I want to make
     # tests go faster and do a before(:all) instead
-    before(:all) do
+    before do
       @keystore = SoapScum::KeyStore.new
       @keystore.add_pc12(@client_pc12, @keypass)
       @keystore.add_cert(@server_cert)
@@ -75,8 +76,10 @@ describe :SoapScum do
       }
 
       @message_processor = SoapScum::MessageProcessor.new(@keystore)
-      @content_document = Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>')
-      @soap_document = @message_processor.wrap_in_soap(@content_document)
+      # @content_document = Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>')
+      @content = '<hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>'
+      @content_document = @message_processor.parse_xml_strictly(@content)
+      @soap_document = @message_processor.wrap_in_soap(@content)
       @java_encrypted_xml = VBMS.encrypted_soap_document_xml(@soap_document,
                                                              @test_jks_keystore,
                                                              @test_keystore_pass,
@@ -107,44 +110,63 @@ describe :SoapScum do
     end
 
     describe '#encrypt' do
-      # it 'returns valid SOAP' do
-      #   ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
-      #                                                   'listDocuments',
-      #                                                   @crypto_options,
-      #                                                   @soap_document.at_xpath(
-      #                                                     '/soapenv:Envelope/soapenv:Body',
-      #                                                     soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+      def parsed_timestamp(xml)
+        x = xml.at_xpath('//wsu:Timestamp', VBMS::XML_NAMESPACES)
 
-      #   xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
-      #   doc = Nokogiri::XML(ruby_encrypted_xml)
+        {
+          id: x['wsu:Id'],
+          created: x.at_xpath('//wsu:Created', VBMS::XML_NAMESPACES).text,
+          expires: x.at_xpath('//wsu:Expires', VBMS::XML_NAMESPACES).text
+        }
+      end
 
-      #   expect(xsd.validate(doc).size).to eq(0)
-      # end
+      def decrypted_symmetric_key(cipher)
+        server_p12 = OpenSSL::PKCS12.new(File.read(@server_p12_key), @keypass)
+        server_p12.key.private_decrypt(cipher)
+      end
+
+      def decrypt_message(decipher, key, iv, encrypted_text)
+        decipher.decrypt
+        decipher.key = key
+        decipher.iv = iv
+
+        # TODO(astone): remove RESCUE block. 
+        begin
+          plain = decipher.update(encrypted_text)
+          plain << decipher.final 
+        rescue StandardError => e
+          puts "********************************************************"
+          puts "ERROR MESSAGE: #{e.message}"; puts ''
+          puts "********************************************************"
+          puts "********************************************************"
+          puts "partially decrypted text:"
+          puts plain
+          puts ''; puts ''; puts ''
+          puts "********************************************************"
+          puts "********************************************************"
+        end
+        plain
+      end
+
+      it 'returns valid SOAP' do
+        ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
+                                                        'listDocuments',
+                                                        @crypto_options,
+                                                        @soap_document.at_xpath(
+                                                          '/soapenv:Envelope/soapenv:Body',
+                                                          soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+
+        xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
+        doc = Nokogiri::XML(ruby_encrypted_xml)
+
+        expect(xsd.validate(doc).size).to eq(0)
+      end
 
       context 'compared to the Java version' do
-        # helper method for manipulating the timestamp
-        def parsed_timestamp(xml)
-          x = xml.at_xpath('//wsu:Timestamp', VBMS::XML_NAMESPACES)
-
-          {
-            id: x['wsu:Id'],
-            created: x.at_xpath('//wsu:Created', VBMS::XML_NAMESPACES).text,
-            expires: x.at_xpath('//wsu:Expires', VBMS::XML_NAMESPACES).text
-          }
-        end
-
-        def decrypted_symmetric_key(cipher)
-          server_p12 = OpenSSL::PKCS12.new(File.read(fixture_path('test_keystore_vbms_server_key.p12')), @keypass)
-          expect(server_p12.key).to be_private
-          symmetric_key = server_p12.key.private_decrypt(Base64.strict_decode64(cipher))
-
-          cert = OpenSSL::X509::Certificate.new(File.read(@server_cert))
-          # expect(Base64.strict_encode64(cert.public_key.public_encrypt(symmetric_key))).to eq(cipher)
-
-          symmetric_key
-        end
-
-        it 'should encrypt in a similar way to the Java version' do
+        # Expected behavior: Ruby's #encrypt method can create a SOAP request which
+        # matches that of the Java version.
+        # This is a beast spec which can be broken up
+        it 'should encrypt similarly' do
           @java_timestamp = parsed_timestamp(@parsed_java_xml)
           time = Time.parse(@java_timestamp[:created])
 
@@ -154,9 +176,17 @@ describe :SoapScum do
           str_id = @parsed_java_xml.at_xpath('//ds:Signature/ds:KeyInfo/wsse:SecurityTokenReference', VBMS::XML_NAMESPACES)['wsu:Id']
           ek_id = @parsed_java_xml.at_xpath('//xenc:EncryptedKey', VBMS::XML_NAMESPACES)['Id']
           ed_id = @parsed_java_xml.at_xpath('//xenc:EncryptedData', VBMS::XML_NAMESPACES)['Id']
-          cipher = @parsed_java_xml.at_xpath('//xenc:EncryptedKey/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text
-          # symmetric_key = decrypted_symmetric_key(cipher)
-          
+
+          algorithm = @parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:EncryptionMethod', VBMS::XML_NAMESPACES)['Algorithm']
+          decipher = @message_processor.get_block_cipher(algorithm)
+
+          key_cipher_text = Base64.decode64(@parsed_java_xml.at_xpath('//xenc:EncryptedKey/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+          symmetric_key = decrypted_symmetric_key(key_cipher_text)
+
+          cipher_text = Base64.decode64(@parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+          encrypted_text = cipher_text[decipher.key_len..-1]
+          known_iv = cipher_text[0..(decipher.key_len-1)]
+
           # This forces the Ruby encryption to be at the exact same
           # time as the Java encryption. You can't just wrap both in a
           # single Timecop declaration because Java code exists
@@ -170,8 +200,8 @@ describe :SoapScum do
             allow(@message_processor).to receive(:security_token_id).and_return(str_id)
             allow(@message_processor).to receive(:encrypted_key_id).and_return(ek_id)
             allow(@message_processor).to receive(:encrypted_data_id).and_return(ed_id)
-            # allow(@message_processor).to receive(:get_symmetric_key).and_return(symmetric_key)
-
+            allow(@message_processor).to receive(:generate_symmetric_key).and_return(symmetric_key)
+            allow(@message_processor).to receive(:get_random_iv).and_return(known_iv)
             @ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
                                                              'listDocuments',
                                                              @crypto_options,
@@ -203,6 +233,8 @@ describe :SoapScum do
           expect(java_signed_info).to_not be_nil
           expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
 
+          # cert = @crypto_options[:server][:certificate]
+          # expect(Base64.strict_encode64(cert.public_key.public_encrypt(symmetric_key))).to eq(cipher)
           # puts @parsed_java_xml.to_xml
           # puts "!!!!!"
           # puts @parsed_ruby_xml.to_xml
@@ -220,8 +252,21 @@ describe :SoapScum do
       end
 
       it 'can be decrypted with ruby' do
-        skip 'pending valid encryption and validation with java'
+        algorithm = @parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:EncryptionMethod', VBMS::XML_NAMESPACES)['Algorithm']
+        decipher = @message_processor.get_block_cipher(algorithm)
+
+        key_cipher_text = Base64.decode64(@parsed_java_xml.at_xpath('//xenc:EncryptedKey/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+        symmetric_key = decrypted_symmetric_key(key_cipher_text)
+        
+        cipher_text = Base64.decode64(@parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+        encrypted_text = cipher_text[decipher.key_len..-1]
+        known_iv = cipher_text[0..(decipher.key_len-1)]
+
+        java_decrypted_text = decrypt_message(decipher, symmetric_key, known_iv, encrypted_text)
+
+        expect(java_decrypted_text).to eq(@message_processor.serialize_xml_strictly(@content_document, false))
       end
     end
   end
 end
+# 

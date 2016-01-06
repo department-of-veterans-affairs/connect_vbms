@@ -202,15 +202,7 @@ module SoapScum
       signed_doc.root.serialize(save_with:0)
     end
 
-    private
-
-    def sign_soap_doc(soap_doc, private_key)
-      signed_doc = Xmldsig::SignedDocument.new(soap_doc)
-      signed_doc.sign(private_key)
-
-      signed_doc
-    end
-
+    # TODO: astone - move this to helpers? 
     def get_block_cipher(cipher_algorithm)
       case cipher_algorithm
       when CryptoAlgorithms::AES128
@@ -220,6 +212,28 @@ module SoapScum
       else
         fail "Unknown Cipher: #{cipher_algorithm}"
       end
+    end
+
+    def parse_xml_strictly(xml)
+      Nokogiri::XML(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
+    end
+
+    def serialize_xml_strictly(xmldoc, preamble=true)
+      options = Nokogiri::XML::Node::SaveOptions::AS_XML
+      options |= Nokogiri::XML::Node::SaveOptions::NO_DECLARATION if !preamble
+
+      xmldoc.serialize(
+        encoding: 'UTF-8',
+        save_with: options
+      )
+    end
+
+    private
+
+    def sign_soap_doc(soap_doc, private_key)
+      signed_doc = Xmldsig::SignedDocument.new(soap_doc)
+      signed_doc.sign(private_key)
+      signed_doc
     end
 
     def timestamp_node(soap_doc)
@@ -248,42 +262,48 @@ module SoapScum
     end
 
     def soap_body_id
-      "ID-#{generate_id}"
+      @soap_body_id ||= "id-#{generate_id}"
     end
 
     def signature_id
-      "SIG-#{generate_id}"
+      @signature_id ||= "SIG-#{generate_id}"
     end
 
     def key_info_id
-      "KI-#{generate_id}"
+      @key_info_id ||= "KI-#{generate_id}"
     end
 
     def security_token_id
-      "STR-#{generate_id}"
+      @security_token_id ||= "STR-#{generate_id}"
     end
 
     def encrypted_key_id
-      "EK-#{generate_id}"
+      @encrypted_key_id ||= "EK-#{generate_id}"
     end
 
     def encrypted_data_id
-      "ED-#{generate_id}"
+      @encrypted_data_id ||= "ED-#{generate_id}"
     end
 
-    def get_symmetric_key(key_len)
+    def generate_symmetric_key(key_len)
       SecureRandom.random_bytes(key_len)
+    end
+
+    def get_random_iv
+      cipher.random_iv
     end
 
     # Takes an XMLBuilder and adds the XML Encryption template.
     def add_xmlenc_template(xml, certificate, keytransport_algorithm, cipher_algorithm)
       # #5.4.1 Lists the valid ciphers and block sizes.
+      # TODO(astone): improve this
       self.key_id = encrypted_key_id
       self.cipher_algorithm = cipher_algorithm
       self.cipher = get_block_cipher(cipher_algorithm)    # instantiate a new Cipher
-      self.cipher.encrypt                                      # set mode for Cipher
-      self.iv = cipher.random_iv
-      self.symmetric_key = cipher.key = get_symmetric_key(cipher.key_len)
+      cipher.encrypt                                      # set mode for Cipher
+      self.iv = get_random_iv
+      self.symmetric_key = cipher.key = generate_symmetric_key(cipher.key_len)
+
       # self.symmetric_key = cipher.random_key # LESS secure. see
       # https://github.com/department-of-veterans-affairs/connect_vbms-old/pull/36/files#r33154220
 
@@ -320,31 +340,8 @@ module SoapScum
     end
 
     def generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
-# debug
-      # original:
-      # raw_xml = node.serialize(encoding: 'UTF-8', save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
-
-      # body children to_xml
-      # raw_xml = node.children.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
-
-      # raw_xml = node.children.collect(&:canonicalize).join
-# /debug
-      # new canonicalize approach.
-      raw_xml = ''
-      node.children.each do |n|
-        out = n.canonicalize(Nokogiri::XML::XML_C14N_EXCLUSIVE_1_0)
-        raw_xml << out unless out =~ /^\s+$/ # skip blank
-      end
-      # raw_xml = raw_xml.chomp.squish
-      # raw_xml = raw_xml.gsub("> <","><") # FURTHER STRIPPING. EW.
-# debug
-puts "raw_xml to be encrypted ----------------------------"
-puts raw_xml
-# /debug
-      # write ciphertext
-      cipher_text = self.iv
-      cipher_text << cipher.update(raw_xml)
-      cipher_text << cipher.final
+      raw_xml = node.children.collect(&:serialize).join
+      cipher_text = self.iv + cipher.update(raw_xml) + cipher.final
 
       # builder portion
       builder = Nokogiri::XML::Builder.new do |xml|
@@ -439,20 +436,6 @@ puts raw_xml
       certificate.subject.to_a.reverse.map do |name, value, _|
         "#{name}=#{value}"
       end.join(',')
-    end
-
-    def parse_xml_strictly(xml)
-      Nokogiri::XML(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
-    end
-
-    def serialize_xml_strictly(xmldoc, preamble=true)
-      options = Nokogiri::XML::Node::SaveOptions::AS_XML
-      options |= Nokogiri::XML::Node::SaveOptions::NO_DECLARATION if !preamble
-
-      xmldoc.serialize(
-        encoding: 'UTF-8',
-        save_with: options
-      )
     end
 
     def relocate_timestamp(doc)

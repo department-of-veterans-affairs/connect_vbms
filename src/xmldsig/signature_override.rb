@@ -15,18 +15,9 @@ end
 module Xmldsig
   class Signature
     extend StrictlyBase64
-
-#     def canonicalized_signed_info
-#       info = Canonicalizer.new(signed_info, canonicalization_method).canonicalize
-# puts "CANONICALIZED_SIGNED_INFO -=-=-=-=-=-=-=-=-=-=-=-=-"
-# puts info
-
-#       info
-#     end
   end
 
   class Reference
     extend StrictlyBase64
   end
-
 end
