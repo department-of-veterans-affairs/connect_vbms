@@ -84,13 +84,13 @@ describe :SoapScum do
       # end
       let(:content_document) { Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>') }
       let(:soap_document) { @message_processor.wrap_in_soap(content_document) }
-      let(:java_encrypted_xml) {
+      let(:java_encrypted_xml) do
         VBMS.encrypted_soap_document_xml(soap_document,
                                          @test_jks_keystore,
                                          @test_keystore_pass,
                                          'listDocuments')
-      }
-      let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) { |x| x.noblanks } }
+      end
+      let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT, &:noblanks) }
       
       it 'creates a valid SOAP document' do
         xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
@@ -115,14 +115,13 @@ describe :SoapScum do
     describe '#encrypt' do
       let(:content_document) { Nokogiri::XML("\n    <v4:listDocuments>\n      <v4:fileNumber>784449089</v4:fileNumber>\n    </v4:listDocuments>\n ") }
       let(:soap_document) { @message_processor.wrap_in_soap(content_document) }
-      let(:java_encrypted_xml) {
+      let(:java_encrypted_xml) do
         VBMS.encrypted_soap_document_xml(soap_document,
                                          @test_jks_keystore,
                                          @test_keystore_pass,
                                          'listDocuments')
-      }
-      let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) { |x| x.noblanks } }
-      
+      end
+      let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT, &:noblanks) }
 
       it 'returns valid SOAP' do
         ruby_encrypted_xml = @message_processor.encrypt(soap_document,
@@ -160,8 +159,7 @@ describe :SoapScum do
           symmetric_key = decrypted_symmetric_key(key_cipher_text)
 
           cipher_text = Base64.decode64(parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
-          encrypted_text = cipher_text[decipher.key_len..(cipher_text.length)]
-          known_iv = cipher_text[0..(decipher.key_len-1)]
+          known_iv = cipher_text[0..(decipher.key_len - 1)]
 
           # This forces the Ruby encryption to be at the exact same
           # time as the Java encryption. You can't just wrap both in a
@@ -236,7 +234,7 @@ describe :SoapScum do
         
         cipher_text = Base64.decode64(parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
         encrypted_text = cipher_text[decipher.key_len..-1]
-        known_iv = cipher_text[0..(decipher.key_len-1)]
+        known_iv = cipher_text[0..(decipher.key_len - 1)]
 
         java_decrypted_text = decrypt_message(decipher, symmetric_key, known_iv, encrypted_text)
 
@@ -245,4 +243,4 @@ describe :SoapScum do
     end
   end
 end
-# 
+#
