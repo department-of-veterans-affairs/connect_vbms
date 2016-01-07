@@ -76,28 +76,31 @@ describe :SoapScum do
       }
 
       @message_processor = SoapScum::MessageProcessor.new(@keystore)
-      # @content_document = Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>')
-      @content = '<hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>'
-      @content_document = @message_processor.parse_xml_strictly(@content)
-      @soap_document = @message_processor.wrap_in_soap(@content)
-      @java_encrypted_xml = VBMS.encrypted_soap_document_xml(@soap_document,
-                                                             @test_jks_keystore,
-                                                             @test_keystore_pass,
-                                                             'listDocuments')
-
-      @parsed_java_xml =  Nokogiri::XML(@java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) { |x| x.noblanks } # for some reason, this is needed for to_xml to prettyprint
     end
 
     describe '#wrap_in_soap' do
+      # before do
+
+      # end
+      let(:content_document) { Nokogiri::XML('<hi-mom xmlns:example="http://example.com"><example:a-doc/><b-doc/></hi-mom>') }
+      let(:soap_document) { @message_processor.wrap_in_soap(content_document) }
+      let(:java_encrypted_xml) {
+        VBMS.encrypted_soap_document_xml(soap_document,
+                                         @test_jks_keystore,
+                                         @test_keystore_pass,
+                                         'listDocuments')
+      }
+      let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) { |x| x.noblanks } }
+      
       it 'creates a valid SOAP document' do
         xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
-        expect(xsd.validate(@soap_document).size).to eq(0)
+        expect(xsd.validate(soap_document).size).to eq(0)
       end
 
       it 'should not reassign a namespace if the parent has no namespaces' do
-        expect(@soap_document.at_xpath('//hi-mom')).to_not be_nil
-        expect(@soap_document.at_xpath('//hi-mom/e:a-doc', e: 'http://example.com')).to_not be_nil
-        expect(@soap_document.at_xpath('//hi-mom/b-doc')).to_not be_nil
+        expect(soap_document.at_xpath('//hi-mom')).to_not be_nil
+        expect(soap_document.at_xpath('//hi-mom/e:a-doc', e: 'http://example.com')).to_not be_nil
+        expect(soap_document.at_xpath('//hi-mom/b-doc')).to_not be_nil
       end
 
       it 'should not reassign a namespace if the root has a namespace' do
@@ -110,49 +113,22 @@ describe :SoapScum do
     end
 
     describe '#encrypt' do
-      def parsed_timestamp(xml)
-        x = xml.at_xpath('//wsu:Timestamp', VBMS::XML_NAMESPACES)
-
-        {
-          id: x['wsu:Id'],
-          created: x.at_xpath('//wsu:Created', VBMS::XML_NAMESPACES).text,
-          expires: x.at_xpath('//wsu:Expires', VBMS::XML_NAMESPACES).text
-        }
-      end
-
-      def decrypted_symmetric_key(cipher)
-        server_p12 = OpenSSL::PKCS12.new(File.read(@server_p12_key), @keypass)
-        server_p12.key.private_decrypt(cipher)
-      end
-
-      def decrypt_message(decipher, key, iv, encrypted_text)
-        decipher.decrypt
-        decipher.key = key
-        decipher.iv = iv
-
-        # TODO(astone): remove RESCUE block. 
-        begin
-          plain = decipher.update(encrypted_text)
-          plain << decipher.final 
-        rescue StandardError => e
-          puts "********************************************************"
-          puts "ERROR MESSAGE: #{e.message}"; puts ''
-          puts "********************************************************"
-          puts "********************************************************"
-          puts "partially decrypted text:"
-          puts plain
-          puts ''; puts ''; puts ''
-          puts "********************************************************"
-          puts "********************************************************"
-        end
-        plain
-      end
+      let(:content_document) { Nokogiri::XML("\n    <v4:listDocuments>\n      <v4:fileNumber>784449089</v4:fileNumber>\n    </v4:listDocuments>\n ") }
+      let(:soap_document) { @message_processor.wrap_in_soap(content_document) }
+      let(:java_encrypted_xml) {
+        VBMS.encrypted_soap_document_xml(soap_document,
+                                         @test_jks_keystore,
+                                         @test_keystore_pass,
+                                         'listDocuments')
+      }
+      let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT) { |x| x.noblanks } }
+      
 
       it 'returns valid SOAP' do
-        ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
+        ruby_encrypted_xml = @message_processor.encrypt(soap_document,
                                                         'listDocuments',
                                                         @crypto_options,
-                                                        @soap_document.at_xpath(
+                                                        soap_document.at_xpath(
                                                           '/soapenv:Envelope/soapenv:Body',
                                                           soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
@@ -167,24 +143,24 @@ describe :SoapScum do
         # matches that of the Java version.
         # This is a beast spec which can be broken up
         it 'should encrypt similarly' do
-          @java_timestamp = parsed_timestamp(@parsed_java_xml)
+          @java_timestamp = parsed_timestamp(parsed_java_xml)
           time = Time.parse(@java_timestamp[:created])
 
-          body_id = @parsed_java_xml.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES)['wsu:Id']
-          signature_id = @parsed_java_xml.at_xpath('//ds:Signature', VBMS::XML_NAMESPACES)['Id']
-          key_info_id = @parsed_java_xml.at_xpath('//ds:Signature/ds:KeyInfo', VBMS::XML_NAMESPACES)['Id']
-          str_id = @parsed_java_xml.at_xpath('//ds:Signature/ds:KeyInfo/wsse:SecurityTokenReference', VBMS::XML_NAMESPACES)['wsu:Id']
-          ek_id = @parsed_java_xml.at_xpath('//xenc:EncryptedKey', VBMS::XML_NAMESPACES)['Id']
-          ed_id = @parsed_java_xml.at_xpath('//xenc:EncryptedData', VBMS::XML_NAMESPACES)['Id']
+          body_id = parsed_java_xml.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES)['wsu:Id']
+          signature_id = parsed_java_xml.at_xpath('//ds:Signature', VBMS::XML_NAMESPACES)['Id']
+          key_info_id = parsed_java_xml.at_xpath('//ds:Signature/ds:KeyInfo', VBMS::XML_NAMESPACES)['Id']
+          str_id = parsed_java_xml.at_xpath('//ds:Signature/ds:KeyInfo/wsse:SecurityTokenReference', VBMS::XML_NAMESPACES)['wsu:Id']
+          ek_id = parsed_java_xml.at_xpath('//xenc:EncryptedKey', VBMS::XML_NAMESPACES)['Id']
+          ed_id = parsed_java_xml.at_xpath('//xenc:EncryptedData', VBMS::XML_NAMESPACES)['Id']
 
-          algorithm = @parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:EncryptionMethod', VBMS::XML_NAMESPACES)['Algorithm']
+          algorithm = parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:EncryptionMethod', VBMS::XML_NAMESPACES)['Algorithm']
           decipher = @message_processor.get_block_cipher(algorithm)
 
-          key_cipher_text = Base64.decode64(@parsed_java_xml.at_xpath('//xenc:EncryptedKey/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+          key_cipher_text = Base64.decode64(parsed_java_xml.at_xpath('//xenc:EncryptedKey/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
           symmetric_key = decrypted_symmetric_key(key_cipher_text)
 
-          cipher_text = Base64.decode64(@parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
-          encrypted_text = cipher_text[decipher.key_len..-1]
+          cipher_text = Base64.decode64(parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+          encrypted_text = cipher_text[decipher.key_len..(cipher_text.length)]
           known_iv = cipher_text[0..(decipher.key_len-1)]
 
           # This forces the Ruby encryption to be at the exact same
@@ -202,10 +178,10 @@ describe :SoapScum do
             allow(@message_processor).to receive(:encrypted_data_id).and_return(ed_id)
             allow(@message_processor).to receive(:generate_symmetric_key).and_return(symmetric_key)
             allow(@message_processor).to receive(:get_random_iv).and_return(known_iv)
-            @ruby_encrypted_xml = @message_processor.encrypt(@soap_document,
+            @ruby_encrypted_xml = @message_processor.encrypt(soap_document,
                                                              'listDocuments',
                                                              @crypto_options,
-                                                             @soap_document.at_xpath(
+                                                             soap_document.at_xpath(
                                                                '/soapenv:Envelope/soapenv:Body',
                                                                soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
@@ -222,14 +198,14 @@ describe :SoapScum do
           # Check the signed info for the timestamp
           ruby_signed_info = @parsed_ruby_xml.at_xpath("//ds:Reference[@URI='##{ruby_timestamp[:id]}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(ruby_signed_info).to_not be_nil
-          java_signed_info = @parsed_java_xml.at_xpath("//ds:Reference[@URI='##{ruby_timestamp[:id]}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
+          java_signed_info = parsed_java_xml.at_xpath("//ds:Reference[@URI='##{ruby_timestamp[:id]}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(java_signed_info).to_not be_nil
           expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
 
           # check the signed info for the encrypted part
           ruby_signed_info = @parsed_ruby_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(ruby_signed_info).to_not be_nil
-          java_signed_info = @parsed_java_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
+          java_signed_info = parsed_java_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(java_signed_info).to_not be_nil
           expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
 
@@ -252,19 +228,19 @@ describe :SoapScum do
       end
 
       it 'can be decrypted with ruby' do
-        algorithm = @parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:EncryptionMethod', VBMS::XML_NAMESPACES)['Algorithm']
+        algorithm = parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:EncryptionMethod', VBMS::XML_NAMESPACES)['Algorithm']
         decipher = @message_processor.get_block_cipher(algorithm)
 
-        key_cipher_text = Base64.decode64(@parsed_java_xml.at_xpath('//xenc:EncryptedKey/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+        key_cipher_text = Base64.decode64(parsed_java_xml.at_xpath('//xenc:EncryptedKey/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
         symmetric_key = decrypted_symmetric_key(key_cipher_text)
         
-        cipher_text = Base64.decode64(@parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+        cipher_text = Base64.decode64(parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
         encrypted_text = cipher_text[decipher.key_len..-1]
         known_iv = cipher_text[0..(decipher.key_len-1)]
 
         java_decrypted_text = decrypt_message(decipher, symmetric_key, known_iv, encrypted_text)
 
-        expect(java_decrypted_text).to eq(@message_processor.serialize_xml_strictly(@content_document, false))
+        expect(java_decrypted_text).to eq(@message_processor.serialize_xml_strictly(content_document, false))
       end
     end
   end
