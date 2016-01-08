@@ -130,10 +130,23 @@ describe :SoapScum do
         decipher.key = key
         decipher.iv = iv
 
+        # Manually handle the xmlenc padding which is not supported by openssl.
+        # See http://openssl.6102.n7.nabble.com/ISO10126-padding-in-openssl-td9228.html
+        # for details.
+        decipher.padding = 0
+
         # TODO(astone): remove RESCUE block. 
         begin
           plain = decipher.update(encrypted_text)
           plain << decipher.final 
+
+          # Remove xmlenc padding as specified in the xmlenc spec.
+          # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
+          raise "Deciphered message must be greater than 0 bytes." if plain.empty?
+          padding_length = plain.bytes[-1]
+          raise "Padding length #{padding_length} violates xmlsec sanity checks for block size #{decipher.block_size}." unless (padding_length >= 1 && padding_length <= decipher.block_size)
+          raise "Padding length #{padding_length} larger than full plaintext." if padding_length > plain.size
+          plain = plain.byteslice(0, plain.size - padding_length)
         rescue StandardError => e
           puts "********************************************************"
           puts "ERROR MESSAGE: #{e.message}"; puts ''
@@ -264,7 +277,7 @@ describe :SoapScum do
 
         java_decrypted_text = decrypt_message(decipher, symmetric_key, known_iv, encrypted_text)
 
-        expect(java_decrypted_text).to eq(@message_processor.serialize_xml_strictly(@content_document, false))
+        expect(Nokogiri::XML(java_decrypted_text)).to be_equivalent_to(@content_document)
       end
     end
   end
