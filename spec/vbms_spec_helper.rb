@@ -102,11 +102,17 @@ def decrypt_message(decipher, key, iv, encrypted_text)
   decipher.decrypt
   decipher.key = key
   decipher.iv = iv
+  # Manually handle the xmlenc padding which is not supported by openssl.
+  # See http://openssl.6102.n7.nabble.com/ISO10126-padding-in-openssl-td9228.html
+  # for details.
+  decipher.padding = 0
 
   # TODO(astone): remove RESCUE block. 
   begin
     plain = decipher.update(encrypted_text)
     plain << decipher.final 
+
+    plain = SoapScum::MessageProcessor.remove_xmlenc_padding(decipher.block_size, plain)
   rescue StandardError => e
     puts "********************************************************"
     puts "ERROR MESSAGE: #{e.message}"; puts ''

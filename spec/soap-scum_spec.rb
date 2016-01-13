@@ -238,7 +238,52 @@ describe :SoapScum do
 
         java_decrypted_text = decrypt_message(decipher, symmetric_key, known_iv, encrypted_text)
 
-        expect(java_decrypted_text).to eq(@message_processor.serialize_xml_strictly(content_document, false))
+        # Compare the DOMs instead of seralized strings to be more robust against serialization differences.
+        expect(Nokogiri::XML(java_decrypted_text)).to be_equivalent_to(content_document)
+      end
+    end
+
+    describe "#xmlenc_padding" do
+      it 'can pad all byte string lenghts correctly' do
+        allow(SecureRandom).to receive(:random_bytes).with(anything()).and_raise("Unexpected argument")
+        allow(SecureRandom).to receive(:random_bytes).with(1).and_return("\xA0" )
+        allow(SecureRandom).to receive(:random_bytes).with(2).and_return("\xA0\xB0" )
+        allow(SecureRandom).to receive(:random_bytes).with(3).and_return("\xA0\xB0\xC0" )
+
+        padded = SoapScum::MessageProcessor.add_xmlenc_padding(4, 'a')
+        expect(padded).to eq("a\xA0\xB0\x03")
+
+        padded = SoapScum::MessageProcessor.add_xmlenc_padding(4, 'ab')
+        expect(padded).to eq("ab\xA0\x02")
+
+        padded = SoapScum::MessageProcessor.add_xmlenc_padding(4, 'abc')
+        expect(padded).to eq("abc\x01")
+
+        padded = SoapScum::MessageProcessor.add_xmlenc_padding(4, 'abcd')
+        expect(padded).to eq("abcd\xA0\xB0\xC0\x04")
+      end
+
+      it 'can unpad all string lenghts correctly' do
+        expect(SoapScum::MessageProcessor.remove_xmlenc_padding(4, "a\xA0\xB0\x03")).to eq('a')
+        expect(SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\xA0\x02")).to eq('ab')
+        expect(SoapScum::MessageProcessor.remove_xmlenc_padding(4, "abc\x01")).to eq('abc')
+        expect(SoapScum::MessageProcessor.remove_xmlenc_padding(4, "abcd\xA0\xB0\xC0\x04")).to eq('abcd')
+      end
+
+      it 'raises if encoded padding length is greater than block size' do
+        expect{ SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\xA0\xB0\x05") }.to raise_error(/violates xmlsec sanity checks/)
+      end
+
+      it 'raises if encoded padding length is 0. There is always padding in xmlenc.' do
+        expect{ SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\xA0\xB0\x00") }.to raise_error(/violates xmlsec sanity checks/)
+      end
+
+      it 'raises if encoded padding length is greater than string length.' do
+        expect{ SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\x04") }.to raise_error(/larger than full plaintext/)
+      end
+
+      it 'raises if unpadding an empty string.' do
+        expect{ SoapScum::MessageProcessor.remove_xmlenc_padding(4, "") }.to raise_error(/padded_string must be greater than 0 bytes./)
       end
     end
   end

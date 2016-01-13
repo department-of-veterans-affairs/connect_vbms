@@ -85,6 +85,9 @@ module SoapScum
       AES128 = 'http://www.w3.org/2001/04/xmlenc#aes128-cbc'
       AES256 = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc'
     end
+    # TODO(awong): Do not expose the internal cipher object. This object has
+    # mutable state which breaks the data hiding of this object. Return a
+    # clone or just keep the cipher completely hidden.
     attr_accessor :cipher, :key_id, :symmetric_key, :cipher_algorithm, :encrypted_elements, :iv
 
     def initialize(keystore)
@@ -300,9 +303,8 @@ module SoapScum
       self.key_id = encrypted_key_id
       self.cipher_algorithm = cipher_algorithm
       self.cipher = get_block_cipher(cipher_algorithm)    # instantiate a new Cipher
-      cipher.encrypt                                      # set mode for Cipher
       self.iv = get_random_iv
-      self.symmetric_key = cipher.key = generate_symmetric_key(cipher.key_len)
+      self.symmetric_key = generate_symmetric_key(cipher.key_len)
 
       # self.symmetric_key = cipher.random_key # LESS secure. see
       # https://github.com/department-of-veterans-affairs/connect_vbms-old/pull/36/files#r33154220
@@ -339,9 +341,35 @@ module SoapScum
       end
     end
 
+    def self.add_xmlenc_padding(block_size, unpadded_string)
+      # Add xmlenc padding as specified in the xmlenc spec.
+      # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
+      raise "block size #{block_size} must be > 0." if block_size <= 0
+      padding_length = (block_size - unpadded_string.length % block_size)
+      num_rand_bytes = padding_length - 1
+      unpadded_string << SecureRandom.random_bytes(num_rand_bytes) if num_rand_bytes > 0
+      unpadded_string << padding_length.chr  # TODO(awong): Do we encoding issues?
+      unpadded_string  # String is now padded.
+    end
+
+    def self.remove_xmlenc_padding(block_size, padded_string)
+      # Remove xmlenc padding as specified in the xmlenc spec.
+      # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
+      raise "padded_string must be greater than 0 bytes." if padded_string.empty?
+      padding_length = padded_string.bytes[-1]
+      raise "Padding length #{padding_length} violates xmlsec sanity checks for block size #{block_size}." unless (padding_length >= 1 && padding_length <= block_size)
+      raise "Padding length #{padding_length} larger than full plaintext." if padding_length > padded_string.size
+      padded_string.byteslice(0, padded_string.size - padding_length)
+    end
+
     def generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
       raw_xml = node.children.collect(&:serialize).join
-      cipher_text = self.iv + cipher.update(raw_xml) + cipher.final
+      cipher.encrypt
+      cipher.padding = 0
+      cipher.iv = iv
+      cipher.key = symmetric_key
+      cipher_text = self.iv + cipher.update(
+        MessageProcessor.add_xmlenc_padding(cipher.block_size, raw_xml)) + cipher.final
 
       # builder portion
       builder = Nokogiri::XML::Builder.new do |xml|
