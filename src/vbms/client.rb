@@ -17,11 +17,11 @@ module VBMS
       @server_key = server_keyfile
 
       @java_keyfile = java_keyfile || nil
-      # TODO remove @keystore and improve access via processor
+      # TODO: remove @keystore and improve access via processor
       @keystore = SoapScum::KeyStore.new
 
       @keystore.add_pc12(@keyfile, @keypass) if @keyfile
-      @keystore.add_cert(@server_key) if @server_key and @server_key.match(/.crt/)
+      @keystore.add_cert(@server_key) if @server_key && @server_key.match(/.crt/)
 
       @processor = SoapScum::MessageProcessor.new(@keystore)
 
@@ -84,26 +84,26 @@ module VBMS
 
       soap_doc = @processor.wrap_in_soap(unencrypted_xml)
       encrypted_doc = @processor.encrypt(soap_doc,
-        request.name,
-        crypto_options,
-        soap_doc.at_xpath(
-          '/soapenv:Envelope/soapenv:Body',
-          soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+                                         request.name,
+                                         crypto_options,
+                                         soap_doc.at_xpath(
+                                           '/soapenv:Envelope/soapenv:Body',
+                                           soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
-      # TODO ugh! serialize, parse, rinse and repeat
+      # TODO: ugh! serialize, parse, rinse and repeat
       encrypted_doc = parse_xml_strictly(encrypted_doc)
       inject_saml(encrypted_doc)
       remove_must_understand(encrypted_doc)
 
       serialized_doc = serialize_document(encrypted_doc)
 
-# debug
-File.open('saml_request.xml', 'w') do |file|
-  file.truncate(0)
-  file.write serialized_doc
-end
-`gorgeous -i saml_request.xml`
-# /debug
+      # debug
+      File.open('saml_request.xml', 'w') do |file|
+        file.truncate(0)
+        file.write serialized_doc
+      end
+      `gorgeous -i saml_request.xml`
+      # /debug
 
       body = create_body(request, serialized_doc)
 
@@ -190,15 +190,15 @@ end
     def crypto_options
       {
         server: {
-            certificate: @keystore.all.last.certificate,
-            keytransport_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
-            cipher_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::AES128
+          certificate: @keystore.all.last.certificate,
+          keytransport_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
+          cipher_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::AES128
         },
         client: {
-            certificate: @keystore.all.first.certificate,
-            private_key: @keystore.all.first.key,
-            digest_algorithm: "http://www.w3.org/2000/09/xmldsig#sha1",
-            signature_algorithm: "http://www.w3.org/2000/09/xmldsig#rsa-sha1"
+          certificate: @keystore.all.first.certificate,
+          private_key: @keystore.all.first.key,
+          digest_algorithm: 'http://www.w3.org/2000/09/xmldsig#sha1',
+          signature_algorithm: 'http://www.w3.org/2000/09/xmldsig#rsa-sha1'
         }
       }
     end
@@ -227,7 +227,7 @@ end
     def parse_body(xml)
       doc = parse_xml_strictly(xml)
       doc.at_xpath('/soapenv:Envelope/soapenv:Body',
-        soapenv: 'http://schemas.xmlsoap.org/soap/envelope/')
+                   soapenv: 'http://schemas.xmlsoap.org/soap/envelope/')
     end
 
     def multipart_boundary(headers)

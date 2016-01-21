@@ -4,12 +4,12 @@ require 'xmldsig'
 
 module SoapScum
   module XMLNamespaces
-    SOAPENV = "http://schemas.xmlsoap.org/soap/envelope/"
-    WSSE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
-    WSSE11 = "http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd"
-    WSU = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-    DS = "http://www.w3.org/2000/09/xmldsig#"
-    XENC = "http://www.w3.org/2001/04/xmlenc#"
+    SOAPENV = 'http://schemas.xmlsoap.org/soap/envelope/'
+    WSSE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
+    WSSE11 = 'http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd'
+    WSU = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd'
+    DS = 'http://www.w3.org/2000/09/xmldsig#'
+    XENC = 'http://www.w3.org/2001/04/xmlenc#'
   end
 
   class KeyStore
@@ -23,18 +23,18 @@ module SoapScum
       @by_subject.values
     end
 
-    def add_pc12(path, keypass = "")
+    def add_pc12(path, keypass = '')
       pkcs12 = OpenSSL::PKCS12.new(File.read(path), keypass)
       cert_entry = CertStruct.new(pkcs12.certificate, pkcs12.key)
       @by_subject[x509_to_normalized_subject(pkcs12.certificate)] = cert_entry
 
-      if pkcs12.ca_certs and pkcs12.ca_certs.any?
+      if pkcs12.ca_certs && pkcs12.ca_certs.any?
         issuer_entry = CertStruct.new(pkcs12.ca_certs.first)
         @by_subject[x509_to_normalized_subject(pkcs12.ca_certs.first)] = issuer_entry
       end
     end
 
-    def add_cert(path, keypass ='')
+    def add_cert(path, _keypass = '')
       certificate = OpenSSL::X509::Certificate.new(File.read(path))
       cert_entry = CertStruct.new(certificate, 'importkey')
       @by_subject[x509_to_normalized_subject(certificate)] = cert_entry
@@ -113,10 +113,10 @@ module SoapScum
 
       builder = Nokogiri::XML::Builder.new do |xml|
         xml['soapenv'].Envelope('xmlns:soapenv' => XMLNamespaces::SOAPENV,
-                                'xmlns:cdm' => "http://vbms.vba.va.gov/cdm",
-                                'xmlns:doc' => "http://vbms.vba.va.gov/cdm/document/v4",
-                                'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4",
-                                'xmlns:xop' => "http://www.w3.org/2004/08/xop/include") do
+                                'xmlns:cdm' => 'http://vbms.vba.va.gov/cdm',
+                                'xmlns:doc' => 'http://vbms.vba.va.gov/cdm/document/v4',
+                                'xmlns:v4' => 'http://vbms.vba.va.gov/external/eDocumentService/v4',
+                                'xmlns:xop' => 'http://www.w3.org/2004/08/xop/include') do
           xml['soapenv'].Body('wsu:Id' => soap_body_id, 'xmlns:wsu' => XMLNamespaces::WSU) do
             xml.REPLACEME unless contents_doc.nil?
           end
@@ -138,7 +138,7 @@ module SoapScum
       else
         if body_node(contents_doc)
           # compatibilty with current Request
-          inner_str = body_node(contents_doc).children.map {|c| serialize_xml_strictly(c, false)}.join('')
+          inner_str = body_node(contents_doc).children.map { |c| serialize_xml_strictly(c, false) }.join('')
         else
           inner_str = serialize_xml_strictly(contents_doc.root, false)
         end
@@ -149,7 +149,7 @@ module SoapScum
       end
     end
 
-    def encrypt(soap_doc, request_name, crypto_options, nodes_to_encrypt, validity: 5.minutes)
+    def encrypt(soap_doc, _request_name, crypto_options, nodes_to_encrypt, validity: 5.minutes)
       # TODO(astone)
       # improve crypto_options messaging, make it cohesive with keystore
       # TODO(awong): Allow configurable digest and signature methods.
@@ -189,20 +189,20 @@ module SoapScum
 
       nodes_to_encrypt = [body_node(signed_doc)]
       Nokogiri::XML::Builder.with(signed_doc.at("*//[Id=#{key_id}]",
-                                              soap: XMLNamespaces::SOAPENV,
-                                              'xmlns:wsse' => XMLNamespaces::WSSE,
-                                              'xmlns:wsu' => XMLNamespaces::WSU,
-                                              'xmlns:xenc' => XMLNamespaces::XENC)) do |xml|
+                                                soap: XMLNamespaces::SOAPENV,
+                                                'xmlns:wsse' => XMLNamespaces::WSSE,
+                                                'xmlns:wsu' => XMLNamespaces::WSU,
+                                                'xmlns:xenc' => XMLNamespaces::XENC)) do |xml|
         encrypt_references(xml, nodes_to_encrypt)
       end
 
       # puts serialize_xml_strictly(signed_doc.document)
       # puts signed_doc.serialize(
-        # encoding: 'UTF-8',
-        # save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
+      # encoding: 'UTF-8',
+      # save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
       # )
       # rtnstr = signed_doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
-      signed_doc.root.serialize(save_with:0)
+      signed_doc.root.serialize(save_with: 0)
     end
 
     # TODO: astone - move this to helpers? 
@@ -221,9 +221,9 @@ module SoapScum
       Nokogiri::XML(xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
     end
 
-    def serialize_xml_strictly(xmldoc, preamble=true)
+    def serialize_xml_strictly(xmldoc, preamble = true)
       options = Nokogiri::XML::Node::SaveOptions::AS_XML
-      options |= Nokogiri::XML::Node::SaveOptions::NO_DECLARATION if !preamble
+      options |= Nokogiri::XML::Node::SaveOptions::NO_DECLARATION unless preamble
 
       xmldoc.serialize(
         encoding: 'UTF-8',
@@ -250,10 +250,10 @@ module SoapScum
     def body_node(doc)
       doc.at_xpath('/soapenv:Envelope/soapenv:Body',
                    soapenv: XMLNamespaces::SOAPENV,
-                   'xmlns:cdm' => "http://vbms.vba.va.gov/cdm",
-                   'xmlns:doc' => "http://vbms.vba.va.gov/cdm/document/v4",
-                   'xmlns:v4' => "http://vbms.vba.va.gov/external/eDocumentService/v4",
-                   'xmlns:xop' => "http://www.w3.org/2004/08/xop/include")
+                   'xmlns:cdm' => 'http://vbms.vba.va.gov/cdm',
+                   'xmlns:doc' => 'http://vbms.vba.va.gov/cdm/document/v4',
+                   'xmlns:v4' => 'http://vbms.vba.va.gov/external/eDocumentService/v4',
+                   'xmlns:xop' => 'http://www.w3.org/2004/08/xop/include')
     end
 
     def generate_id
@@ -334,7 +334,7 @@ module SoapScum
         nodes_to_encrypt.each do |node|
           encrypted_node_id = encrypted_data_id
           encrypted_node = generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
-          node.children.each {|child_node| child_node.remove } # remove unencrypted node
+          node.children.each(&:remove) # remove unencrypted node
           node << encrypted_node
           xml['xenc'].DataReference(URI: "##{encrypted_node_id}")
         end
@@ -344,7 +344,7 @@ module SoapScum
     def self.add_xmlenc_padding(block_size, unpadded_string)
       # Add xmlenc padding as specified in the xmlenc spec.
       # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
-      raise "block size #{block_size} must be > 0." if block_size <= 0
+      fail "block size #{block_size} must be > 0." if block_size <= 0
       padding_length = (block_size - unpadded_string.length % block_size)
       num_rand_bytes = padding_length - 1
       unpadded_string << SecureRandom.random_bytes(num_rand_bytes) if num_rand_bytes > 0
@@ -355,10 +355,10 @@ module SoapScum
     def self.remove_xmlenc_padding(block_size, padded_string)
       # Remove xmlenc padding as specified in the xmlenc spec.
       # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
-      raise "padded_string must be greater than 0 bytes." if padded_string.empty?
+      fail 'padded_string must be greater than 0 bytes.' if padded_string.empty?
       padding_length = padded_string.bytes[-1]
-      raise "Padding length #{padding_length} violates xmlsec sanity checks for block size #{block_size}." unless (padding_length >= 1 && padding_length <= block_size)
-      raise "Padding length #{padding_length} larger than full plaintext." if padding_length > padded_string.size
+      fail "Padding length #{padding_length} violates xmlsec sanity checks for block size #{block_size}." unless padding_length >= 1 && padding_length <= block_size
+      fail "Padding length #{padding_length} larger than full plaintext." if padding_length > padded_string.size
       padded_string.byteslice(0, padded_string.size - padding_length)
     end
 
@@ -368,12 +368,12 @@ module SoapScum
       cipher.padding = 0
       cipher.iv = iv
       cipher.key = symmetric_key
-      cipher_text = self.iv + cipher.update(
+      cipher_text = iv + cipher.update(
         MessageProcessor.add_xmlenc_padding(cipher.block_size, raw_xml)) + cipher.final
 
       # builder portion
       builder = Nokogiri::XML::Builder.new do |xml|
-        xml['xenc'].EncryptedData('xmlns:xenc' => 'http://www.w3.org/2001/04/xmlenc#', Id: encrypted_node_id, Type: "http://www.w3.org/2001/04/xmlenc#Content") do
+        xml['xenc'].EncryptedData('xmlns:xenc' => 'http://www.w3.org/2001/04/xmlenc#', Id: encrypted_node_id, Type: 'http://www.w3.org/2001/04/xmlenc#Content') do
           xml['xenc'].EncryptionMethod(Algorithm: cipher_algorithm)
           xml['ds'].KeyInfo('xmlns:ds' => XMLNamespaces::DS) do
             xml['wsse'].SecurityTokenReference('xmlns:wsse' => XMLNamespaces::WSSE,
@@ -396,7 +396,7 @@ module SoapScum
                              'xmlns:soapenv' => XMLNamespaces::SOAPENV
                             ) do
           # TODO(awong): Allow modification of CanonicalizationMethod.
-          xml['ds'].CanonicalizationMethod(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
+          xml['ds'].CanonicalizationMethod(Algorithm: 'http://www.w3.org/2001/10/xml-exc-c14n#') do
             xml['ec'].InclusiveNamespaces('xmlns:ec' => 'http://www.w3.org/2001/10/xml-exc-c14n#',
                                           'PrefixList' => 'cdm doc soapenv v4 xop')
           end
@@ -404,9 +404,9 @@ module SoapScum
           nodes_to_sign.each do |node|
             xml['ds'].Reference(URI: "##{node.attr('wsu:Id')}") do
               xml['ds'].Transforms do
-                xml['ds'].Transform(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
+                xml['ds'].Transform(Algorithm: 'http://www.w3.org/2001/10/xml-exc-c14n#') do
                   prefix_list = (node.name == 'Body' ? 'cdm doc v4 xop' : 'wsse cdm doc soapenv v4 xop')
-                  xml['ec'].InclusiveNamespaces('xmlns:ec' => "http://www.w3.org/2001/10/xml-exc-c14n#", PrefixList: prefix_list)
+                  xml['ec'].InclusiveNamespaces('xmlns:ec' => 'http://www.w3.org/2001/10/xml-exc-c14n#', PrefixList: prefix_list)
                 end
               end
               xml['ds'].DigestMethod(Algorithm: digest_method)
@@ -437,7 +437,7 @@ module SoapScum
       header = envelope.at_xpath('/soapenv:Header', soapenv: XMLNamespaces::SOAPENV)
       if header.nil?
         header_builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-          xml["soapenv"].Header('xmlns:soapenv' => XMLNamespaces::SOAPENV)
+          xml['soapenv'].Header('xmlns:soapenv' => XMLNamespaces::SOAPENV)
         end
         envelope.children.first.add_previous_sibling(header_builder.doc.root)
         header = envelope.children.first
@@ -469,9 +469,9 @@ module SoapScum
     def relocate_timestamp(doc)
       timestamp = timestamp_node(doc)
       dsig = doc.at('/soap:Envelope/soap:Header/wsse:Security/ds:Signature',
-                                              soap: XMLNamespaces::SOAPENV,
-                                              'xmlns:wsse' => XMLNamespaces::WSSE,
-                                              'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#')
+                    soap: XMLNamespaces::SOAPENV,
+                    'xmlns:wsse' => XMLNamespaces::WSSE,
+                    'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#')
       dsig.add_next_sibling(timestamp.dup)
       timestamp.remove
     end

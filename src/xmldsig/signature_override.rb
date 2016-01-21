@@ -8,7 +8,7 @@ module StrictlyBase64
   # extend with caution.
 
   def Base64.encode64(str)
-    Base64::strict_encode64(str)
+    Base64.strict_encode64(str)
   end
 end
 
