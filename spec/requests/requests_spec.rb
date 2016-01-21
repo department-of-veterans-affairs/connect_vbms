@@ -7,7 +7,7 @@ describe VBMS::Requests do
       # otherwise, just use @client from above and webmock
       @client = VBMS::Client.from_env_vars
     else
-        @client = new_test_client
+      @client = new_test_client
     end
   end
 

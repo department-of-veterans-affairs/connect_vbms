@@ -114,15 +114,15 @@ def decrypt_message(decipher, key, iv, encrypted_text)
 
     plain = SoapScum::MessageProcessor.remove_xmlenc_padding(decipher.block_size, plain)
   rescue StandardError => e
-    puts "********************************************************"
+    puts '********************************************************'
     puts "ERROR MESSAGE: #{e.message}"; puts ''
-    puts "********************************************************"
-    puts "********************************************************"
-    puts "partially decrypted text:"
+    puts '********************************************************'
+    puts '********************************************************'
+    puts 'partially decrypted text:'
     puts plain
     puts ''; puts ''; puts ''
-    puts "********************************************************"
-    puts "********************************************************"
+    puts '********************************************************'
+    puts '********************************************************'
   end
   plain
 end

@@ -113,7 +113,8 @@ describe :SoapScum do
     end
 
     describe '#encrypt' do
-      let(:content_document) { Nokogiri::XML("\n    <v4:listDocuments>\n      <v4:fileNumber>784449089</v4:fileNumber>\n    </v4:listDocuments>\n ") }
+      let(:content_document) { Nokogiri::XML("\n    <v4:listDocuments>\n      \
+        <v4:fileNumber>784449089</v4:fileNumber>\n    </v4:listDocuments>\n ") }
       let(:soap_document) { @message_processor.wrap_in_soap(content_document) }
       let(:java_encrypted_xml) do
         VBMS.encrypted_soap_document_xml(soap_document,
@@ -121,15 +122,20 @@ describe :SoapScum do
                                          @test_keystore_pass,
                                          'listDocuments')
       end
-      let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT, &:noblanks) }
+      let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml,
+                                            nil,
+                                            nil,
+                                            Nokogiri::XML::ParseOptions::STRICT,
+                                            &:noblanks) }
 
       it 'returns valid SOAP' do
-        ruby_encrypted_xml = @message_processor.encrypt(soap_document,
-                                                        'listDocuments',
-                                                        @crypto_options,
-                                                        soap_document.at_xpath(
-                                                          '/soapenv:Envelope/soapenv:Body',
-                                                          soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+        ruby_encrypted_xml = @message_processor.encrypt(
+                                soap_document,
+                                'listDocuments',
+                                @crypto_options,
+                                soap_document.at_xpath(
+                                  '/soapenv:Envelope/soapenv:Body',
+                                  soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
         xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
         doc = Nokogiri::XML(ruby_encrypted_xml)
@@ -243,12 +249,12 @@ describe :SoapScum do
       end
     end
 
-    describe "#xmlenc_padding" do
+    describe '#xmlenc_padding' do
       it 'can pad all byte string lenghts correctly' do
-        allow(SecureRandom).to receive(:random_bytes).with(anything()).and_raise("Unexpected argument")
-        allow(SecureRandom).to receive(:random_bytes).with(1).and_return("\xA0" )
-        allow(SecureRandom).to receive(:random_bytes).with(2).and_return("\xA0\xB0" )
-        allow(SecureRandom).to receive(:random_bytes).with(3).and_return("\xA0\xB0\xC0" )
+        allow(SecureRandom).to receive(:random_bytes).with(anything).and_raise('Unexpected argument')
+        allow(SecureRandom).to receive(:random_bytes).with(1).and_return("\xA0")
+        allow(SecureRandom).to receive(:random_bytes).with(2).and_return("\xA0\xB0")
+        allow(SecureRandom).to receive(:random_bytes).with(3).and_return("\xA0\xB0\xC0")
 
         padded = SoapScum::MessageProcessor.add_xmlenc_padding(4, 'a')
         expect(padded).to eq("a\xA0\xB0\x03")
@@ -271,19 +277,19 @@ describe :SoapScum do
       end
 
       it 'raises if encoded padding length is greater than block size' do
-        expect{ SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\xA0\xB0\x05") }.to raise_error(/violates xmlsec sanity checks/)
+        expect { SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\xA0\xB0\x05") }.to raise_error(/violates xmlsec sanity checks/)
       end
 
       it 'raises if encoded padding length is 0. There is always padding in xmlenc.' do
-        expect{ SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\xA0\xB0\x00") }.to raise_error(/violates xmlsec sanity checks/)
+        expect { SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\xA0\xB0\x00") }.to raise_error(/violates xmlsec sanity checks/)
       end
 
       it 'raises if encoded padding length is greater than string length.' do
-        expect{ SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\x04") }.to raise_error(/larger than full plaintext/)
+        expect { SoapScum::MessageProcessor.remove_xmlenc_padding(4, "ab\x04") }.to raise_error(/larger than full plaintext/)
       end
 
       it 'raises if unpadding an empty string.' do
-        expect{ SoapScum::MessageProcessor.remove_xmlenc_padding(4, "") }.to raise_error(/padded_string must be greater than 0 bytes./)
+        expect { SoapScum::MessageProcessor.remove_xmlenc_padding(4, '') }.to raise_error(/padded_string must be greater than 0 bytes./)
       end
     end
   end
