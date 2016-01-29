@@ -205,7 +205,26 @@ module SoapScum
       signed_doc.root.serialize(save_with: 0)
     end
 
-    # TODO: astone - move this to helpers? 
+    def decrypt(soap_doc, keyfile, keypass)
+      decipher = get_block_cipher(soap_doc.at_xpath(
+        '//soapenv:Body/xenc:EncryptedData/xenc:EncryptionMethod',
+        VBMS::XML_NAMESPACES)['Algorithm'])
+
+      key_cipher_text = Base64.decode64(soap_doc.at_xpath(
+        '//xenc:EncryptedKey/xenc:CipherData/xenc:CipherValue',
+        VBMS::XML_NAMESPACES).text)
+      symmetric_key = decrypted_symmetric_key(key_cipher_text, keyfile, keypass)
+
+      cipher_text = Base64.decode64(soap_doc.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+      known_iv = cipher_text[0..(decipher.key_len - 1)]
+
+      plain = decrypt_cipher_text(decipher, symmetric_key, known_iv, cipher_text)
+
+      # TODO(astone)
+      # replace body with decrypted cipher_text
+      # soap_doc.parsed_java_xml.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES).
+    end
+
     def get_block_cipher(cipher_algorithm)
       case cipher_algorithm
       when CryptoAlgorithms::AES128
@@ -215,6 +234,21 @@ module SoapScum
       else
         fail "Unknown Cipher: #{cipher_algorithm}"
       end
+    end
+
+    def decrypt_cipher_text(decipher, key, iv, cipher_text)
+      decipher.decrypt
+      decipher.key = key
+      decipher.iv = iv
+      # Manually handle the xmlenc padding which is not supported by openssl.
+      # See http://openssl.6102.n7.nabble.com/ISO10126-padding-in-openssl-td9228.html
+      # for details.
+      decipher.padding = 0
+
+      plain = decipher.update(cipher_text)
+      plain << decipher.final 
+
+      plain = remove_xmlenc_padding(decipher.block_size, plain)
     end
 
     def parse_xml_strictly(xml)
@@ -231,12 +265,46 @@ module SoapScum
       )
     end
 
+    def add_xmlenc_padding(block_size, unpadded_string)
+      # Add xmlenc padding as specified in the xmlenc spec.
+      # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
+      fail "block size #{block_size} must be > 0." if block_size <= 0
+      padding_length = (block_size - unpadded_string.length % block_size)
+      num_rand_bytes = padding_length - 1
+      unpadded_string << SecureRandom.random_bytes(num_rand_bytes) if num_rand_bytes > 0
+      unpadded_string << padding_length.chr  # TODO(awong): Do we encoding issues?
+      unpadded_string  # String is now padded.
+    end
+
+    def remove_xmlenc_padding(block_size, padded_string)
+      # Remove xmlenc padding as specified in the xmlenc spec.
+      # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
+      fail 'padded_string must be greater than 0 bytes.' if padded_string.empty?
+      padding_length = padded_string.bytes[-1]
+      fail "Padding length #{padding_length} larger than full plaintext." if 
+                                              padding_length > padded_string.size
+      fail "Padding length #{padding_length} violates xmlsec sanity checks for " \
+            "block size #{block_size}." unless padding_length >= 1 && 
+                                              padding_length <= block_size &&
+                                              (padded_string.size - padding_length - block_size) > 0
+
+      # TODO astone: determine if any more checks need to be done here.
+      # start of string: padded_string.size - padding_length - block_size
+      padded_string.byteslice(block_size,
+                              padded_string.size - padding_length - block_size)
+    end
+
     private
 
     def sign_soap_doc(soap_doc, private_key)
       signed_doc = Xmldsig::SignedDocument.new(soap_doc)
       signed_doc.sign(private_key)
       signed_doc
+    end
+
+    def decrypted_symmetric_key(key_cipher_text, keyfile, keypass)
+      server_p12 = OpenSSL::PKCS12.new(File.read(keyfile), keypass)
+      server_p12.key.private_decrypt(key_cipher_text)
     end
 
     def timestamp_node(soap_doc)
@@ -293,7 +361,7 @@ module SoapScum
     end
 
     def get_random_iv
-      cipher.random_iv
+      cipher.iv = SecureRandom.random_bytes(cipher.key_len)
     end
 
     # Takes an XMLBuilder and adds the XML Encryption template.
@@ -305,9 +373,6 @@ module SoapScum
       self.cipher = get_block_cipher(cipher_algorithm)    # instantiate a new Cipher
       self.iv = get_random_iv
       self.symmetric_key = generate_symmetric_key(cipher.key_len)
-
-      # self.symmetric_key = cipher.random_key # LESS secure. see
-      # https://github.com/department-of-veterans-affairs/connect_vbms-old/pull/36/files#r33154220
 
       xml['xenc'].EncryptedKey('xmlns:xenc' => XMLNamespaces::XENC, Id: key_id) do
         xml['xenc'].EncryptionMethod(Algorithm: keytransport_algorithm)
@@ -341,27 +406,6 @@ module SoapScum
       end
     end
 
-    def self.add_xmlenc_padding(block_size, unpadded_string)
-      # Add xmlenc padding as specified in the xmlenc spec.
-      # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
-      fail "block size #{block_size} must be > 0." if block_size <= 0
-      padding_length = (block_size - unpadded_string.length % block_size)
-      num_rand_bytes = padding_length - 1
-      unpadded_string << SecureRandom.random_bytes(num_rand_bytes) if num_rand_bytes > 0
-      unpadded_string << padding_length.chr  # TODO(awong): Do we encoding issues?
-      unpadded_string  # String is now padded.
-    end
-
-    def self.remove_xmlenc_padding(block_size, padded_string)
-      # Remove xmlenc padding as specified in the xmlenc spec.
-      # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
-      fail 'padded_string must be greater than 0 bytes.' if padded_string.empty?
-      padding_length = padded_string.bytes[-1]
-      fail "Padding length #{padding_length} violates xmlsec sanity checks for block size #{block_size}." unless padding_length >= 1 && padding_length <= block_size
-      fail "Padding length #{padding_length} larger than full plaintext." if padding_length > padded_string.size
-      padded_string.byteslice(0, padded_string.size - padding_length)
-    end
-
     def generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
       raw_xml = node.children.collect(&:serialize).join
       cipher.encrypt
@@ -369,7 +413,7 @@ module SoapScum
       cipher.iv = iv
       cipher.key = symmetric_key
       cipher_text = iv + cipher.update(
-        MessageProcessor.add_xmlenc_padding(cipher.block_size, raw_xml)) + cipher.final
+        add_xmlenc_padding(cipher.block_size, raw_xml)) + cipher.final
 
       # builder portion
       builder = Nokogiri::XML::Builder.new do |xml|

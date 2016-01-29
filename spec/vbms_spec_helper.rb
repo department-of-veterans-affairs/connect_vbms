@@ -98,35 +98,6 @@ def decrypted_symmetric_key(cipher)
   server_p12.key.private_decrypt(cipher)
 end
 
-def decrypt_message(decipher, key, iv, encrypted_text)
-  decipher.decrypt
-  decipher.key = key
-  decipher.iv = iv
-  # Manually handle the xmlenc padding which is not supported by openssl.
-  # See http://openssl.6102.n7.nabble.com/ISO10126-padding-in-openssl-td9228.html
-  # for details.
-  decipher.padding = 0
-
-  # TODO(astone): remove RESCUE block. 
-  begin
-    plain = decipher.update(encrypted_text)
-    plain << decipher.final 
-
-    plain = SoapScum::MessageProcessor.remove_xmlenc_padding(decipher.block_size, plain)
-  rescue StandardError => e
-    puts '********************************************************'
-    puts "ERROR MESSAGE: #{e.message}"; puts ''
-    puts '********************************************************'
-    puts '********************************************************'
-    puts 'partially decrypted text:'
-    puts plain
-    puts ''; puts ''; puts ''
-    puts '********************************************************'
-    puts '********************************************************'
-  end
-  plain
-end
-
 def new_test_client
   VBMS::Client.new(
     'http://test.endpoint.url/', 
