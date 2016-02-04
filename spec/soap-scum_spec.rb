@@ -148,10 +148,12 @@ describe :SoapScum do
           ed_id = parsed_java_xml.at_xpath('//xenc:EncryptedData',
                                            VBMS::XML_NAMESPACES)['Id']
 
-          # DECRYPT DOC
-          plain_text = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
-          puts "!+!+!! DECRYPTED"
-          puts plain_text
+          # DECRYPT DOC 
+          # decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
+          # plain_text = decrypted_doc.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES)
+          # puts "!+!+!! DECRYPTED"
+          # puts plain_text
+
           algorithm = parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:EncryptionMethod', VBMS::XML_NAMESPACES)['Algorithm']
           decipher = @message_processor.get_block_cipher(algorithm)
 
@@ -207,13 +209,11 @@ describe :SoapScum do
           expect(java_signed_info).to_not be_nil
           # expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
 
-          # binding.pry
 
           # expect(@parsed_ruby_xml.to_xml).to eq(@parsed_java_xml.to_xml)
-          # binding.pry
           ruby_signature = @parsed_ruby_xml.at_xpath('//ds:Signature', ds: 'http://www.w3.org/2000/09/xmldsig#')
           # expect(ruby_signature).to_not be_nil
-          java_signature = Nokogiri::XML(java_encrypted_xml).at_xpath('//ds:Signature', ds: 'http://www.w3.org/2000/09/xmldsig#')
+          java_signature = parsed_java_xml.at_xpath('//ds:Signature', ds: 'http://www.w3.org/2000/09/xmldsig#')
           # expect(java_signature).to_not be_nil
 
 
@@ -239,7 +239,8 @@ File.write('java_sig.xml', java_signature)
           # expect(ruby_signature.to_xml).to eq(java_signature.to_xml)
 
           # Validation
-          signed_document = Xmldsig::SignedDocument.new(parsed_java_xml)
+          decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
+          signed_document = Xmldsig::SignedDocument.new(decrypted_doc)
 
           pending 'XMLDsig validation is attempting to validate against ' \
                   'the encrypted Body. MessageProcessor.decrypt needs to ' \
@@ -263,9 +264,11 @@ File.write('java_sig.xml', java_signature)
       end
 
       it 'can be decrypted with ruby' do
-        java_decrypted_text = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
-        # Compare the DOMs instead of seralized strings to be more robust against serialization differences.
-        expect(Nokogiri::XML(java_decrypted_text)).to be_equivalent_to(content_document)
+        java_decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
+        java_decrypted_body = java_decrypted_doc.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES)
+        decrypted_body = java_decrypted_body.children.collect(&:serialize).join
+        original_content = content_document.root.to_s
+        expect(decrypted_body).to eq(original_content)
       end
     end
 
@@ -320,4 +323,3 @@ File.write('java_sig.xml', java_signature)
     end
   end
 end
-#
