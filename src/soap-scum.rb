@@ -219,10 +219,12 @@ module SoapScum
       known_iv = cipher_text[0..(decipher.key_len - 1)]
 
       plain = decrypt_cipher_text(decipher, symmetric_key, known_iv, cipher_text)
-
-      # TODO(astone)
-      # replace body with decrypted cipher_text
-      # soap_doc.parsed_java_xml.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES).
+  
+      body_node(soap_doc).children.each(&:remove) # destroy children elephants
+      Nokogiri::XML::Builder.with(body_node(soap_doc)) do |xml|
+        xml << plain
+      end
+      soap_doc
     end
 
     def get_block_cipher(cipher_algorithm)
