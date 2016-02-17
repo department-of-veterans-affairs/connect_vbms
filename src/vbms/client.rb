@@ -75,13 +75,23 @@ module VBMS
         unencrypted_body: unencrypted_xml
       )
 
-      # output = VBMS.encrypted_soap_document_xml(
-      #   unencrypted_xml,
-      #   @keyfile,
-      #   @keypass,
-      #   request.name)
-      # ---------------------
+      # JAVA ENCRYPTION
+      # ----------------------------------------------------
+      java_output = VBMS.encrypted_soap_document_xml(
+        parse_xml_strictly(unencrypted_xml),
+        @java_keyfile,
+        @keypass,
+        request.name)
+      java_doc = parse_xml_strictly(java_output)
+      inject_saml(java_doc)
+      remove_must_understand(java_doc)
+      java_serialized_doc = serialize_document(java_doc)
 
+      # /JAVA ENCRYPTION
+      # ----------------------------------------------------
+
+      # RUBY ENCRYPTION
+      # ----------------------------------------------------
       soap_doc = @processor.wrap_in_soap(unencrypted_xml)
       encrypted_doc = @processor.encrypt(soap_doc,
                                          request.name,
@@ -90,20 +100,28 @@ module VBMS
                                            '/soapenv:Envelope/soapenv:Body',
                                            soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
-      # TODO: ugh! serialize, parse, rinse and repeat
+
+
+      # TODO[astone]: Improve! ugh! serialize, parse, rinse and repeat
       encrypted_doc = parse_xml_strictly(encrypted_doc)
       inject_saml(encrypted_doc)
       remove_must_understand(encrypted_doc)
-
       serialized_doc = serialize_document(encrypted_doc)
+      # /RUBY ENCRYPTION
+      # ----------------------------------------------------
 
-      # debug
-      File.open('saml_request.xml', 'w') do |file|
-        file.truncate(0)
-        file.write serialized_doc
-      end
-      `gorgeous -i saml_request.xml`
-      # /debug
+File.open('java_req.xml', 'w') do |file|
+  file.truncate(0)
+  file.write java_serialized_doc
+end
+`gorgeous -i java_req.xml`
+
+File.open('ruby_req.xml', 'w') do |file|
+  file.truncate(0)
+  file.write serialized_doc
+end
+`gorgeous -i ruby_req.xml`
+      # ---------------------
 
       body = create_body(request, serialized_doc)
 
@@ -266,23 +284,23 @@ module VBMS
       check_soap_errors(full_doc, response)
 
       # DEBUG!!
-      # begin
-      #   java_data = Tempfile.open('log') do |out_t|
-      #     VBMS.decrypt_message_xml(full_doc, @java_keyfile, @keypass, out_t.path)
-      #   end
-      # rescue Exception => e
-      #   puts "failed java decryption"
-      #   puts "client key: "  + @java_keyfile
-      #   puts "!!!!"
-      #   puts e.message
-      #   # raise SOAPError.new('Unable to decrypt SOAP response', body)
-      # end
-
       begin
-        data = VBMS.decrypt_message_xml_ruby(body, @server_key, @keypass)
-      rescue
-        raise SOAPError.new('Unable to decrypt SOAP response', body)
+        data = Tempfile.open('log') do |out_t|
+          VBMS.decrypt_message_xml(body, @java_keyfile, @keypass, out_t.path)
+        end
+      rescue Exception => e
+        puts "failed java decryption"
+        puts "client key: "  + @java_keyfile
+        puts "!!!!"
+        puts e.message
+        # raise SOAPError.new('Unable to decrypt SOAP response', body)
       end
+
+      # begin
+      #   data = VBMS.decrypt_message_xml_ruby(full_doc, @server_key, @keypass)
+      # rescue
+      #   raise SOAPError.new('Unable to decrypt SOAP response', body)
+      # end
 
       # /DEBUG!! -- decrypting with ruby and java for validation
       log(:decrypted_message, decrypted_data: data, request: request)
