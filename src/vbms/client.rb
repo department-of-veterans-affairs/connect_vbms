@@ -77,15 +77,15 @@ module VBMS
 
       # JAVA ENCRYPTION
       # ----------------------------------------------------
-      java_output = VBMS.encrypted_soap_document_xml(
-        parse_xml_strictly(unencrypted_xml),
-        @java_keyfile,
-        @keypass,
-        request.name)
-      java_doc = parse_xml_strictly(java_output)
-      inject_saml(java_doc)
-      remove_must_understand(java_doc)
-      java_serialized_doc = serialize_document(java_doc)
+      # java_output = VBMS.encrypted_soap_document_xml(
+      #   parse_xml_strictly(unencrypted_xml),
+      #   @java_keyfile,
+      #   @keypass,
+      #   request.name)
+      # java_doc = parse_xml_strictly(java_output)
+      # inject_saml(java_doc)
+      # remove_must_understand(java_doc)
+      # java_serialized_doc = serialize_document(java_doc)
 
       # /JAVA ENCRYPTION
       # ----------------------------------------------------
@@ -110,17 +110,17 @@ module VBMS
       # /RUBY ENCRYPTION
       # ----------------------------------------------------
 
-File.open('java_req.xml', 'w') do |file|
-  file.truncate(0)
-  file.write java_serialized_doc
-end
-`gorgeous -i java_req.xml`
+# File.open('java_req.xml', 'w') do |file|
+#   file.truncate(0)
+#   file.write java_serialized_doc
+# end
+# `gorgeous -i java_req.xml`
 
-File.open('ruby_req.xml', 'w') do |file|
-  file.truncate(0)
-  file.write serialized_doc
-end
-`gorgeous -i ruby_req.xml`
+# File.open('ruby_req.xml', 'w') do |file|
+#   file.truncate(0)
+#   file.write serialized_doc
+# end
+# `gorgeous -i ruby_req.xml`
       # ---------------------
 
       body = create_body(request, serialized_doc)
@@ -289,11 +289,12 @@ end
           VBMS.decrypt_message_xml(body, @java_keyfile, @keypass, out_t.path)
         end
       rescue Exception => e
+        # TODO[astone] remove/cleanup
         puts "failed java decryption"
         puts "client key: "  + @java_keyfile
         puts "!!!!"
         puts e.message
-        # raise SOAPError.new('Unable to decrypt SOAP response', body)
+        raise SOAPError.new('Unable to decrypt SOAP response', body)
       end
 
       # begin
