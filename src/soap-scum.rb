@@ -228,6 +228,24 @@ module SoapScum
       soap_doc
     end
 
+    def xenc_decrypt(xml, keyfile, keypass)
+      # encrypted_doc = Xmlenc::EncryptedDocument.new(serialize_xml_strictly(soap_doc))
+      encrypted_doc = Xmlenc::EncryptedDocument.new(xml)
+      # TODO(awong): Associate a keystore class with this API instead of
+      # passing path per request. The keystore client should take in a ds:KeyInfo
+      # node and know how to find the associated private key.
+      
+      encryption_key = OpenSSL::PKCS12.new(File.read(keyfile), keypass)
+      decrypted_doc = encrypted_doc.decrypt(encryption_key.key)
+
+      # TODO(awong): Signature verification.
+      # TODO(awong): Timestamp validation.
+
+      # parse_xml_strictly decrypted_doc
+      # Nokogiri::XML decrypted_doc
+      decrypted_doc
+    end
+
     def get_block_cipher(cipher_algorithm)
       case cipher_algorithm
       when CryptoAlgorithms::AES128
