@@ -98,8 +98,10 @@ module VBMS
     # TODO(awong): Associate a keystore class with this API instead of
     # passing path per request. The keystore client should take in a ds:KeyInfo
     # node and know how to find the associated private key.
-    encryption_key = OpenSSL::PKCS12.new(File.read(keyfile_p12), keypass)
-    decrypted_doc = encrypted_doc.decrypt(encryption_key.key)
+    # encryption_key = OpenSSL::PKCS12.new(File.read(keyfile_p12), keypass)
+    # decrypted_doc = encrypted_doc.decrypt(encryption_key.key)
+
+    # decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
 
     # TODO(awong): Signature verification.
     # TODO(awong): Timestamp validation.
@@ -115,7 +117,7 @@ module VBMS
             '-p', keypass,
             '-n', request_name]
     output, errors, status = Open3.capture3(*args)
-
+    
     if status != 0
       fail ExecutionError.new(DO_WSSE + ' EncryptSOAPDocument', errors)
     end

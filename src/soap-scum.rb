@@ -202,7 +202,8 @@ module SoapScum
       # save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
       # )
       # rtnstr = signed_doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
-      signed_doc.root.serialize(save_with: 0)
+      # signed_doc.root.serialize(save_with: 0)
+      signed_doc.root.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
     end
 
     def decrypt(soap_doc, keyfile, keypass)
@@ -296,6 +297,15 @@ module SoapScum
                               padded_string.size - padding_length - block_size)
     end
 
+    def body_node(doc)
+      doc.at_xpath('/soapenv:Envelope/soapenv:Body',
+                   soapenv: XMLNamespaces::SOAPENV,
+                   'xmlns:cdm' => 'http://vbms.vba.va.gov/cdm',
+                   'xmlns:doc' => 'http://vbms.vba.va.gov/cdm/document/v4',
+                   'xmlns:v4' => 'http://vbms.vba.va.gov/external/eDocumentService/v4',
+                   'xmlns:xop' => 'http://www.w3.org/2004/08/xop/include')
+    end
+
     private
 
     def sign_soap_doc(soap_doc, private_key)
@@ -317,21 +327,12 @@ module SoapScum
         'xmlns:wsu' => XMLNamespaces::WSU)
     end
 
-    def body_node(doc)
-      doc.at_xpath('/soapenv:Envelope/soapenv:Body',
-                   soapenv: XMLNamespaces::SOAPENV,
-                   'xmlns:cdm' => 'http://vbms.vba.va.gov/cdm',
-                   'xmlns:doc' => 'http://vbms.vba.va.gov/cdm/document/v4',
-                   'xmlns:v4' => 'http://vbms.vba.va.gov/external/eDocumentService/v4',
-                   'xmlns:xop' => 'http://www.w3.org/2004/08/xop/include')
-    end
-
     def generate_id
       SecureRandom.hex(5)
     end
 
     def timestamp_id
-      "TS-#{generate_id}"
+      @timestamp_id ||= "TS-#{generate_id}"
     end
 
     def soap_body_id
@@ -363,7 +364,7 @@ module SoapScum
     end
 
     def get_random_iv
-      cipher.iv = SecureRandom.random_bytes(cipher.key_len)
+      SecureRandom.random_bytes(cipher.key_len)
     end
 
     # Takes an XMLBuilder and adds the XML Encryption template.
@@ -409,7 +410,9 @@ module SoapScum
     end
 
     def generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
-      raw_xml = node.children.collect(&:serialize).join
+      # raw_xml = node.children.collect(&:serialize).join
+      raw_xml = node.children.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+
       cipher.encrypt
       cipher.padding = 0
       cipher.iv = iv

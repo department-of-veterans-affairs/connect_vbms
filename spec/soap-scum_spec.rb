@@ -97,9 +97,9 @@ describe :SoapScum do
     end
 
     describe '#encrypt' do
-      # let(:content_document) { Nokogiri::XML("\n    <v4:listDocuments>\n      \
-        # <v4:fileNumber>784449089</v4:fileNumber>\n    </v4:listDocuments>\n ") }
-      let(:content_document) { Nokogiri::XML('<v4:listDocuments><v4:fileNumber>784449089</v4:fileNumber></v4:listDocuments>')}
+      let(:content_document) { Nokogiri::XML("\n    <v4:listDocuments>\n      \
+        <v4:fileNumber>784449089</v4:fileNumber>\n    </v4:listDocuments>\n ") }
+      # let(:content_document) { Nokogiri::XML('<v4:listDocuments><v4:fileNumber>784449089</v4:fileNumber></v4:listDocuments>')}
       let(:soap_document) { @message_processor.wrap_in_soap(content_document) }
       let(:java_encrypted_xml) do
         VBMS.encrypted_soap_document_xml(soap_document,
@@ -148,12 +148,6 @@ describe :SoapScum do
           ed_id = parsed_java_xml.at_xpath('//xenc:EncryptedData',
                                            VBMS::XML_NAMESPACES)['Id']
 
-          # DECRYPT DOC 
-          # decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
-          # plain_text = decrypted_doc.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES)
-          # puts "!+!+!! DECRYPTED"
-          # puts plain_text
-
           algorithm = parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:EncryptionMethod', VBMS::XML_NAMESPACES)['Algorithm']
           decipher = @message_processor.get_block_cipher(algorithm)
 
@@ -200,66 +194,26 @@ describe :SoapScum do
           expect(ruby_signed_info).to_not be_nil
           java_signed_info = parsed_java_xml.at_xpath("//ds:Reference[@URI='##{ruby_timestamp[:id]}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(java_signed_info).to_not be_nil
-          # expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
 
           # check the signed info for the encrypted part
           ruby_signed_info = @parsed_ruby_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(ruby_signed_info).to_not be_nil
           java_signed_info = parsed_java_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(java_signed_info).to_not be_nil
-          # expect(ruby_signed_info.to_xml).to eq(java_signed_info.to_xml)
 
-
-          # expect(@parsed_ruby_xml.to_xml).to eq(@parsed_java_xml.to_xml)
           ruby_signature = @parsed_ruby_xml.at_xpath('//ds:Signature', ds: 'http://www.w3.org/2000/09/xmldsig#')
-          # expect(ruby_signature).to_not be_nil
+          expect(ruby_signature).to_not be_nil
           java_signature = parsed_java_xml.at_xpath('//ds:Signature', ds: 'http://www.w3.org/2000/09/xmldsig#')
-          # expect(java_signature).to_not be_nil
+          expect(java_signature).to_not be_nil
 
+          ruby_decrypted_doc = @message_processor.decrypt(@parsed_ruby_xml, @server_p12_key, @keypass)
+          ruby_signed_document = Xmldsig::SignedDocument.new(ruby_decrypted_doc)
+          expect(ruby_signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
 
-
-# debug
-File.open('saml_request.xml', 'w') do |file|
-  file.truncate(0)
-  file.write @parsed_ruby_xml
-end
-`gorgeous -i saml_request.xml`
-# /debug
-
-
-File.open('ruby_sig.xml', 'w') {|file| file.truncate(0) }
-File.write('ruby_sig.xml', ruby_signature)
-`gorgeous ruby_sig.xml`
-
-File.open('java_sig.xml', 'w') {|file| file.truncate(0) }
-File.write('java_sig.xml', java_signature)
-`gorgeous java_sig.xml`
-
-          # puts java_signature.to_xml
-          # expect(ruby_signature.to_xml).to eq(java_signature.to_xml)
-
-          # Validation
-          decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
-          signed_document = Xmldsig::SignedDocument.new(decrypted_doc)
-
-          pending 'XMLDsig validation is attempting to validate against ' \
-                  'the encrypted Body. MessageProcessor.decrypt needs to ' \
-                  'be updated to replace the EncryptedData with decrypted ' \
-                  'text'
-          # signed_document.validate(@crypto_options[:client][:certificate])
-          expect(signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
-
-          # signed_document = Xmldsig::SignedDocument.new(@ruby_encrypted_xml)
-          # signed_document = Xmldsig::SignedDocument.new(@parsed_ruby_xml)
-          # signed_document.validate(@crypto_options[:client][:certificate])
-          # expect(signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
-
-# # With block
-# signed_document = Xmldsig::SignedDocument.new(signed_xml)
-# signed_document.validate do |signature_value, data|
-#   certificate.public_key.verify(OpenSSL::Digest::SHA256.new, signature_value, data)
-# end
-          # ruby_signature.to_xml == java_signature.to_xml
+          # ERROR!
+          java_decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
+          java_signed_document = Xmldsig::SignedDocument.new(java_decrypted_doc)
+          expect(java_signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
         end
       end
 
@@ -269,6 +223,37 @@ File.write('java_sig.xml', java_signature)
         decrypted_body = java_decrypted_body.children.collect(&:serialize).join
         original_content = content_document.root.to_s
         expect(decrypted_body).to eq(original_content)
+      end
+
+      it 'can be decrypted' do
+        soap_doc = @message_processor.wrap_in_soap(content_document)
+        encrypted_xml = @message_processor.encrypt(soap_doc,
+                                                   'listDocuments',
+                                                   @crypto_options,
+                                                   soap_doc.at_xpath(
+                                                     '/soapenv:Envelope/soapenv:Body',
+                                                     soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+
+        parsed_doc = @message_processor.parse_xml_strictly(encrypted_xml)
+        decrypted_doc = @message_processor.decrypt(parsed_doc, @server_p12_key, @keypass)
+        decrypted_body = decrypted_doc.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES).children.collect(&:serialize).join
+        original_content = content_document.root.to_s
+        expect(decrypted_body).to eq(original_content)
+      end
+
+      it 'has a valid signature' do
+        soap_doc = @message_processor.wrap_in_soap(content_document)
+        encrypted_xml = @message_processor.encrypt(soap_doc,
+                                                   'listDocuments',
+                                                   @crypto_options,
+                                                   soap_doc.at_xpath(
+                                                     '/soapenv:Envelope/soapenv:Body',
+                                                     soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+
+        parsed_doc = @message_processor.parse_xml_strictly(encrypted_xml)
+        decrypted_doc = @message_processor.decrypt(parsed_doc, @server_p12_key, @keypass)
+        signed_document = Xmldsig::SignedDocument.new(decrypted_doc)
+        expect(signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
       end
     end
 
