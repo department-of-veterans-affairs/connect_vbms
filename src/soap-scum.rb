@@ -267,8 +267,9 @@ module SoapScum
       decipher.padding = 0
 
       plain = decipher.update(cipher_text)
-      plain << decipher.final 
-
+      plain << decipher.final
+      iv = plain.byteslice(0, decipher.block_size)
+      plain = plain.byteslice(decipher.block_size, plain.length)
       plain = remove_xmlenc_padding(decipher.block_size, plain)
     end
 
@@ -311,8 +312,7 @@ module SoapScum
 
       # TODO astone: determine if any more checks need to be done here.
       # start of string: padded_string.size - padding_length - block_size
-      padded_string.byteslice(block_size,
-                              padded_string.size - padding_length - block_size)
+      padded_string.byteslice(0, padded_string.size - padding_length)
     end
 
     def body_node(doc)
