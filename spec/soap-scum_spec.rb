@@ -219,6 +219,7 @@ describe :SoapScum do
           # java_signed_document = Xmldsig::SignedDocument.new(java_decrypted_doc)
           # expect(java_signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
 
+          # FAILS validation
           java_decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
           java_signed_document = Xmldsig::SignedDocument.new(java_decrypted_doc)
           expect(java_signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
@@ -232,23 +233,6 @@ describe :SoapScum do
         decrypted_body = Nokogiri::XML(java_decrypted_body.children.to_xml)
         expect(decrypted_body.to_xml).to eq(content_document.to_xml)
       end
-
-      # it 'can be decrypted' do
-      #   soap_doc = @message_processor.wrap_in_soap(content_document)
-      #   encrypted_xml = @message_processor.encrypt(soap_doc,
-      #                                              'listDocuments',
-      #                                              @crypto_options,
-      #                                              soap_doc.at_xpath(
-      #                                                '/soapenv:Envelope/soapenv:Body',
-      #                                                soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
-
-      #   parsed_doc = @message_processor.parse_xml_strictly(encrypted_xml)
-      #   decrypted_xml = @message_processor.xenc_decrypt(parsed_doc, @server_p12_key, @keypass)
-      #   decrypted_doc = Nokogiri::XML(decrypted_xml)
-      #   decrypted_body = decrypted_doc.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES).children.collect(&:serialize).join
-      #   # binding.pry
-      #   expect(decrypted_body).to eq(content_document.root.to_xml)
-      # end
 
       it 'has a valid signature' do
         soap_doc = @message_processor.wrap_in_soap(content_document)

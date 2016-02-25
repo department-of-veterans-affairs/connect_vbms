@@ -17,8 +17,16 @@ module Xmldsig
     extend StrictlyBase64
 
     def validate_schema
-      puts "(ℹ)         Skipping schema validation on ds:Signature node"
-      return
+      xsd = File.read(File.expand_path('../../xmldsig-core-schema.xsd', __FILE__))
+      doc = Nokogiri::XML::Document.parse(signature.canonicalize)
+      errors = Nokogiri::XML::Schema.new(xsd).validate(doc).map(&:to_s)
+      
+      # Hack to ignore InclusiveNamespaces exception
+      fail Xmldsig::SchemaError.new(errors.first.message) if errors.any? unless 
+        errors.include? "Element '{http://www.w3.org/2001/10/xml-exc-c14n#}InclusiveNamespaces': " \
+                        'No matching global element declaration available, but demanded by the ' \
+                        'strict wildcard.'
+      # /ugly
     end
   end
 
