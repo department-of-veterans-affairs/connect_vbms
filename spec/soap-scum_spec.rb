@@ -271,10 +271,22 @@ describe :SoapScum do
       end
 
       it 'can unpad all string lengths correctly' do
-        expect(@message_processor.remove_xmlenc_padding(4, "\xA0\xB0\x03\xCCa\xA0\xB0\x03\x04")).to eq('a')
-        expect(@message_processor.remove_xmlenc_padding(4, "\xA0\xB0\x03\xCCab\xA0\x02\x04\x04")).to eq('ab')
-        expect(@message_processor.remove_xmlenc_padding(4, "\xA0\xB0\x03\xCCabc\x01\x04\x04\x04")).to eq('abc')
-        expect(@message_processor.remove_xmlenc_padding(4, "\xA0\xB0\x03\xCCabcd\xA0\xB0\xC0\x04")).to eq('abcd')
+        expect(@message_processor.remove_xmlenc_padding(4, "abcda\xA0\xB0\x03\x04")).to eq('abcda')
+        expect(@message_processor.remove_xmlenc_padding(4, "abcdab\xA0\x02\x04\x04")).to eq('abcdab')
+        expect(@message_processor.remove_xmlenc_padding(4, "abcdabc\x01\x04\x04\x04")).to eq('abcdabc')
+        expect(@message_processor.remove_xmlenc_padding(4, "abcdabcd\xA0\xB0\xC0\x04")).to eq('abcdabcd')
+      end
+
+      it 'can round trip a string' do
+        test_string = <<-jabber
+And hast thou slain the Jabberwock?
+      Come to my arms, my beamish boy!
+O frabjous day! Callooh! Callay!
+      He chortled in his joy.
+jabber
+        padded = @message_processor.add_xmlenc_padding(4, test_string)
+        unpadded = @message_processor.remove_xmlenc_padding(4, padded)
+        expect(unpadded).to eq(test_string)
       end
 
       it 'raises if encoded padding length is greater than block size' do

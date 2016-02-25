@@ -267,8 +267,9 @@ module SoapScum
       decipher.padding = 0
 
       plain = decipher.update(cipher_text)
-      plain << decipher.final 
-
+      plain << decipher.final
+      iv = plain.byteslice(0, decipher.block_size)
+      plain = plain.byteslice(decipher.block_size, plain.length)
       plain = remove_xmlenc_padding(decipher.block_size, plain)
     end
 
@@ -289,12 +290,13 @@ module SoapScum
     def add_xmlenc_padding(block_size, unpadded_string)
       # Add xmlenc padding as specified in the xmlenc spec.
       # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
+      data = unpadded_string.dup
       fail "block size #{block_size} must be > 0." if block_size <= 0
-      padding_length = (block_size - unpadded_string.length % block_size)
+      padding_length = (block_size - data.length % block_size)
       num_rand_bytes = padding_length - 1
-      unpadded_string << SecureRandom.random_bytes(num_rand_bytes) if num_rand_bytes > 0
-      unpadded_string << padding_length.chr  # TODO(awong): Do we encoding issues?
-      unpadded_string  # String is now padded.
+      data << SecureRandom.random_bytes(num_rand_bytes) if num_rand_bytes > 0
+      data << padding_length.chr  # TODO(awong): Do we encoding issues?
+      data  # String is now padded.
     end
 
     def remove_xmlenc_padding(block_size, padded_string)
@@ -311,8 +313,7 @@ module SoapScum
 
       # TODO astone: determine if any more checks need to be done here.
       # start of string: padded_string.size - padding_length - block_size
-      padded_string.byteslice(block_size,
-                              padded_string.size - padding_length - block_size)
+      padded_string.byteslice(0, padded_string.size - padding_length)
     end
 
     def body_node(doc)
