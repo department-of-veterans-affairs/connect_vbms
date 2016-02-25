@@ -268,8 +268,14 @@ module SoapScum
 
       plain = decipher.update(cipher_text)
       plain << decipher.final
-      iv = plain.byteslice(0, decipher.block_size)
+
+      # the IV is the first block of data that comes across the line, so
+      # before we try and slice off the padding on the back, we'll go ahead
+      # and take the IV off the front. `decipher.iv` already has a copy
+      # (and we're given one in the function call) so we can just ignore
+      # it.
       plain = plain.byteslice(decipher.block_size, plain.length)
+
       plain = remove_xmlenc_padding(decipher.block_size, plain)
     end
 
