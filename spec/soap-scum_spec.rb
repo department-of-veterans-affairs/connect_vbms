@@ -251,6 +251,16 @@ describe :SoapScum do
     end
 
     describe '#xmlenc_padding' do
+
+      let(:test_padding_string) {
+        <<-jabber
+And hast thou slain the Jabberwock?
+      Come to my arms, my beamish boy!
+O frabjous day! Callooh! Callay!
+      He chortled in his joy.
+jabber
+      }
+
       it 'can pad all byte string lengths correctly' do
         allow(SecureRandom).to receive(:random_bytes).with(anything).and_raise('Unexpected argument')
         allow(SecureRandom).to receive(:random_bytes).with(1).and_return("\xA0")
@@ -278,15 +288,9 @@ describe :SoapScum do
       end
 
       it 'can round trip a string' do
-        test_string = <<-jabber
-And hast thou slain the Jabberwock?
-      Come to my arms, my beamish boy!
-O frabjous day! Callooh! Callay!
-      He chortled in his joy.
-jabber
-        padded = @message_processor.add_xmlenc_padding(4, test_string)
+        padded = @message_processor.add_xmlenc_padding(4, test_padding_string)
         unpadded = @message_processor.remove_xmlenc_padding(4, padded)
-        expect(unpadded).to eq(test_string)
+        expect(unpadded).to eq(test_padding_string)
       end
 
       it 'raises if encoded padding length is greater than block size' do
