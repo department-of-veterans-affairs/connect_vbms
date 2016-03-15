@@ -174,6 +174,8 @@ describe :SoapScum do
             allow(@message_processor).to receive(:encrypted_data_id).and_return(ed_id)
             allow(@message_processor).to receive(:generate_symmetric_key).and_return(symmetric_key)
             allow(@message_processor).to receive(:get_random_iv).and_return(known_iv)
+            puts "Unencrypted: "
+            puts soap_document
             @ruby_encrypted_xml = @message_processor.encrypt(soap_document,
                                                              'listDocuments',
                                                              @crypto_options,
@@ -212,6 +214,8 @@ describe :SoapScum do
           # ruby_decrypted_doc = @message_processor.xenc_decrypt(@ruby_encrypted_xml, @server_p12_key, @keypass)
           ruby_decrypted_doc = @message_processor.decrypt(@parsed_ruby_xml, @server_p12_key, @keypass)
           ruby_signed_document = Xmldsig::SignedDocument.new(ruby_decrypted_doc)
+          puts ""
+          puts "Canonicalized Ruby Version:"
           expect(ruby_signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
 
           # FAILS validation
@@ -222,6 +226,8 @@ describe :SoapScum do
           # FAILS validation
           java_decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
           java_signed_document = Xmldsig::SignedDocument.new(java_decrypted_doc)
+          puts ""
+          puts "Canonicalized Java Version:"
           expect(java_signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
         end
       end

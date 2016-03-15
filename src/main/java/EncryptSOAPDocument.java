@@ -10,6 +10,13 @@ import org.apache.ws.security.message.WSSecTimestamp;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.ws.security.util.XMLUtils;
 import org.w3c.dom.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +24,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.Writer;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -103,6 +114,20 @@ public class EncryptSOAPDocument
 
     builder.setParts(references);
     Document signedDoc = builder.build(doc, crypto, secHeader);
+    FileOutputStream output = null;
+
+    try {
+        output = new FileOutputStream("/tmp/dump_xml.txt");
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+//        transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
+        DOMSource source = new DOMSource(signedDoc);
+        StreamResult result = new StreamResult(output);
+        transformer.transform(source, result);
+    } catch (IOException ex) {
+      // report
+    } finally {
+       try {output.close();} catch (Exception ex) {/*ignore*/}
+    }
     return XMLUtils.PrettyDocumentToString(signedDoc);
   }
 
