@@ -35,11 +35,14 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'webmock', '~> 1.22.0'
   spec.add_development_dependency 'byebug' if RUBY_PLATFORM != 'java'
   spec.add_development_dependency 'timecop'
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'pry-nav'
+  spec.add_development_dependency 'httplog'
   
   spec.add_runtime_dependency 'httpclient', '~> 2.6.0.1'
   spec.add_runtime_dependency 'httpi', '~> 2.4'
   spec.add_runtime_dependency 'nokogiri', '~> 1.6'
   spec.add_runtime_dependency 'xmlenc', '~> 0.3.0'
   spec.add_runtime_dependency 'mail'
-#  spec.add_runtime_dependency 'xmldsig', '~> 0.3.1'
+  spec.add_runtime_dependency 'xmldsig', '~> 0.3.1'
 end
