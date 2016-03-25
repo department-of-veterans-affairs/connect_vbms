@@ -4,12 +4,12 @@ require 'xmldsig'
 
 module SoapScum
   module XMLNamespaces
-    SOAPENV = 'http://schemas.xmlsoap.org/soap/envelope/'
-    WSSE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
-    WSSE11 = 'http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd'
-    WSU = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd'
-    DS = 'http://www.w3.org/2000/09/xmldsig#'
-    XENC = 'http://www.w3.org/2001/04/xmlenc#'
+    SOAPENV = 'http://schemas.xmlsoap.org/soap/envelope/'.freeze
+    WSSE = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'.freeze
+    WSSE11 = 'http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd'.freeze
+    WSU = 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd'.freeze
+    DS = 'http://www.w3.org/2000/09/xmldsig#'.freeze
+    XENC = 'http://www.w3.org/2001/04/xmlenc#'.freeze
   end
 
   class KeyStore
@@ -79,11 +79,11 @@ module SoapScum
 
   class MessageProcessor
     module CryptoAlgorithms
-      RSA_PKCS1_15 = 'http://www.w3.org/2001/04/xmlenc#rsa-1_5'
-      RSA_OAEP = 'http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p'
+      RSA_PKCS1_15 = 'http://www.w3.org/2001/04/xmlenc#rsa-1_5'.freeze
+      RSA_OAEP = 'http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p'.freeze
       # TODO(awong): Add triple-des support for xmlenc 1.0 compliance.
-      AES128 = 'http://www.w3.org/2001/04/xmlenc#aes128-cbc'
-      AES256 = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc'
+      AES128 = 'http://www.w3.org/2001/04/xmlenc#aes128-cbc'.freeze
+      AES256 = 'http://www.w3.org/2001/04/xmlenc#aes256-cbc'.freeze
     end
     # TODO(awong): Do not expose the internal cipher object. This object has
     # mutable state which breaks the data hiding of this object. Return a
@@ -136,12 +136,12 @@ module SoapScum
       if contents_doc.nil?
         builder.doc
       else
-        if body_node(contents_doc)
-          # compatibilty with current Request
-          inner_str = body_node(contents_doc).children.map { |c| serialize_xml_strictly(c, false) }.join('')
-        else
-          inner_str = serialize_xml_strictly(contents_doc.root, false)
-        end
+        inner_str = if body_node(contents_doc)
+                      # compatibilty with current Request
+                      body_node(contents_doc).children.map { |c| serialize_xml_strictly(c, false) }.join('')
+                    else
+                      serialize_xml_strictly(contents_doc.root, false)
+                    end
 
         xml_str = serialize_xml_strictly(builder.doc)
         xml_str.gsub!('<soapenv:REPLACEME/>', inner_str)
@@ -180,13 +180,6 @@ module SoapScum
 
       signed_doc = sign_soap_doc(soap_doc, crypto_options[:client][:private_key]).document
 
-      # TODO
-      # this could be optimized
-      # The timestamp is injected before signature is applied and therefore is
-      # the first node in the Security element. The WS spec says that elements
-      # should be prepended to existing elements
-      relocate_timestamp(signed_doc)
-
       nodes_to_encrypt = [body_node(signed_doc)]
       Nokogiri::XML::Builder.with(signed_doc.at("*//[Id=#{key_id}]",
                                                 soap: XMLNamespaces::SOAPENV,
@@ -196,14 +189,7 @@ module SoapScum
         encrypt_references(xml, nodes_to_encrypt)
       end
 
-      # puts serialize_xml_strictly(signed_doc.document)
-      # puts signed_doc.serialize(
-      # encoding: 'UTF-8',
-      # save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
-      # )
-      # rtnstr = signed_doc.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
-      # signed_doc.root.serialize(save_with: 0)
-      signed_doc.root.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+      signed_doc.root.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
     end
 
     def decrypt(soap_doc, keyfile, keypass)
@@ -253,7 +239,7 @@ module SoapScum
       when CryptoAlgorithms::AES256
         OpenSSL::Cipher::AES256.new(:CBC)
       else
-        fail "Unknown Cipher: #{cipher_algorithm}"
+        raise "Unknown Cipher: #{cipher_algorithm}"
       end
     end
 
@@ -297,7 +283,7 @@ module SoapScum
       # Add xmlenc padding as specified in the xmlenc spec.
       # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
       data = unpadded_string.dup
-      fail "block size #{block_size} must be > 0." if block_size <= 0
+      raise "block size #{block_size} must be > 0." if block_size <= 0
       padding_length = (block_size - data.length % block_size)
       num_rand_bytes = padding_length - 1
       data << SecureRandom.random_bytes(num_rand_bytes) if num_rand_bytes > 0
@@ -308,17 +294,15 @@ module SoapScum
     def remove_xmlenc_padding(block_size, padded_string)
       # Remove xmlenc padding as specified in the xmlenc spec.
       # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
-      fail 'padded_string must be greater than 0 bytes.' if padded_string.empty?
+      raise 'padded_string must be greater than 0 bytes.' if padded_string.empty?
       padding_length = padded_string.bytes[-1]
-      fail "Padding length #{padding_length} larger than full plaintext." if 
+      raise "Padding length #{padding_length} larger than full plaintext." if 
                                               padding_length > padded_string.size
-      fail "Padding length #{padding_length} violates xmlsec sanity checks for " \
+      raise "Padding length #{padding_length} violates xmlsec sanity checks for " \
             "block size #{block_size}." unless padding_length >= 1 && 
-                                              padding_length <= block_size &&
-                                              (padded_string.size - padding_length - block_size) > 0
+                                               padding_length <= block_size &&
+                                               (padded_string.size - padding_length - block_size) > 0
 
-      # TODO astone: determine if any more checks need to be done here.
-      # start of string: padded_string.size - padding_length - block_size
       padded_string.byteslice(0, padded_string.size - padding_length)
     end
 
@@ -435,8 +419,7 @@ module SoapScum
     end
 
     def generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
-      # raw_xml = node.children.collect(&:serialize).join
-      raw_xml = node.children.to_xml(:save_with => Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+      raw_xml = node.children.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
 
       cipher.encrypt
       cipher.padding = 0
@@ -538,16 +521,6 @@ module SoapScum
       certificate.subject.to_a.reverse.map do |name, value, _|
         "#{name}=#{value}"
       end.join(',')
-    end
-
-    def relocate_timestamp(doc)
-      timestamp = timestamp_node(doc)
-      dsig = doc.at('/soap:Envelope/soap:Header/wsse:Security/ds:Signature',
-                    soap: XMLNamespaces::SOAPENV,
-                    'xmlns:wsse' => XMLNamespaces::WSSE,
-                    'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#')
-      dsig.add_next_sibling(timestamp.dup)
-      timestamp.remove
     end
   end
 end

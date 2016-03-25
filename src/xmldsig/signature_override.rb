@@ -17,16 +17,28 @@ module Xmldsig
     extend StrictlyBase64
 
     def validate_schema
-      xsd = File.read(File.expand_path('../../xmldsig-core-schema.xsd', __FILE__))
       doc = Nokogiri::XML::Document.parse(signature.canonicalize)
-      errors = Nokogiri::XML::Schema.new(xsd).validate(doc).map(&:to_s)
-      
+      errors = Nokogiri::XML::Schema.new(Xmldsig::XSD_FILE).validate(doc).map(&:to_s)
+
       # Hack to ignore InclusiveNamespaces exception
       fail Xmldsig::SchemaError.new(errors.first.message) if errors.any? unless 
         errors.include? "Element '{http://www.w3.org/2001/10/xml-exc-c14n#}InclusiveNamespaces': " \
                         'No matching global element declaration available, but demanded by the ' \
                         'strict wildcard.'
       # /ugly
+    end
+
+    def inclusive_namespaces
+      inclusive_namespaces = signed_info.at_xpath("descendant::ds:CanonicalizationMethod/ec:InclusiveNamespaces", Xmldsig::NAMESPACES)
+      if inclusive_namespaces && inclusive_namespaces.has_attribute?("PrefixList")
+        inclusive_namespaces.get_attribute("PrefixList").to_s.split(" ")
+      else
+        []
+      end
+    end
+
+    def canonicalized_signed_info
+      Canonicalizer.new(signed_info, canonicalization_method, inclusive_namespaces).canonicalize
     end
   end
 
