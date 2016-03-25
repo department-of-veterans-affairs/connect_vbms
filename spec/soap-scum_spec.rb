@@ -97,11 +97,11 @@ describe :SoapScum do
     end
 
     describe '#encrypt' do
-      # let(:content_document) { Nokogiri::XML("\n    <v4:listDocuments>\n      \
-        # <v4:fileNumber>784449089</v4:fileNumber>\n    </v4:listDocuments>\n ") }
-      let(:content_document) { Nokogiri::XML("<v4:listDocuments>\n
+      let(:content_document) do 
+        Nokogiri::XML("<v4:listDocuments>\n
         <v4:fileNumber>784449089</v4:fileNumber>\n
-        </v4:listDocuments>")}
+        </v4:listDocuments>")
+      end
       let(:soap_document) { @message_processor.wrap_in_soap(content_document) }
       let(:java_encrypted_xml) do
         VBMS.encrypted_soap_document_xml(soap_document,
@@ -109,20 +109,22 @@ describe :SoapScum do
                                          @test_keystore_pass,
                                          'listDocuments')
       end
-      let(:parsed_java_xml) { Nokogiri::XML(java_encrypted_xml,
-                                            nil,
-                                            nil,
-                                            Nokogiri::XML::ParseOptions::STRICT,
-                                            &:noblanks) }
+      let(:parsed_java_xml) do 
+        Nokogiri::XML(java_encrypted_xml,
+                      nil,
+                      nil,
+                      Nokogiri::XML::ParseOptions::STRICT,
+                      &:noblanks) 
+      end
 
       it 'returns valid SOAP' do
         ruby_encrypted_xml = @message_processor.encrypt(
-                                soap_document,
-                                'listDocuments',
-                                @crypto_options,
-                                soap_document.at_xpath(
-                                  '/soapenv:Envelope/soapenv:Body',
-                                  soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+          soap_document,
+          'listDocuments',
+          @crypto_options,
+          soap_document.at_xpath(
+            '/soapenv:Envelope/soapenv:Body',
+            soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
 
         xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
         doc = Nokogiri::XML(ruby_encrypted_xml)
@@ -254,15 +256,14 @@ describe :SoapScum do
     end
 
     describe '#xmlenc_padding' do
-
-      let(:test_padding_string) {
+      let(:test_padding_string) do
         <<-jabber
 And hast thou slain the Jabberwock?
       Come to my arms, my beamish boy!
 O frabjous day! Callooh! Callay!
       He chortled in his joy.
 jabber
-      }
+      end
 
       it 'can pad all byte string lengths correctly' do
         allow(SecureRandom).to receive(:random_bytes).with(anything).and_raise('Unexpected argument')

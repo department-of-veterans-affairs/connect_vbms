@@ -239,7 +239,7 @@ module SoapScum
       when CryptoAlgorithms::AES256
         OpenSSL::Cipher::AES256.new(:CBC)
       else
-        raise "Unknown Cipher: #{cipher_algorithm}"
+        fail "Unknown Cipher: #{cipher_algorithm}"
       end
     end
 
@@ -283,7 +283,7 @@ module SoapScum
       # Add xmlenc padding as specified in the xmlenc spec.
       # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
       data = unpadded_string.dup
-      raise "block size #{block_size} must be > 0." if block_size <= 0
+      fail "block size #{block_size} must be > 0." if block_size <= 0
       padding_length = (block_size - data.length % block_size)
       num_rand_bytes = padding_length - 1
       data << SecureRandom.random_bytes(num_rand_bytes) if num_rand_bytes > 0
@@ -294,11 +294,11 @@ module SoapScum
     def remove_xmlenc_padding(block_size, padded_string)
       # Remove xmlenc padding as specified in the xmlenc spec.
       # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
-      raise 'padded_string must be greater than 0 bytes.' if padded_string.empty?
+      fail 'padded_string must be greater than 0 bytes.' if padded_string.empty?
       padding_length = padded_string.bytes[-1]
-      raise "Padding length #{padding_length} larger than full plaintext." if 
+      fail "Padding length #{padding_length} larger than full plaintext." if 
                                               padding_length > padded_string.size
-      raise "Padding length #{padding_length} violates xmlsec sanity checks for " \
+      fail "Padding length #{padding_length} violates xmlsec sanity checks for " \
             "block size #{block_size}." unless padding_length >= 1 && 
                                                padding_length <= block_size &&
                                                (padded_string.size - padding_length - block_size) > 0
