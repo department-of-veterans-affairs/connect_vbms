@@ -12,12 +12,8 @@ require 'nokogiri'
 require 'rspec/matchers'
 require 'equivalent-xml'
 require 'vbms_spec_helper'
-# TODO remove
-# debug
 require 'pry'
-require 'httplog'
-# /remove
-# /debug
+require 'httplog' if ENV['CONNECT_VBMS_HTTPLOG'] and ENV['CONNECT_VBMS_HTTPLOG'] == 1
 require 'byebug' if RUBY_PLATFORM != 'java'
 
 if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')

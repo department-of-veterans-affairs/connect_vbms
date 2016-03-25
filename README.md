@@ -34,6 +34,8 @@ This will run all the tests and also runs [rubocop](http://batsov.com/rubocop/) 
 
 Tests normally mock all web requests so tests can be run without needing any credentials for VBMS systems. To run the integration tests against a VBMS server, you must specify all the necessary `VBMS_CONNECT` environment variables. You can then execute tests with `CONNECT_VBMS_RUN_EXTERNAL_TESTS=1 bundle exec rake default` and it will not use local webmocks.
 
+Our development group also includes HTTPLog for viewing raw HTTP messages. To enable HTTPLog, use the `CONNECT_VBMS_HTTPLOG=1` environment variable.
+
 ## Docs
 
 From the root directory, run:
