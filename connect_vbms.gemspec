@@ -23,8 +23,8 @@ Gem::Specification.new do |spec|
   end
 
   git_files          = `git ls-files -z`.split("\x00").reject { |f| f.match(%r{^(test|spec|features|\.java)/}) }
-  spec.files         = git_files + Dir['classes/*.class']
-  spec.require_paths = ['src']
+  # spec.files         = git_files + Dir['classes/*.class']
+  # spec.require_paths = ['src']
 
   spec.add_development_dependency 'bundler', '~> 1.10'
   spec.add_development_dependency 'rake', '~> 10.0'
