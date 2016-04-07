@@ -2,6 +2,7 @@
 # require 'nokogiri'
 require 'xmldsig'
 require 'securerandom'
+require 'xmlenc'
 
 module VBMS
   module SoapScum

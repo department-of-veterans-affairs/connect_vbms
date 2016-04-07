@@ -1,7 +1,7 @@
 # require 'spec_helper'
 # require 'soap-scum'
 # require 'xmlenc'
-# require 'timecop'
+require 'timecop'
 
 describe VBMS::SoapScum do
   before(:all) do
