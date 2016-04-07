@@ -1,6 +1,7 @@
-require 'base64'
-require 'nokogiri'
+# require 'base64'
+# require 'nokogiri'
 require 'xmldsig'
+require 'securerandom'
 
 module VBMS
   module SoapScum
@@ -150,7 +151,7 @@ module VBMS
         end
       end
 
-      def encrypt(soap_doc, _request_name, crypto_options, nodes_to_encrypt, validity: 5.minutes)
+      def encrypt(soap_doc, _request_name, crypto_options, nodes_to_encrypt, validity: 300)
         # TODO(astone)
         # improve crypto_options messaging, make it cohesive with keystore
         # TODO(awong): Allow configurable digest and signature methods.

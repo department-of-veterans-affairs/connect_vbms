@@ -15,6 +15,7 @@ require 'vbms_spec_helper'
 require 'pry'
 require 'httplog' if ENV['CONNECT_VBMS_HTTPLOG'] and ENV['CONNECT_VBMS_HTTPLOG'] == 1
 require 'byebug' if RUBY_PLATFORM != 'java'
+require 'httpi'
 
 if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
   puts "WARNING: CONNECT_VBMS_RUN_EXTERNAL_TESTS set, the tests will connect to live VBMS test servers\n"

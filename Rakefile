@@ -6,6 +6,10 @@ RSpec::Core::RakeTask.new(:spec)
 
 task default: [:spec, :rubocop]
 
+task :build_java do
+  sh "make -C src build"
+end
+
 task :docs do
   sh "make -C docs html"
 end
@@ -16,3 +20,5 @@ RuboCop::RakeTask.new(:rubocop) do |task|
   # Trigger failure for CI
   task.fail_on_error = true
 end
+
+Rake::Task[:build].prerequisites << Rake::Task[:build_java]

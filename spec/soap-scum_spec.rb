@@ -1,9 +1,9 @@
-require 'spec_helper'
-require 'soap-scum'
-require 'xmlenc'
-require 'timecop'
+# require 'spec_helper'
+# require 'soap-scum'
+# require 'xmlenc'
+# require 'timecop'
 
-describe :SoapScum do
+describe VBMS::SoapScum do
   before(:all) do
     @server_x509_subject = Nokogiri::XML(fixture('soap-scum/server_x509_subject_keyinfo.xml'))
     @client_x509_subject = Nokogiri::XML(fixture('soap-scum/client_x509_subject_keyinfo.xml'))
@@ -18,7 +18,7 @@ describe :SoapScum do
 
   describe 'KeyStore' do
     it 'returns correct cert and key by subject' do
-      keystore = SoapScum::KeyStore.new
+      keystore = VBMS::SoapScum::KeyStore.new
       keystore.add_pc12(@client_pc12, @keypass)
       keystore.add_cert(@server_cert)
 
@@ -29,7 +29,7 @@ describe :SoapScum do
     end
 
     it 'loads a PEM encoded public certificate' do
-      keystore = SoapScum::KeyStore.new
+      keystore = VBMS::SoapScum::KeyStore.new
       keystore.add_cert(@server_cert)
 
       cert = OpenSSL::X509::Certificate.new(File.read(@server_cert))
@@ -41,15 +41,15 @@ describe :SoapScum do
     # These should be lets in normal circumstances, but I want to make
     # tests go faster and do a before(:all) instead
     before do
-      @keystore = SoapScum::KeyStore.new
+      @keystore = VBMS::SoapScum::KeyStore.new
       @keystore.add_pc12(@client_pc12, @keypass)
       @keystore.add_cert(@server_cert)
 
       @crypto_options = {
         server: {
           certificate: @keystore.all.last.certificate,
-          keytransport_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
-          cipher_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::AES128
+          keytransport_algorithm: VBMS::SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
+          cipher_algorithm: VBMS::SoapScum::MessageProcessor::CryptoAlgorithms::AES128
         },
         client: {
           certificate: @keystore.all.first.certificate,
@@ -59,7 +59,7 @@ describe :SoapScum do
         }
       }
 
-      @message_processor = SoapScum::MessageProcessor.new(@keystore)
+      @message_processor = VBMS::SoapScum::MessageProcessor.new(@keystore)
     end
 
     describe '#wrap_in_soap' do
@@ -124,7 +124,7 @@ describe :SoapScum do
           @crypto_options,
           soap_document.at_xpath(
             '/soapenv:Envelope/soapenv:Body',
-            soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+            soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV).children)
 
         xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
         doc = Nokogiri::XML(ruby_encrypted_xml)
@@ -182,7 +182,7 @@ describe :SoapScum do
                                                              @crypto_options,
                                                              soap_document.at_xpath(
                                                                '/soapenv:Envelope/soapenv:Body',
-                                                               soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+                                                               soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV).children)
 
             @parsed_ruby_xml = Nokogiri::XML(@ruby_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
           end
@@ -246,7 +246,7 @@ describe :SoapScum do
                                                    @crypto_options,
                                                    soap_doc.at_xpath(
                                                      '/soapenv:Envelope/soapenv:Body',
-                                                     soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
+                                                     soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV).children)
 
         parsed_doc = Nokogiri::XML encrypted_xml
         decrypted_doc = @message_processor.decrypt(parsed_doc, @server_p12_key, @keypass)

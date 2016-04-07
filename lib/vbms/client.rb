@@ -1,5 +1,3 @@
-require 'soap-scum'
-
 module VBMS
   # rubocop:disable Metrics/ClassLength
   class Client

@@ -97,7 +97,7 @@ describe VBMS::Client do
     end
 
     before do
-      allow_any_instance_of(SoapScum::KeyStore).to receive(:add_pc12)
+      allow_any_instance_of(VBMS::SoapScum::KeyStore).to receive(:add_pc12)
     end
 
     it 'smoke test that it initializes when all environment variables are set' do

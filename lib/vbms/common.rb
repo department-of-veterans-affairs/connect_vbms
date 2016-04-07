@@ -1,5 +1,5 @@
+# require 'xmlenc'
 require 'open3'
-require 'xmlenc'
 
 module VBMS
   FILEDIR = File.dirname(File.absolute_path(__FILE__))

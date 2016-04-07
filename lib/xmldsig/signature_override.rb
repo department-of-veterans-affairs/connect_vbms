@@ -1,4 +1,4 @@
-require 'xmldsig'
+# require 'xmldsig'
 require 'base64'
 
 module StrictlyBase64

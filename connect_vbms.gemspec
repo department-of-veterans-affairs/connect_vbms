@@ -1,5 +1,6 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'vbms/version'
 
 Gem::Specification.new do |spec|
@@ -22,7 +23,7 @@ Gem::Specification.new do |spec|
   end
 
   git_files          = `git ls-files -z`.split("\x00").reject { |f| f.match(%r{^(test|spec|features|\.java)/}) }
-  # spec.files         = git_files + Dir['classes/*.class']
+  # spec.files         = git_fiels + Dir['classes/*.class']
   # spec.require_paths = ['src']
 
   spec.add_development_dependency 'bundler', '~> 1.10'
@@ -41,7 +42,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'httpclient', '~> 2.6.0.1'
   spec.add_runtime_dependency 'httpi', '~> 2.4'
   spec.add_runtime_dependency 'nokogiri', '~> 1.6'
-  spec.add_runtime_dependency 'xmlenc', '~> 0.3.0'
+  spec.add_runtime_dependency 'xmlenc', '~> 0.5.0'
   spec.add_runtime_dependency 'mail'
   spec.add_runtime_dependency 'xmldsig', '~> 0.3.1'
 end
