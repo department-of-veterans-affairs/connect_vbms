@@ -69,7 +69,7 @@ then passed to the client for execution.
 Requests Documentation
 ----------------------
 
-For ``ListDocuments``, the result is a list of ``VBMS::Responses::Document`` objects. For
+For ``ListDocuments``, the result is an ``Array`` of ``VBMS::Responses::Document`` objects. For
 full details on ``ListDocuments`` and all the other API requests, consult :doc:`requests`
 
 Audit Logging
