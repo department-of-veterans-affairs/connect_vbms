@@ -193,24 +193,36 @@ module VBMS
       response.content
     end
 
-    def process_response(request, response)
+    def get_and_validate_body(response)
       body = get_body(response)
+
+      # if the body is really large, we can assume it isn't an error
+      return body if body.length > 10.megabytes
 
       # we could check the response content-type to make sure it's XML, but they don't seem
       # to send any HTTP headers back, so we'll instead rely on strict XML parsing instead
-      full_doc = parse_xml_strictly(body)
-      check_soap_errors(full_doc, response)
+      doc = parse_xml_strictly(body)
+      check_soap_errors(doc, response)
 
+      body
+    end
+
+    def get_decrypted_data(request, response)
       begin
         data = Tempfile.open('log') do |out_t|
-          VBMS.decrypt_message_xml(body, @keyfile, @keypass, out_t.path)
+          VBMS.decrypt_message_xml(get_and_validate_body(response), @keyfile, @keypass, out_t.path)
         end
       rescue ExecutionError
         raise SOAPError.new('Unable to decrypt SOAP response', body)
       end
 
       log(:decrypted_message, decrypted_data: data, request: request)
-      doc = parse_xml_strictly(data)
+
+      data
+    end
+
+    def process_response(request, response)
+      doc = parse_xml_strictly(get_decrypted_data(request, response))
       request.handle_response(doc)
     end
 
