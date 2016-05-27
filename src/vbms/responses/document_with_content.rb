@@ -9,10 +9,13 @@ module VBMS
       end
   
       def self.create_from_xml(el)
-        document_el = el.at_xpath('//v4:document', VBMS::XML_NAMESPACES)
-  
-        new(document: Document.create_from_xml(document_el),
-            content: Base64.decode64(el.at_xpath('//v4:content/ns2:data/text()', VBMS::XML_NAMESPACES).content))
+        document = Document.create_from_xml(el.at_xpath('//v4:document', VBMS::XML_NAMESPACES))
+        content = el.at_xpath('//v4:content/ns2:data/text()', VBMS::XML_NAMESPACES).content
+        el = nil
+
+        content = Base64.decode64(content)
+
+        new(document: document, content: content)
       end
 
       def to_h
