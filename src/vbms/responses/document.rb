@@ -3,7 +3,9 @@ module VBMS
     class Document
       attr_accessor :document_id, :filename, :doc_type, :source, :received_at, :mime_type, :alt_doc_types
   
-      def initialize(document_id: nil, filename: nil, doc_type: nil, source: nil, received_at: nil, mime_type: nil, alt_doc_types: nil)
+      def initialize(
+          document_id: nil, filename: nil, doc_type: nil, source: nil,
+          received_at: nil, mime_type: nil, alt_doc_types: nil)
         self.document_id = document_id
         self.filename = filename
         self.doc_type = doc_type
@@ -29,9 +31,7 @@ module VBMS
         if el['metadata']
           metadata = JSON.parse(el['metadata'])
 
-          if metadata["altDocType"]
-            return JSON.parse(metadata["altDocType"])
-          end
+          return JSON.parse(metadata['altDocType']) if metadata['altDocType']
         end
       end
 
@@ -47,7 +47,7 @@ module VBMS
         }
       end
 
-      alias_method :to_s, :inspect
+      alias to_s inspect
     end
   end
 end

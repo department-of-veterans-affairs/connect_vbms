@@ -27,11 +27,9 @@ module VBMS
 
     def self.env_path(env_dir, env_var_name, allow_empty: false)
       value = get_env(env_var_name, allow_empty: allow_empty)
-      if value.nil?
-        return nil
-      else
-        return File.join(env_dir, value)
-      end
+      return nil if value.nil?
+
+      File.join(env_dir, value)
     end
 
     def initialize(endpoint_url, keyfile, saml, key, keypass, cacert,
@@ -138,14 +136,13 @@ module VBMS
     end
 
     def create_body(request, doc)
-      if request.multipart?
-        filepath = request.multipart_file
-        filename = File.basename(filepath)
-        content = File.read(filepath)
-        return VBMS.load_erb('mtom_request.erb').result(binding)
-      else
-        return VBMS.load_erb('request.erb').result(binding)
-      end
+      return VBMS.load_erb('request.erb').result(binding) unless request.multipart?
+
+      filepath = request.multipart_file
+      filename = File.basename(filepath)
+      content = File.read(filepath)
+
+      VBMS.load_erb('mtom_request.erb').result(binding)
     end
 
     def parse_xml_strictly(xml_string)
