@@ -1,7 +1,6 @@
 require 'open3'
 require 'xmlenc'
 
-# rubocop:disable Metrics/ModuleLength
 module VBMS
   FILEDIR = File.dirname(File.absolute_path(__FILE__))
   DO_WSSE = File.join(FILEDIR, '../../src/do_wsse.sh')
@@ -27,7 +26,7 @@ module VBMS
     ns2: 'http://vbms.vba.va.gov/cdm/document/v4',
     soapenv: 'http://schemas.xmlsoap.org/soap/envelope/',
     wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
-  }
+  }.freeze
 
   class ClientError < StandardError
   end
@@ -63,8 +62,6 @@ module VBMS
       @output = output
     end
   end
-
-  private
 
   def self.load_erb(path)
     location = File.join(FILEDIR, '../templates', path)
@@ -150,14 +147,12 @@ module VBMS
   end
 
   def self.encrypted_soap_document_xml(in_xml, keyfile, keypass, request_name)
-    if RUBY_PLATFORM == 'java'
-      return Java::EncryptSOAPDocument.encrypt(in_xml, keyfile, keypass, request_name)
-    else
-      Tempfile.open('tmp') do |t|
-        t.write(in_xml)
-        t.flush
-        return encrypted_soap_document(t.path, keyfile, keypass, request_name)
-      end
+    return Java::EncryptSOAPDocument.encrypt(in_xml, keyfile, keypass, request_name) if RUBY_PLATFORM == 'java'
+
+    Tempfile.open('tmp') do |t|
+      t.write(in_xml)
+      t.flush
+      return encrypted_soap_document(t.path, keyfile, keypass, request_name)
     end
   end
 end
