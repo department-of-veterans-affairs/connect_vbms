@@ -395,7 +395,7 @@ module VBMS
             xml['wsse'].SecurityTokenReference do
               xml['ds'].X509Data do
                 xml['ds'].X509IssuerSerial do
-                  xml['ds'].X509IssuerName certificate.issuer.to_a.reverse.map { |name, value, _| "#{name}=#{value}" }.join(',')
+                  xml['ds'].X509IssuerName format_cert_xml(certificate)
                   xml['ds'].X509SerialNumber certificate.serial.to_s
                 end
               end
@@ -521,9 +521,7 @@ module VBMS
       end
 
       def format_cert_xml(certificate)
-        certificate.subject.to_a.reverse.map do |name, value, _|
-          "#{name}=#{value}"
-        end.join(',')
+        certificate.issuer.to_a.reverse.map { |name, value, _| "#{name}=#{value}" }.join(',')
       end
     end
   end
