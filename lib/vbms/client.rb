@@ -186,12 +186,13 @@ module VBMS
     # rubocop:disable Metrics/AbcSize
     def build_request(body, headers)
       request = HTTPI::Request.new(@endpoint_url)
-      if @key
-        request.auth.ssl.cert_key_file = @https_key
-        request.auth.ssl.cert_key_password = @https_keypass
-        request.auth.ssl.cert_file = @https_cert
-        request.auth.ssl.ca_cert_file = @https_cacert
-        request.auth.ssl.verify_mode = :peer
+
+      if @keystore.all.length > 0
+        request.auth.ssl.cert_key          = @keystore.all.first.key
+        request.auth.ssl.cert_key_password = @keypass
+        request.auth.ssl.cert              = @keystore.all.first.certificate
+        request.auth.ssl.ca_cert_file      = @cacert
+        request.auth.ssl.verify_mode       = :peer
       else
         # TODO: this can't really be correct
         request.auth.ssl.verify_mode = :none
