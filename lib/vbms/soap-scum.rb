@@ -429,7 +429,7 @@ module VBMS
         cipher.iv = iv
         cipher.key = symmetric_key
         cipher_text = iv + cipher.update(
-          add_xmlenc_padding(cipher.block_size, raw_xml)) + cipher.final
+        add_xmlenc_padding(cipher.block_size, raw_xml)) + cipher.final
 
         # builder portion
         builder = Nokogiri::XML::Builder.new do |xml|
