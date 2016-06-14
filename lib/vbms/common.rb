@@ -93,15 +93,15 @@ module VBMS
     end
   end
 
-  def self.decrypt_message_xml_ruby(encrypted_xml, keyfile_p12, keypass)
+  def self.decrypt_message_xml_ruby(encrypted_xml, client_key, keypass)
     encrypted_doc = Xmlenc::EncryptedDocument.new(encrypted_xml)
     # TODO(awong): Associate a keystore class with this API instead of
     # passing path per request. The keystore client should take in a ds:KeyInfo
     # node and know how to find the associated private key.
     # such as:
     # decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
-    encryption_key = OpenSSL::PKCS12.new(File.read(keyfile_p12), keypass)
-    decrypted_doc = encrypted_doc.decrypt(encryption_key.key)
+    # encryption_key = OpenSSL::PKCS12.new(File.read(keyfile_p12), keypass)
+    decrypted_doc = encrypted_doc.decrypt(client_key)
 
     # TODO(awong): Signature verification.
     # TODO(awong): Timestamp validation.

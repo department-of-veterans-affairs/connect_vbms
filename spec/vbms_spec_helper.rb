@@ -107,7 +107,7 @@ def new_test_client
     'importkey',
     nil,
     nil,
-    fixture_path('test_keystore_vbms_server_key.p12'),
+    fixture_path('test_server.crt'),
     nil,
     fixture_path('test_keystore.jks')
   )

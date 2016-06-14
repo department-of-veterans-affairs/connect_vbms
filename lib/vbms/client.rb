@@ -279,22 +279,27 @@ module VBMS
       check_soap_errors(full_doc, response)
 
       # DEBUG!!
-      begin
-        data = Tempfile.open('log') do |out_t|
-          VBMS.decrypt_message_xml(body, @java_keyfile, @keypass, out_t.path)
-        end
-      rescue Exception => e
-        # TODO[astone] remove/cleanup
-        puts "failed java decryption"
-        puts "client key: "  + @java_keyfile
-        puts "!!!!"
-        puts e.message
-        raise SOAPError.new('Unable to decrypt SOAP response', body)
-      end
-
       # begin
-      #   data = VBMS.decrypt_message_xml_ruby(full_doc, @server_key, @keypass)
+      #   data = Tempfile.open('log') do |out_t|
+      #     VBMS.decrypt_message_xml(body, @java_keyfile, @keypass, out_t.path)
+      #   end
+      # rescue Exception => e
+      #   # TODO[astone] remove/cleanup
+      #   puts "failed java decryption"
+      #   puts "client key: "  + @java_keyfile
+      #   puts "!!!!"
+      #   puts e.message
+      #   raise SOAPError.new('Unable to decrypt SOAP response', body)
+      # end
+
+      #begin
+        data = VBMS.decrypt_message_xml_ruby(
+          full_doc.to_xml,
+          @keystore.all.first.key,
+          @keypass
+        )
       # rescue
+      #     puts body
       #   raise SOAPError.new('Unable to decrypt SOAP response', body)
       # end
 

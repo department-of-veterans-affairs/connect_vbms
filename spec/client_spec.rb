@@ -2,9 +2,7 @@ require 'spec_helper'
 
 describe VBMS::Client do
   before(:example) do
-    @client = VBMS::Client.new(
-      'http://test.endpoint.url/', nil, nil, nil, nil, nil, nil, nil, nil
-    )
+    @client = new_test_client
   end
 
   describe 'remove_must_understand' do
