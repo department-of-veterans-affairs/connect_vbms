@@ -140,7 +140,8 @@ describe VBMS::SoapScum do
           @java_timestamp = parsed_timestamp(parsed_java_xml)
           time = Time.parse(@java_timestamp[:created])
 
-          body_id = parsed_java_xml.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES)['wsu:Id']
+          body_id = parsed_java_xml.at_xpath('//soapenv:Envelope//*[contains(@wsu:Id, "id-")]/@wsu:Id', VBMS::XML_NAMESPACES)
+
           signature_id = parsed_java_xml.at_xpath('//ds:Signature', VBMS::XML_NAMESPACES)['Id']
           key_info_id = parsed_java_xml.at_xpath('//ds:Signature/ds:KeyInfo',
                                                  VBMS::XML_NAMESPACES)['Id']
@@ -168,7 +169,6 @@ describe VBMS::SoapScum do
           Timecop.freeze(time) do
             # mock the Ruby to return the same IDs as the Java
             allow(@message_processor).to receive(:timestamp_id).and_return(@java_timestamp[:id])
-            allow(@message_processor).to receive(:soap_body_id).and_return(body_id)
             allow(@message_processor).to receive(:signature_id).and_return(signature_id)
             allow(@message_processor).to receive(:key_info_id).and_return(key_info_id)
             allow(@message_processor).to receive(:security_token_id).and_return(str_id)
@@ -201,7 +201,9 @@ describe VBMS::SoapScum do
           expect(java_signed_info).to_not be_nil
 
           # check the signed info for the encrypted part
-          ruby_signed_info = @parsed_ruby_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
+
+          ruby_body_id = @parsed_ruby_xml.at_xpath('//soapenv:Envelope//*[contains(@wsu:Id, "id-")]/@wsu:Id', VBMS::XML_NAMESPACES)
+          ruby_signed_info = @parsed_ruby_xml.at_xpath("//ds:Reference[@URI='##{ruby_body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(ruby_signed_info).to_not be_nil
           java_signed_info = parsed_java_xml.at_xpath("//ds:Reference[@URI='##{body_id}']", ds: 'http://www.w3.org/2000/09/xmldsig#')
           expect(java_signed_info).to_not be_nil

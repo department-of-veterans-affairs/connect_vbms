@@ -120,7 +120,7 @@ module VBMS
                                   'xmlns:doc' => 'http://vbms.vba.va.gov/cdm/document/v4',
                                   'xmlns:v4' => 'http://vbms.vba.va.gov/external/eDocumentService/v4',
                                   'xmlns:xop' => 'http://www.w3.org/2004/08/xop/include') do
-            xml['soapenv'].Body do # ('wsu:Id' => soap_body_id, 'xmlns:wsu' => XMLNamespaces::WSU) do
+            xml['soapenv'].Body do
               xml.REPLACEME unless contents_doc.nil?
             end
           end
@@ -173,19 +173,21 @@ module VBMS
             crypto_options[:server][:cipher_algorithm]
           )
 
-          document = soap_doc.at('//v4:document', VBMS::XML_NAMESPACES)
-          document.add_namespace_definition "wsu", XMLNamespaces::WSU
-          document['wsu:Id'] = soap_body_id
+          documents = nodes_to_encrypt.map do |xpath, ns, modifier|
+            document = soap_doc.at(xpath, ns)
+            document.add_namespace_definition "wsu", XMLNamespaces::WSU
+            document['wsu:Id'] = generate_body_id
+            document
+          end
 
           add_xmldsig_template(
             xml,
             crypto_options[:client][:certificate],
             crypto_options[:client][:digest_algorithm],
             crypto_options[:client][:signature_algorithm],
-            [timestamp_node(soap_doc), document]
+            [timestamp_node(soap_doc)] + documents
           )
         end
-
 
         signed_doc = sign_soap_doc(soap_doc, crypto_options[:client][:private_key]).document
 
@@ -356,8 +358,8 @@ module VBMS
         @timestamp_id ||= "TS-#{generate_id}"
       end
 
-      def soap_body_id
-        @soap_body_id ||= "id-#{generate_id}"
+      def generate_body_id
+        "id-#{generate_id}"
       end
 
       def signature_id
