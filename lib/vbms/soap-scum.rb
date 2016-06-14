@@ -120,7 +120,7 @@ module VBMS
                                   'xmlns:doc' => 'http://vbms.vba.va.gov/cdm/document/v4',
                                   'xmlns:v4' => 'http://vbms.vba.va.gov/external/eDocumentService/v4',
                                   'xmlns:xop' => 'http://www.w3.org/2004/08/xop/include') do
-            xml['soapenv'].Body('wsu:Id' => soap_body_id, 'xmlns:wsu' => XMLNamespaces::WSU) do
+            xml['soapenv'].Body do # ('wsu:Id' => soap_body_id, 'xmlns:wsu' => XMLNamespaces::WSU) do
               xml.REPLACEME unless contents_doc.nil?
             end
           end
@@ -172,12 +172,17 @@ module VBMS
             crypto_options[:server][:keytransport_algorithm],
             crypto_options[:server][:cipher_algorithm]
           )
+
+          document = soap_doc.at('//v4:document', VBMS::XML_NAMESPACES)
+          document.add_namespace_definition "wsu", XMLNamespaces::WSU
+          document['wsu:Id'] = soap_body_id
+
           add_xmldsig_template(
             xml,
             crypto_options[:client][:certificate],
             crypto_options[:client][:digest_algorithm],
             crypto_options[:client][:signature_algorithm],
-            [timestamp_node(soap_doc), body_node(soap_doc)]
+            [timestamp_node(soap_doc), document]
           )
         end
 
