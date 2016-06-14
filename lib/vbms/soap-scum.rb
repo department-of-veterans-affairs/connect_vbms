@@ -181,9 +181,13 @@ module VBMS
           )
         end
 
+
         signed_doc = sign_soap_doc(soap_doc, crypto_options[:client][:private_key]).document
 
-        nodes_to_encrypt = [body_node(signed_doc)]
+        nodes_to_encrypt = nodes_to_encrypt.map do |xpath, ns, modifier|
+          [signed_doc.at_xpath(xpath, ns), modifier]
+        end
+
         Nokogiri::XML::Builder.with(signed_doc.at("*//[Id=#{key_id}]",
                                                   soap: XMLNamespaces::SOAPENV,
                                                   'xmlns:wsse' => XMLNamespaces::WSSE,
@@ -411,18 +415,26 @@ module VBMS
       def encrypt_references(xml, nodes_to_encrypt)
         self.encrypted_elements = []
         xml['xenc'].ReferenceList do
-          nodes_to_encrypt.each do |node|
+          nodes_to_encrypt.each do |node, modifier|
+            encrypt_node = modifier == "Element" ? node : node.children
+
             encrypted_node_id = encrypted_data_id
-            encrypted_node = generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
-            node.children.each(&:remove) # remove unencrypted node
-            node << encrypted_node
+            encrypted_node = generate_encrypted_data(encrypt_node, modifier, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
+
+            if modifier == "Element"
+              node.replace(encrypted_node)
+            else
+              node.children.each(&:remove)
+              node << encrypted_node
+            end
+
             xml['xenc'].DataReference(URI: "##{encrypted_node_id}")
           end
         end
       end
 
-      def generate_encrypted_data(node, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
-        raw_xml = node.children.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+      def generate_encrypted_data(node, modifier, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
+        raw_xml = node.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
 
         cipher.encrypt
         cipher.padding = 0
@@ -433,7 +445,7 @@ module VBMS
 
         # builder portion
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml['xenc'].EncryptedData('xmlns:xenc' => 'http://www.w3.org/2001/04/xmlenc#', Id: encrypted_node_id, Type: 'http://www.w3.org/2001/04/xmlenc#Content') do
+          xml['xenc'].EncryptedData('xmlns:xenc' => 'http://www.w3.org/2001/04/xmlenc#', Id: encrypted_node_id, Type: "http://www.w3.org/2001/04/xmlenc##{modifier}") do
             xml['xenc'].EncryptionMethod(Algorithm: cipher_algorithm)
             xml['ds'].KeyInfo('xmlns:ds' => XMLNamespaces::DS) do
               xml['wsse'].SecurityTokenReference('xmlns:wsse' => XMLNamespaces::WSSE,

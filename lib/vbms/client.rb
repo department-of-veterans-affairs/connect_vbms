@@ -94,11 +94,7 @@ module VBMS
       encrypted_doc = @processor.encrypt(soap_doc,
                                          request.name,
                                          crypto_options,
-                                         soap_doc.at_xpath(
-                                           '/soapenv:Envelope/soapenv:Body',
-                                           soapenv: SoapScum::XMLNamespaces::SOAPENV).children)
-
-
+                                         request.signed_elements)
 
       # TODO[astone]: Improve! ugh! serialize, parse, rinse and repeat
       encrypted_doc = parse_xml_strictly(encrypted_doc)

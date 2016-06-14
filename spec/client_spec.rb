@@ -43,7 +43,10 @@ describe VBMS::Client do
                         source: 'CUI tests',
                         name: 'uploadDocumentWithAssociations',
                         new_mail: '',
-                        render_xml: '<xml></xml>'
+                        render_xml: '<xml></xml>',
+                        signed_elements: [['/soapenv:Envelope/soapenv:Body',
+                                           {soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV},
+                                           'Content']]
                        )
       @response = double('response', code: 200, body: 'response')
     end
