@@ -58,8 +58,11 @@ module VBMS
       # Takes an x509 certificate and returns an array sorted in an order that
       # allows for matching against other normalized subjects.
       def x509_to_normalized_subject(certificate)
-        normalized_subject = certificate.subject.to_a.reverse.map { |name, value, _| [name, value] }.sort_by { |x| x[0] }
-        normalized_subject << ['SerialNumber', certificate.serial.to_s]
+        normalized_subject = certificate.subject.to_a.reverse.map do |name, value, _|
+          [name, value]
+        end
+        sorted_subject = normalized_subject.sort_by { |x| x[0] }
+        sorted_subject << ['SerialNumber', certificate.serial.to_s]
       end
 
       def keyinfo_to_normalized_subject(keyinfo_node)
@@ -152,7 +155,13 @@ module VBMS
         end
       end
 
-      def encrypt(soap_doc, _request_name, crypto_options, nodes_to_encrypt, validity: 300)
+      def encrypt(
+          soap_doc,
+          _request_name,
+          crypto_options,
+          nodes_to_encrypt,
+          validity: 300
+      )
         # TODO(astone)
         # improve crypto_options messaging, make it cohesive with keystore
         # TODO(awong): Allow configurable digest and signature methods.
@@ -203,7 +212,9 @@ module VBMS
           encrypt_references(xml, nodes_to_encrypt)
         end
 
-        signed_doc.root.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+        signed_doc.root.to_xml(
+          save_with: (Nokogiri::XML::Node::SaveOptions::AS_XML |
+                      Nokogiri::XML::Node::SaveOptions::NO_DECLARATION))
       end
 
       def decrypt(soap_doc, keyfile, keypass)
@@ -216,7 +227,9 @@ module VBMS
           VBMS::XML_NAMESPACES).text)
         symmetric_key = decrypted_symmetric_key(key_cipher_text, keyfile, keypass)
 
-        cipher_text = Base64.decode64(soap_doc.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
+        cipher_text = Base64.decode64(soap_doc.at_xpath(
+          '//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue',
+          VBMS::XML_NAMESPACES).text)
         known_iv = cipher_text[0..(decipher.key_len - 1)]
 
         plain = decrypt_cipher_text(decipher, symmetric_key, known_iv, cipher_text)
@@ -276,7 +289,7 @@ module VBMS
         # it.
         plain = plain.byteslice(decipher.block_size, plain.length)
 
-        plain = remove_xmlenc_padding(decipher.block_size, plain)
+        remove_xmlenc_padding(decipher.block_size, plain)
       end
 
       def parse_xml_strictly(xml)
@@ -386,7 +399,7 @@ module VBMS
         SecureRandom.random_bytes(key_len)
       end
 
-      def get_random_iv
+      def generate_random_iv
         SecureRandom.random_bytes(cipher.key_len)
       end
 
@@ -397,7 +410,7 @@ module VBMS
         self.key_id = encrypted_key_id
         self.cipher_algorithm = cipher_algorithm
         self.cipher = get_block_cipher(cipher_algorithm)    # instantiate a new Cipher
-        self.iv = get_random_iv
+        self.iv = generate_random_iv
         self.symmetric_key = generate_symmetric_key(cipher.key_len)
 
         xml['xenc'].EncryptedKey('xmlns:xenc' => XMLNamespaces::XENC, Id: key_id) do
@@ -426,7 +439,10 @@ module VBMS
             encrypt_node = modifier == 'Element' ? node : node.children
 
             encrypted_node_id = encrypted_data_id
-            encrypted_node = generate_encrypted_data(encrypt_node, modifier, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
+            encrypted_node = generate_encrypted_data(
+              encrypt_node, modifier, encrypted_node_id,
+              key_id, symmetric_key, cipher_algorithm
+            )
 
             if modifier == 'Element'
               node.replace(encrypted_node)
@@ -441,7 +457,9 @@ module VBMS
       end
 
       def generate_encrypted_data(node, modifier, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
-        raw_xml = node.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML | Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+        raw_xml = node.to_xml(
+          save_with: (Nokogiri::XML::Node::SaveOptions::AS_XML |
+                      Nokogiri::XML::Node::SaveOptions::NO_DECLARATION))
 
         cipher.encrypt
         cipher.padding = 0
@@ -452,12 +470,18 @@ module VBMS
 
         # builder portion
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml['xenc'].EncryptedData('xmlns:xenc' => 'http://www.w3.org/2001/04/xmlenc#', Id: encrypted_node_id, Type: "http://www.w3.org/2001/04/xmlenc##{modifier}") do
+          xml['xenc'].EncryptedData(
+            'xmlns:xenc' => 'http://www.w3.org/2001/04/xmlenc#',
+            Id: encrypted_node_id, Type:
+            "http://www.w3.org/2001/04/xmlenc##{modifier}"
+          ) do
             xml['xenc'].EncryptionMethod(Algorithm: cipher_algorithm)
             xml['ds'].KeyInfo('xmlns:ds' => XMLNamespaces::DS) do
-              xml['wsse'].SecurityTokenReference('xmlns:wsse' => XMLNamespaces::WSSE,
-                                                 'xmlns:wsse11' => XMLNamespaces::WSSE11,
-                                                 'wsse11:TokenType' => 'http://docs.oasis-open.org/wss/oasis-wss-soap-message-security-1.1#EncryptedKey') do
+              xml['wsse'].SecurityTokenReference(
+                'xmlns:wsse' => XMLNamespaces::WSSE,
+                'xmlns:wsse11' => XMLNamespaces::WSSE11,
+                'wsse11:TokenType' => 'http://docs.oasis-open.org/wss/oasis-wss-soap-message-security-1.1#EncryptedKey'
+              ) do
                 xml['wsse'].Reference(URI: "##{key_id}")
               end
             end
@@ -485,7 +509,10 @@ module VBMS
                 xml['ds'].Transforms do
                   xml['ds'].Transform(Algorithm: 'http://www.w3.org/2001/10/xml-exc-c14n#') do
                     prefix_list = (node.name == 'Body' ? 'cdm doc v4 xop' : 'wsse cdm doc soapenv v4 xop')
-                    xml['ec'].InclusiveNamespaces('xmlns:ec' => 'http://www.w3.org/2001/10/xml-exc-c14n#', PrefixList: prefix_list)
+                    xml['ec'].InclusiveNamespaces(
+                      'xmlns:ec' => 'http://www.w3.org/2001/10/xml-exc-c14n#',
+                      PrefixList: prefix_list
+                    )
                   end
                 end
                 xml['ds'].DigestMethod(Algorithm: digest_method)
@@ -519,7 +546,7 @@ module VBMS
             xml['soapenv'].Header('xmlns:soapenv' => XMLNamespaces::SOAPENV)
           end
           envelope.children.first.add_previous_sibling(header_builder.doc.root)
-          header = envelope.children.first
+          envelope.children.first
         end
       end
 
@@ -533,7 +560,7 @@ module VBMS
                                 ) do
               now = Time.now.utc
               xml['wsu'].Created now.xmlschema(3)
-              xml['wsu'].Expires (now + validity).xmlschema(3)
+              xml['wsu'].Expires((now + validity).xmlschema(3))
             end
           end
         end

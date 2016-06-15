@@ -3,11 +3,15 @@ Lint/ParenthesesAsGroupedExpression:
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#parens-no-spaces
   Enabled: true
 
+Metrics/AbcSize:
+  Description: "Complain about \"complexity\" without knowing what that means"
+  Max: 50
+
 Metrics/ClassLength:
-  Description: Avoid classes longer than 150 lines of code.
+  Description: Avoid classes longer than some arbitrary lines of code.
   Enabled: true
   CountComments: false
-  Max: 150
+  Max: 500
 
 Metrics/LineLength:
   Description: Limit lines to 120 characters.
@@ -25,11 +29,11 @@ Metrics/ParameterLists:
   CountKeywordArgs: true
 
 Metrics/MethodLength:
-  Description: Avoid methods longer than 20 lines of code.
+  Description: Avoid methods longer than some random lines of code.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#short-methods
   Enabled: true
   CountComments: false
-  Max: 30
+  Max: 52
 
 Metrics/ModuleLength:
   Description: Avoid modules longer than 100 lines of code.
