@@ -51,7 +51,8 @@ describe VBMS::Client do
 
     it 'creates two log messages' do
       body = Nokogiri::XML('<xml>body</xml')
-      allow_any_instance_of(HTTPClient).to receive(:post).and_return(@response)
+      allow(HTTPI).to receive(:post).and_return(@response)
+
       allow(@client).to receive(:process_response).and_return(nil)
       allow(@client).to receive(:wrap_in_soap).and_return(body.to_s)
       allow(@client).to receive(:encrypt).and_return(body.to_s)
@@ -63,8 +64,7 @@ describe VBMS::Client do
       expect(@client).to receive(:log).with(:request, response_code: @response.code,
                                                       request_body: body.to_s,
                                                       response_body: @response.body,
-                                                      request: @request,
-                                                      duration: Float)
+                                                      request: @request)
 
       @client.send_request(@request)
     end
@@ -176,7 +176,7 @@ describe VBMS::Client do
 
       let(:request) { double('request') }
       let(:response_body) { '' }
-      let(:response) { double('response', content: response_body, headers: {}) }
+      let(:response) { double('response', body: response_body, headers: {}) }
 
       subject { client.process_response(request, response) }
 

@@ -117,26 +117,22 @@ module VBMS
 
       body = create_body(request, serialized_doc)
 
-      response = nil
-      duration = Benchmark.realtime do
-        response = @http_client.post(
-          @endpoint_url, body: body, header: [
-            [
-              'Content-Type',
-              'Multipart/Related; type="application/xop+xml"; '\
-                'start-info="application/soap+xml"; boundary="boundary_1234"'
-            ]
-          ]
-        )
-      end
+      http_request = build_request(
+        body,
+        'Content-Type' => 'Multipart/Related; '\
+                  'type="application/xop+xml"; '\
+                  'start-info="application/soap+xml"; '\
+                  'boundary="boundary_1234"')
+
+      HTTPI.log = false
+      response = HTTPI.post(http_request)
 
       log(
         :request,
         response_code: response.code,
         request_body: serialized_doc.to_s,
         response_body: response.body,
-        request: request,
-        duration: duration
+        request: request
       )
 
       if response.code != 200
@@ -172,7 +168,14 @@ module VBMS
     end
 
     def create_body(request, doc)
-      return VBMS.load_erb('request.erb').result(binding) unless request.multipart?
+      if request.multipart?
+        filepath = request.multipart_file
+        filename = File.basename(filepath)
+        content = File.read(filepath)
+        return VBMS.load_erb('mtom_request.erb').result(binding)
+      else
+        return VBMS.load_erb('request.erb').result(binding)
+      end
     end
 
     # rubocop:disable Metrics/AbcSize
@@ -190,7 +193,9 @@ module VBMS
         request.auth.ssl.verify_mode = :none
       end
 
-      VBMS.load_erb('mtom_request.erb').result(binding)
+      request.body = body
+      request.headers = headers
+      request
     end
 
     def crypto_options
@@ -246,7 +251,7 @@ module VBMS
       return if boundary.nil?
       Mail::Part.new(
         headers: response.headers,
-        body: response.content
+        body: response.body,
       ).body.split!(boundary).parts
     end
 
@@ -264,7 +269,7 @@ module VBMS
       end
 
       # otherwise just return the body
-      response.content
+      response.body
     end
 
     def process_response(request, response)
@@ -276,7 +281,7 @@ module VBMS
       check_soap_errors(doc, response)
 
       data = VBMS.decrypt_message_xml_ruby(
-        full_doc.to_xml,
+        doc.to_xml,
         @keystore.all.first.key,
         @keypass
       )
@@ -290,10 +295,10 @@ module VBMS
     def check_soap_errors(doc, response)
       # the envelope should be the root node of the document
       soap = doc.at_xpath('/soapenv:Envelope', VBMS::XML_NAMESPACES)
-      fail SOAPError.new('No SOAP envelope found in response', response.content) if
+      fail SOAPError.new('No SOAP envelope found in response', response.body) if
         soap.nil?
 
-      fail SOAPError.new('SOAP Fault returned', response.content) if
+      fail SOAPError.new('SOAP Fault returned', response.body) if
         soap.at_xpath('//soapenv:Fault', VBMS::XML_NAMESPACES)
     end
   end
