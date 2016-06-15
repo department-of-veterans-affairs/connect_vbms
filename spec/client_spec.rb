@@ -63,12 +63,8 @@ describe VBMS::Client do
       expect(@client).to receive(:log).with(:request, response_code: @response.code,
                                                       request_body: body.to_s,
                                                       response_body: @response.body,
-<<<<<<< HEAD
                                                       request: @request,
                                                       duration: Float)
-=======
-                                                      request: @request)
->>>>>>> feature/no-java
 
       @client.send_request(@request)
     end
