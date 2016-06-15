@@ -288,7 +288,7 @@ module VBMS
 
       log(:decrypted_message, decrypted_data: data, request: request)
 
-      doc = parse_xml_strictly(get_decrypted_data(request, response))
+      doc = parse_xml_strictly(data)
       request.handle_response(doc)
     end
 
