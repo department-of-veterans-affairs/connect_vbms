@@ -65,7 +65,7 @@ module VBMS
 
       def signed_elements
         [['//v4:document',
-          {v4: 'http://vbms.vba.va.gov/external/eDocumentService/v4'},
+          { v4: 'http://vbms.vba.va.gov/external/eDocumentService/v4' },
           'Element']]
       end
 

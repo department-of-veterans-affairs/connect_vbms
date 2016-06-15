@@ -43,7 +43,7 @@ describe VBMS::Client do
                         new_mail: '',
                         render_xml: '<xml></xml>',
                         signed_elements: [['/soapenv:Envelope/soapenv:Body',
-                                           {soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV},
+                                           { soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV },
                                            'Content']]
                        )
       @response = double('response', code: 200, body: 'response')
@@ -181,7 +181,7 @@ describe VBMS::Client do
         let(:response_body) { encrypted_xml_file(fixture_path('requests/fetch_document.xml'), 'fetchDocumentResponse') }
 
         it 'should return a decrypted XML document' do
-          pending("Working PKI")
+          pending('Working PKI')
 
           expect(request).to receive(:handle_response) do |doc|
             expect(doc).to be_a(Nokogiri::XML::Document)
@@ -216,7 +216,7 @@ describe VBMS::Client do
         end
 
         it 'should raise a SOAPError' do
-          pending("Working PKI")
+          pending('Working PKI')
           expect { subject }.to raise_error do |error|
             expect(error).to be_a(VBMS::SOAPError)
             expect(error.message).to eq('Unable to decrypt SOAP response')

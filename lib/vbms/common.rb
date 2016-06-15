@@ -29,7 +29,7 @@ module VBMS
     wsu: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd',
     ds: 'http://www.w3.org/2000/09/xmldsig#',
     xenc: 'http://www.w3.org/2001/04/xmlenc#'
-  }
+  }.freeze
 
   class ClientError < StandardError
   end
@@ -118,7 +118,7 @@ module VBMS
     end
   end
 
-  def self.decrypt_message_xml_ruby(encrypted_xml, client_key, keypass)
+  def self.decrypt_message_xml_ruby(encrypted_xml, client_key, _keypass)
     encrypted_doc = Xmlenc::EncryptedDocument.new(encrypted_xml)
     # TODO(awong): Associate a keystore class with this API instead of
     # passing path per request. The keystore client should take in a ds:KeyInfo

@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
     fail 'RubyGems 2.0 or newer is required to protect against public gem pushes.'
   end
 
-  git_files          = `git ls-files -z`.split("\x00").reject { |f| f.match(%r{^(test|spec|features|\.java)/}) }
+  git_files = `git ls-files -z`.split("\x00").reject { |f| f.match(%r{^(test|spec|features|\.java)/}) }
   # spec.files         = git_fiels + Dir['classes/*.class']
   # spec.require_paths = ['src']
 

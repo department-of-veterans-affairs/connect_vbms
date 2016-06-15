@@ -102,17 +102,17 @@ module VBMS
       # /RUBY ENCRYPTION
       # ----------------------------------------------------
 
-# File.open('java_req.xml', 'w') do |file|
-#   file.truncate(0)
-#   file.write java_serialized_doc
-# end
-# `gorgeous -i java_req.xml`
+      # File.open('java_req.xml', 'w') do |file|
+      #   file.truncate(0)
+      #   file.write java_serialized_doc
+      # end
+      # `gorgeous -i java_req.xml`
 
-# File.open('ruby_req.xml', 'w') do |file|
-#   file.truncate(0)
-#   file.write serialized_doc
-# end
-# `gorgeous -i ruby_req.xml`
+      # File.open('ruby_req.xml', 'w') do |file|
+      #   file.truncate(0)
+      #   file.write serialized_doc
+      # end
+      # `gorgeous -i ruby_req.xml`
       # ---------------------
 
       body = create_body(request, serialized_doc)
@@ -251,7 +251,7 @@ module VBMS
       return if boundary.nil?
       Mail::Part.new(
         headers: response.headers,
-        body: response.body,
+        body: response.body
       ).body.split!(boundary).parts
     end
 

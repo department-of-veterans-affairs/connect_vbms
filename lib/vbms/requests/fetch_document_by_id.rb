@@ -19,7 +19,7 @@ module VBMS
 
       def signed_elements
         [['/soapenv:Envelope/soapenv:Body',
-          {soapenv: SoapScum::XMLNamespaces::SOAPENV},
+          { soapenv: SoapScum::XMLNamespaces::SOAPENV },
           'Content']]
       end
 

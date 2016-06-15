@@ -13,7 +13,7 @@ require 'rspec/matchers'
 require 'equivalent-xml'
 require 'vbms_spec_helper'
 require 'pry'
-require 'httplog' if ENV['CONNECT_VBMS_HTTPLOG'] and ENV['CONNECT_VBMS_HTTPLOG'] == 1
+require 'httplog' if ENV['CONNECT_VBMS_HTTPLOG'] && ENV['CONNECT_VBMS_HTTPLOG'] == 1
 require 'byebug' if RUBY_PLATFORM != 'java'
 require 'httpi'
 

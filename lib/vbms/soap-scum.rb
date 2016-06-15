@@ -173,9 +173,9 @@ module VBMS
             crypto_options[:server][:cipher_algorithm]
           )
 
-          documents = nodes_to_encrypt.map do |xpath, ns, modifier|
+          documents = nodes_to_encrypt.map do |xpath, ns, _modifier|
             document = soap_doc.at(xpath, ns)
-            document.add_namespace_definition "wsu", XMLNamespaces::WSU
+            document.add_namespace_definition 'wsu', XMLNamespaces::WSU
             document['wsu:Id'] = generate_body_id
             document
           end
@@ -423,12 +423,12 @@ module VBMS
         self.encrypted_elements = []
         xml['xenc'].ReferenceList do
           nodes_to_encrypt.each do |node, modifier|
-            encrypt_node = modifier == "Element" ? node : node.children
+            encrypt_node = modifier == 'Element' ? node : node.children
 
             encrypted_node_id = encrypted_data_id
             encrypted_node = generate_encrypted_data(encrypt_node, modifier, encrypted_node_id, key_id, symmetric_key, cipher_algorithm)
 
-            if modifier == "Element"
+            if modifier == 'Element'
               node.replace(encrypted_node)
             else
               node.children.each(&:remove)
@@ -448,7 +448,7 @@ module VBMS
         cipher.iv = iv
         cipher.key = symmetric_key
         cipher_text = iv + cipher.update(
-        add_xmlenc_padding(cipher.block_size, raw_xml)) + cipher.final
+          add_xmlenc_padding(cipher.block_size, raw_xml)) + cipher.final
 
         # builder portion
         builder = Nokogiri::XML::Builder.new do |xml|
