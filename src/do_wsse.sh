@@ -37,7 +37,7 @@ done
 [ -z "$KEYFILE" ] && echo "Specify keyfile in -k" >&2 && exit 1
 [ -z "$KEYPASS" ] && echo "Specify keypass in -p" >&2 && exit 1
 
-MY_CLASSPATH="${SCRIPT_ROOT}/classes:${SCRIPT_ROOT}/lib/*:${SCRIPT_ROOT}/lib:${SCRIPT_ROOT}/src/main/properties" 
+MY_CLASSPATH="${SCRIPT_ROOT}/classes:${SCRIPT_ROOT}/java/*:${SCRIPT_ROOT}/java:${SCRIPT_ROOT}/src/main/properties" 
 
 if [ "$MODE" = EncryptSOAPDocument ]; then
   [ -z "$REQNAME" ] && echo "Specify request name in -n" >&2 && exit 1

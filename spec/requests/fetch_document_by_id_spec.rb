@@ -6,7 +6,7 @@ describe VBMS::Requests::FetchDocumentById do
 
     it 'generates valid XML' do
       xml = subject.render_xml
-      xsd = Nokogiri::XML::Schema(File.read('spec/soap.xsd'))
+      xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
       expect(errors).to eq []
@@ -16,7 +16,7 @@ describe VBMS::Requests::FetchDocumentById do
   describe 'parsing the XML' do
     before(:all) do
       request = VBMS::Requests::FetchDocumentById.new('')
-      xml = File.read(fixture_path('requests/fetch_document.xml'))
+      xml = fixture('requests/fetch_document.xml')
       doc = parse_strict(xml)
       @response = request.handle_response(doc)
     end

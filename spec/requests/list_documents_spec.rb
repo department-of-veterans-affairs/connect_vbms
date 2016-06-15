@@ -6,7 +6,7 @@ describe VBMS::Requests::ListDocuments do
 
     it 'generates valid XML' do
       xml = subject.render_xml
-      xsd = Nokogiri::XML::Schema(File.read('spec/soap.xsd'))
+      xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
       expect(errors).to eq []
@@ -16,7 +16,7 @@ describe VBMS::Requests::ListDocuments do
   describe 'parsing the XML response' do
     before(:all) do
       request = VBMS::Requests::ListDocuments.new('784449089')
-      xml = File.read(fixture_path('requests/list_documents.xml'))
+      xml = fixture('requests/list_documents.xml')
       doc = parse_strict(xml)
       @vbms_docs = request.handle_response(doc)
     end

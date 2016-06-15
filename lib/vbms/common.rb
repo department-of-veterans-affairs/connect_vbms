@@ -1,5 +1,5 @@
+# require 'xmlenc'
 require 'open3'
-require 'xmlenc'
 
 module VBMS
   FILEDIR = File.dirname(File.absolute_path(__FILE__))
@@ -25,8 +25,11 @@ module VBMS
     v4: 'http://vbms.vba.va.gov/external/eDocumentService/v4',
     ns2: 'http://vbms.vba.va.gov/cdm/document/v4',
     soapenv: 'http://schemas.xmlsoap.org/soap/envelope/',
-    wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
-  }.freeze
+    wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd',
+    wsu: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd',
+    ds: 'http://www.w3.org/2000/09/xmldsig#',
+    xenc: 'http://www.w3.org/2001/04/xmlenc#'
+  }
 
   class ClientError < StandardError
   end
@@ -115,14 +118,15 @@ module VBMS
     end
   end
 
-  def self.decrypt_message_xml_ruby(encrypted_xml, keyfile_p12, keypass)
+  def self.decrypt_message_xml_ruby(encrypted_xml, client_key, keypass)
     encrypted_doc = Xmlenc::EncryptedDocument.new(encrypted_xml)
-
     # TODO(awong): Associate a keystore class with this API instead of
     # passing path per request. The keystore client should take in a ds:KeyInfo
     # node and know how to find the associated private key.
-    encryption_key = OpenSSL::PKCS12.new(File.read(keyfile_p12), keypass)
-    decrypted_doc = encrypted_doc.decrypt(encryption_key.key)
+    # such as:
+    # decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
+    # encryption_key = OpenSSL::PKCS12.new(File.read(keyfile_p12), keypass)
+    decrypted_doc = encrypted_doc.decrypt(client_key)
 
     # TODO(awong): Signature verification.
     # TODO(awong): Timestamp validation.
@@ -150,7 +154,8 @@ module VBMS
     return Java::EncryptSOAPDocument.encrypt(in_xml, keyfile, keypass, request_name) if RUBY_PLATFORM == 'java'
 
     Tempfile.open('tmp') do |t|
-      t.write(in_xml)
+      out = in_xml.serialize(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+      t.write(out)
       t.flush
       return encrypted_soap_document(t.path, keyfile, keypass, request_name)
     end

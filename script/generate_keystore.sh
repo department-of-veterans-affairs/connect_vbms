@@ -4,6 +4,20 @@ set -x
 # this script is meant to be run from the project's /script folder
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+function ask_for_overwrite {
+  if [ -f "$DIR/../spec/fixtures/$2" ] ; then
+    read -p "Overwrite existing $2? [y/n]" -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+      rm "$DIR/../spec/fixtures/$2"
+      mv $1 "$DIR/../spec/fixtures/$2"
+    fi
+  else
+    mv $1 "$DIR/../spec/fixtures/$2"
+  fi
+}
+
 # generate import (client) key
 openssl genrsa -des3 -out import.key -passout pass:importkey 2048
 openssl req -new -key import.key -out import.csr \
@@ -44,17 +58,7 @@ keytool -importkeystore \
   -storepass "importkey"
 
 # move import keystore
-if [ -f "$DIR/../spec/fixtures/test_keystore_importkey.p12" ] ; then
-  read -p "Overwrite existing test_keystore_importkey.p12? [y/n]" -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]
-  then
-    rm "$DIR/../spec/fixtures/test_keystore_importkey.p12"
-    mv keystore.p12 "$DIR/../spec/fixtures/test_keystore_importkey.p12"
-  else
-    mv keystore.p12 test_keystore_importkey.p12
-  fi
-fi
+ask_for_overwrite keystore.p12 test_keystore_importkey.p12
 
 keytool -importcert \
   -keystore "$DIR/keystore.jks" \
@@ -66,32 +70,21 @@ keytool -importcert \
 openssl pkcs12 -export -name vbms_server_key -in "$DIR/server.crt" -inkey "$DIR/server.key" \
   -out "$DIR/keystore.p12"
 keytool -importkeystore -destkeystore "$DIR/keystore.jks" -srckeystore "$DIR/keystore.p12" \
-  -srcstoretype pkcs12 -alias vbms_server_key -storepass "importkey"
+  -srcstoretype pkcs12 -alias "vbms_server_key" -storepass "importkey"
 
-# move server key
-if [ -f "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12" ] ; then
-  read -p "Overwrite existing test_keystore_vbms_server_key.p12? [y/n]" -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]
-  then
-    rm "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12"
-    mv keystore.p12 "$DIR/../spec/fixtures/test_keystore_vbms_server_key.p12"
-  else
-    mv keystore.p12 test_keystore_vbms_server_key.p12
-  fi
-fi
+# move server keystore
+ask_for_overwrite keystore.p12 test_keystore_vbms_server_key.p12
 
-# move keystore
-if [ -f "$DIR/../spec/fixtures/test_keystore.jks" ] ; then
-  read -p "Overwrite existing test_keystore.jks? [y/n]" -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]
-  then
-    rm "$DIR/../spec/fixtures/test_keystore.jks"
-    mv keystore.jks "$DIR/../spec/fixtures/test_keystore.jks"
-    # cleanup
-    rm import.crt import.csr import.key server.crt server.key
-    # view information for generated keystore    
-    keytool -list -v -keystore "$DIR/../spec/fixtures/test_keystore.jks"
-  fi
-fi
+# move server cert
+ask_for_overwrite server.crt test_server.crt
+
+# move java keystore
+ask_for_overwrite keystore.jks test_keystore.jks
+
+# cleanup
+rm -f import.crt import.csr import.key server.key
+
+echo "*****************************************************"
+echo "*****************************************************"
+echo "CURRENT KEYSTORE INFO:"
+keytool -list -v -keystore "$DIR/../spec/fixtures/test_keystore.jks"

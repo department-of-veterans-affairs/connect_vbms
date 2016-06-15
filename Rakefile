@@ -4,7 +4,7 @@ require 'rubocop/rake_task'
 
 RSpec::Core::RakeTask.new(:spec)
 
-task default: [:build_java, :spec, :rubocop]
+task default: [:spec, :rubocop]
 
 task :build_java do
   sh 'make -C src build'
@@ -14,9 +14,9 @@ task :docs do
   sh 'make -C docs html'
 end
 
-desc 'Run RuboCop on the src directory'
+desc 'Run RuboCop on the lib directory'
 RuboCop::RakeTask.new(:rubocop) do |task|
-  task.patterns = ['src/**/*.rb', 'spec/**/*.rb']
+  task.patterns = ['lib/**/*.rb', 'spec/**/*.rb']
   # Trigger failure for CI
   task.fail_on_error = true
 end

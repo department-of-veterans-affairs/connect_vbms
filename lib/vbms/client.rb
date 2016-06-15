@@ -3,17 +3,43 @@ module VBMS
   class Client
     attr_reader :endpoint_url
 
-    def self.from_env_vars(logger: nil, env_name: 'test')
+    def initialize(endpoint_url, keyfile, saml, key, keypass, cacert,
+                   client_cert, server_keyfile, logger = nil, java_keyfile)
+      @endpoint_url = endpoint_url
+      @keyfile = keyfile
+      @saml = saml
+      @key = key
+      @keypass = keypass
+      @cacert = cacert
+      @client_cert = client_cert
+      @server_key = server_keyfile
+
+      @java_keyfile = java_keyfile || nil
+      # TODO: remove @keystore and improve access via processor
+      @keystore = SoapScum::KeyStore.new
+
+      @keystore.add_pc12(@keyfile, @keypass) if @keyfile
+      @keystore.add_cert(@server_key) if @server_key && @server_key.match(/.crt/)
+
+      @processor = SoapScum::MessageProcessor.new(@keystore)
+
+      @logger = logger
+    end
+
+    def self.from_env_vars(logger: nil, env_name: 'test', lang: 'ruby')
       env_dir = File.join(get_env('CONNECT_VBMS_ENV_DIR'), env_name)
+
       VBMS::Client.new(
         get_env('CONNECT_VBMS_URL'),
-        env_path(env_dir, 'CONNECT_VBMS_KEYFILE'),
+        env_path(env_dir, 'CONNECT_VBMS_CLIENT_KEY_FILE'),
         env_path(env_dir, 'CONNECT_VBMS_SAML'),
-        env_path(env_dir, 'CONNECT_VBMS_KEY', allow_empty: true),
+        env_path(env_dir, 'CONNECT_VBMS_IMPORT_KEY_FILE', allow_empty: true),
         get_env('CONNECT_VBMS_KEYPASS'),
         env_path(env_dir, 'CONNECT_VBMS_CACERT', allow_empty: true),
         env_path(env_dir, 'CONNECT_VBMS_CERT', allow_empty: true),
-        logger
+        env_path(env_dir, 'CONNECT_VBMS_SERVER_KEY_FILE', allow_empty: true),
+        logger,
+        env_path(env_dir, 'CONNECT_VBMS_JAVA_KEYFILE')
       )
     end
 
@@ -32,32 +58,6 @@ module VBMS
       File.join(env_dir, value)
     end
 
-    def initialize(endpoint_url, keyfile, saml, key, keypass, cacert,
-                   client_cert, logger = nil)
-      @endpoint_url = endpoint_url
-      @keyfile = keyfile
-      @saml = saml
-      @key = key
-      @keypass = keypass
-      @cacert = cacert
-      @client_cert = client_cert
-
-      @logger = logger
-
-      http_client = HTTPClient.new
-      if @key
-        http_client.ssl_config.set_client_cert_file(
-          @client_cert, @key, @keypass
-        )
-        http_client.ssl_config.set_trust_ca(@cacert)
-        http_client.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_PEER
-      else
-        http_client.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      end
-
-      @http_client = http_client
-    end
-
     def log(event, data)
       @logger.log(event, data) if @logger
     end
@@ -71,16 +71,51 @@ module VBMS
         unencrypted_body: unencrypted_xml
       )
 
-      output = VBMS.encrypted_soap_document_xml(
-        unencrypted_xml,
-        @keyfile,
-        @keypass,
-        request.name)
-      doc = Nokogiri::XML(output)
-      inject_saml(doc)
-      remove_must_understand(doc)
+      # JAVA ENCRYPTION
+      # ----------------------------------------------------
+      # java_output = VBMS.encrypted_soap_document_xml(
+      #   parse_xml_strictly(unencrypted_xml),
+      #   @java_keyfile,
+      #   @keypass,
+      #   request.name)
+      # java_doc = parse_xml_strictly(java_output)
+      # inject_saml(java_doc)
+      # remove_must_understand(java_doc)
+      # java_serialized_doc = serialize_document(java_doc)
 
-      body = create_body(request, doc)
+      # /JAVA ENCRYPTION
+      # ----------------------------------------------------
+
+      # RUBY ENCRYPTION
+      # ----------------------------------------------------
+      soap_doc = @processor.wrap_in_soap(unencrypted_xml)
+      encrypted_doc = @processor.encrypt(soap_doc,
+                                         request.name,
+                                         crypto_options,
+                                         request.signed_elements)
+
+      # TODO[astone]: Improve! ugh! serialize, parse, rinse and repeat
+      encrypted_doc = parse_xml_strictly(encrypted_doc)
+      inject_saml(encrypted_doc)
+      remove_must_understand(encrypted_doc)
+      serialized_doc = serialize_document(encrypted_doc)
+      # /RUBY ENCRYPTION
+      # ----------------------------------------------------
+
+# File.open('java_req.xml', 'w') do |file|
+#   file.truncate(0)
+#   file.write java_serialized_doc
+# end
+# `gorgeous -i java_req.xml`
+
+# File.open('ruby_req.xml', 'w') do |file|
+#   file.truncate(0)
+#   file.write serialized_doc
+# end
+# `gorgeous -i ruby_req.xml`
+      # ---------------------
+
+      body = create_body(request, serialized_doc)
 
       response = nil
       duration = Benchmark.realtime do
@@ -98,7 +133,7 @@ module VBMS
       log(
         :request,
         response_code: response.code,
-        request_body: doc.to_s,
+        request_body: serialized_doc.to_s,
         response_body: response.body,
         request: request,
         duration: duration
@@ -129,20 +164,48 @@ module VBMS
     end
 
     def remove_must_understand(doc)
-      doc.at_xpath(
+      node = doc.at_xpath(
         '//wsse:Security',
         wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
-      ).attributes['mustUnderstand'].remove
+      ).attributes['mustUnderstand']
+      node.remove if node
     end
 
     def create_body(request, doc)
       return VBMS.load_erb('request.erb').result(binding) unless request.multipart?
 
-      filepath = request.multipart_file
-      filename = File.basename(filepath)
-      content = File.read(filepath)
+    # rubocop:disable Metrics/AbcSize
+    def build_request(body, headers)
+      request = HTTPI::Request.new(@endpoint_url)
+
+      if @keystore.all.length > 0
+        request.auth.ssl.cert_key          = @keystore.all.first.key
+        request.auth.ssl.cert_key_password = @keypass
+        request.auth.ssl.cert              = @keystore.all.first.certificate
+        request.auth.ssl.ca_cert_file      = @cacert
+        request.auth.ssl.verify_mode       = :peer
+      else
+        # TODO: this can't really be correct
+        request.auth.ssl.verify_mode = :none
+      end
 
       VBMS.load_erb('mtom_request.erb').result(binding)
+    end
+
+    def crypto_options
+      {
+        server: {
+          certificate: @keystore.all.last.certificate,
+          keytransport_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
+          cipher_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::AES128
+        },
+        client: {
+          certificate: @keystore.all.first.certificate,
+          private_key: @keystore.all.first.key,
+          digest_algorithm: 'http://www.w3.org/2000/09/xmldsig#sha1',
+          signature_algorithm: 'http://www.w3.org/2000/09/xmldsig#rsa-sha1'
+        }
+      }
     end
 
     def parse_xml_strictly(xml_string)
@@ -157,6 +220,19 @@ module VBMS
         raise SOAPError.new('Unable to parse SOAP message', xml_string)
       end
       xml
+    end
+
+    def serialize_document(doc)
+      doc.serialize(
+        encoding: 'UTF-8',
+        save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
+      )
+    end
+
+    def parse_body(xml)
+      doc = parse_xml_strictly(xml)
+      doc.at_xpath('/soapenv:Envelope/soapenv:Body',
+                   soapenv: 'http://schemas.xmlsoap.org/soap/envelope/')
     end
 
     def multipart_boundary(headers)
@@ -190,36 +266,22 @@ module VBMS
       response.content
     end
 
-    def get_and_validate_body(response)
+    def process_response(request, response)
       body = get_body(response)
-
-      # if the body is really large, we can assume it isn't an error
-      return body if body.length > 10.megabytes
 
       # we could check the response content-type to make sure it's XML, but they don't seem
       # to send any HTTP headers back, so we'll instead rely on strict XML parsing instead
       doc = parse_xml_strictly(body)
       check_soap_errors(doc, response)
 
-      body
-    end
-
-    def get_decrypted_data(request, response)
-      body = get_and_validate_body(response)
-      begin
-        data = Tempfile.open('log') do |out_t|
-          VBMS.decrypt_message_xml(body, @keyfile, @keypass, out_t.path)
-        end
-      rescue ExecutionError
-        raise SOAPError.new('Unable to decrypt SOAP response', body)
-      end
+      data = VBMS.decrypt_message_xml_ruby(
+        full_doc.to_xml,
+        @keystore.all.first.key,
+        @keypass
+      )
 
       log(:decrypted_message, decrypted_data: data, request: request)
 
-      data
-    end
-
-    def process_response(request, response)
       doc = parse_xml_strictly(get_decrypted_data(request, response))
       request.handle_response(doc)
     end
