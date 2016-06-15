@@ -173,6 +173,7 @@ module VBMS
 
     def create_body(request, doc)
       return VBMS.load_erb('request.erb').result(binding) unless request.multipart?
+    end
 
     # rubocop:disable Metrics/AbcSize
     def build_request(body, headers)
