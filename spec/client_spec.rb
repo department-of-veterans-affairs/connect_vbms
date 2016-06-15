@@ -170,15 +170,11 @@ describe VBMS::Client do
     end
 
     describe 'process_response' do
-      let(:client) do
-        new_test_client
-      end
-
       let(:request) { double('request') }
       let(:response_body) { '' }
       let(:response) { double('response', body: response_body, headers: {}) }
 
-      subject { client.process_response(request, response) }
+      subject { @client.process_response(request, response) }
 
       context 'when it is given valid encrypted XML' do
         let(:response_body) { encrypted_xml_file(fixture_path('requests/fetch_document.xml'), 'fetchDocumentResponse') }
