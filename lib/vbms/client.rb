@@ -4,7 +4,7 @@ module VBMS
     attr_reader :endpoint_url
 
     def initialize(endpoint_url, keyfile, saml, key, keypass, cacert,
-                   client_cert, server_keyfile, logger = nil, java_keyfile)
+                   client_cert, server_keyfile, logger = nil)
       @endpoint_url = endpoint_url
       @keyfile = keyfile
       @saml = saml
@@ -14,7 +14,6 @@ module VBMS
       @client_cert = client_cert
       @server_key = server_keyfile
 
-      @java_keyfile = java_keyfile || nil
       # TODO: remove @keystore and improve access via processor
       @keystore = SoapScum::KeyStore.new
 
@@ -38,8 +37,7 @@ module VBMS
         env_path(env_dir, 'CONNECT_VBMS_CACERT', allow_empty: true),
         env_path(env_dir, 'CONNECT_VBMS_CERT', allow_empty: true),
         env_path(env_dir, 'CONNECT_VBMS_SERVER_KEY_FILE', allow_empty: true),
-        logger,
-        env_path(env_dir, 'CONNECT_VBMS_JAVA_KEYFILE')
+        logger
       )
     end
 

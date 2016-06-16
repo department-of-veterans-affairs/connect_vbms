@@ -49,7 +49,7 @@ DO_WSSE = File.join(FILEDIR, '../src/do_wsse.sh')
 # I want them to continue to call the Java WSSE utility even when encryption/decryption in
 # gem is done in Ruby, so we can check as against Ruby methods
 def encrypted_xml_file(response_path, request_name)
-  keystore_path = fixture_path('test_keystore.jks')
+  keystore_path = fixture_path('test_server.jks')
 
   args = [DO_WSSE,
           '-e',

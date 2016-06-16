@@ -93,22 +93,21 @@ def parsed_timestamp(xml)
   }
 end
 
-def decrypted_symmetric_key(cipher)
-  server_p12 = OpenSSL::PKCS12.new(File.read(@server_p12_key), @keypass)
+def decrypted_symmetric_key(cipher, p12_file)
+  server_p12 = OpenSSL::PKCS12.new(File.read(p12_file), @keypass)
   server_p12.key.private_decrypt(cipher)
 end
 
 def new_test_client
   VBMS::Client.new(
     'http://test.endpoint.url/', 
-    fixture_path('test_keystore_importkey.p12'),
+    fixture_path('test_client.p12'),
     fixture_path('test_samltoken.xml'),
     nil,
     'importkey',
     nil,
     nil,
     fixture_path('test_server.crt'),
-    nil,
-    fixture_path('test_keystore.jks')
+    nil
   )
 end

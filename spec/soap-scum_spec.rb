@@ -7,11 +7,12 @@ describe VBMS::SoapScum do
   before(:all) do
     @server_x509_subject = Nokogiri::XML(fixture('soap-scum/server_x509_subject_keyinfo.xml'))
     @client_x509_subject = Nokogiri::XML(fixture('soap-scum/client_x509_subject_keyinfo.xml'))
-    @client_pc12 = fixture_path('test_keystore_importkey.p12')
+    @client_pc12 = fixture_path('test_client.p12')
     @server_cert = fixture_path('test_server.crt')
-    @server_p12_key = fixture_path('test_keystore_vbms_server_key.p12')
-    @server_key = fixture_path('test_server_key.key')
-    @test_jks_keystore = fixture_path('test_keystore.jks')
+    @client_cert = fixture_path('test_client.crt')
+    @server_p12_key = fixture_path('test_server.p12')
+    @server_key = fixture_path('test_server.key')
+    @test_jks_keystore = fixture_path('test_server.jks')
     @test_keystore_pass = 'importkey'
     @keypass = 'importkey'
   end
@@ -42,8 +43,8 @@ describe VBMS::SoapScum do
     # tests go faster and do a before(:all) instead
     before do
       @keystore = VBMS::SoapScum::KeyStore.new
-      @keystore.add_pc12(@client_pc12, @keypass)
-      @keystore.add_cert(@server_cert)
+      @keystore.add_pc12(@server_p12_key, @keypass)
+      @keystore.add_cert(@client_cert)
 
       @crypto_options = {
         server: {
@@ -157,7 +158,7 @@ describe VBMS::SoapScum do
           decipher = @message_processor.get_block_cipher(algorithm)
 
           key_cipher_text = Base64.decode64(parsed_java_xml.at_xpath('//xenc:EncryptedKey/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
-          symmetric_key = decrypted_symmetric_key(key_cipher_text)
+          symmetric_key = decrypted_symmetric_key(key_cipher_text, @client_pc12)
 
           cipher_text = Base64.decode64(parsed_java_xml.at_xpath('//soapenv:Body/xenc:EncryptedData/xenc:CipherData/xenc:CipherValue', VBMS::XML_NAMESPACES).text)
           known_iv = cipher_text[0..(decipher.key_len - 1)]
@@ -215,7 +216,7 @@ describe VBMS::SoapScum do
 
           # FAILS on validation when decrypted with xenc_decrypt
           # ruby_decrypted_doc = @message_processor.xenc_decrypt(@ruby_encrypted_xml, @server_p12_key, @keypass)
-          ruby_decrypted_doc = @message_processor.decrypt(@parsed_ruby_xml, @server_p12_key, @keypass)
+          ruby_decrypted_doc = @message_processor.decrypt(@parsed_ruby_xml, @client_pc12, @keypass)
           ruby_signed_document = Xmldsig::SignedDocument.new(ruby_decrypted_doc)
 
           expect(ruby_signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
@@ -226,7 +227,7 @@ describe VBMS::SoapScum do
           # expect(java_signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
 
           # FAILS validation
-          java_decrypted_doc = @message_processor.decrypt(parsed_java_xml, @server_p12_key, @keypass)
+          java_decrypted_doc = @message_processor.decrypt(parsed_java_xml, @client_pc12, @keypass)
           java_signed_document = Xmldsig::SignedDocument.new(java_decrypted_doc)
 
           expect(java_signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
@@ -234,7 +235,7 @@ describe VBMS::SoapScum do
       end
 
       it 'can be decrypted with ruby' do
-        java_decrypted_xml = @message_processor.xenc_decrypt(java_encrypted_xml, @server_p12_key, @keypass)
+        java_decrypted_xml = @message_processor.xenc_decrypt(java_encrypted_xml, @client_pc12, @keypass)
         java_decrypted_doc = Nokogiri::XML(java_decrypted_xml)
         java_decrypted_body = java_decrypted_doc.at_xpath('//soapenv:Body', VBMS::XML_NAMESPACES)
         decrypted_body = Nokogiri::XML(java_decrypted_body.children.to_xml)
@@ -251,7 +252,7 @@ describe VBMS::SoapScum do
                                                      'Content']])
 
         parsed_doc = Nokogiri::XML encrypted_xml
-        decrypted_doc = @message_processor.decrypt(parsed_doc, @server_p12_key, @keypass)
+        decrypted_doc = @message_processor.decrypt(parsed_doc, @client_pc12, @keypass)
         signed_document = Xmldsig::SignedDocument.new(decrypted_doc)
         expect(signed_document.validate(@crypto_options[:client][:certificate])).to be_truthy
       end
