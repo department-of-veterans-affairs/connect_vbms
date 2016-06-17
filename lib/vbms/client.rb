@@ -3,16 +3,20 @@ module VBMS
   class Client
     attr_reader :endpoint_url
 
-    def initialize(endpoint_url, keyfile, saml, key, keypass, cacert,
-                   client_cert, server_keyfile, logger = nil)
+    def initialize(endpoint_url:,
+                   keypass:,
+                   client_keyfile:,
+                   server_cert:,
+                   ca_cert: nil,
+                   saml:,
+                   logger: nil)
+
       @endpoint_url = endpoint_url
-      @keyfile = keyfile
+      @keyfile = client_keyfile
       @saml = saml
-      @key = key
       @keypass = keypass
-      @cacert = cacert
-      @client_cert = client_cert
-      @server_key = server_keyfile
+      @cacert = ca_cert
+      @server_key = server_cert
 
       # TODO: remove @keystore and improve access via processor
       @keystore = SoapScum::KeyStore.new
@@ -29,15 +33,13 @@ module VBMS
       env_dir = File.join(get_env('CONNECT_VBMS_ENV_DIR'), env_name)
 
       VBMS::Client.new(
-        get_env('CONNECT_VBMS_URL'),
-        env_path(env_dir, 'CONNECT_VBMS_CLIENT_KEY_FILE'),
-        env_path(env_dir, 'CONNECT_VBMS_SAML'),
-        env_path(env_dir, 'CONNECT_VBMS_IMPORT_KEY_FILE', allow_empty: true),
-        get_env('CONNECT_VBMS_KEYPASS'),
-        env_path(env_dir, 'CONNECT_VBMS_CACERT', allow_empty: true),
-        env_path(env_dir, 'CONNECT_VBMS_CERT', allow_empty: true),
-        env_path(env_dir, 'CONNECT_VBMS_SERVER_KEY_FILE', allow_empty: true),
-        logger
+        endpoint_url: get_env('CONNECT_VBMS_URL'),
+        keypass: get_env('CONNECT_VBMS_KEYPASS'),
+        client_keyfile: env_path(env_dir, 'CONNECT_VBMS_CLIENT_KEY_FILE'),
+        server_cert: env_path(env_dir, 'CONNECT_VBMS_SERVER_KEY_FILE', allow_empty: true),
+        ca_cert: env_path(env_dir, 'CONNECT_VBMS_CACERT', allow_empty: true),
+        saml: env_path(env_dir, 'CONNECT_VBMS_SAML'),
+        logger: logger
       )
     end
 

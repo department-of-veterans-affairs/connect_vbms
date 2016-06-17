@@ -100,14 +100,10 @@ end
 
 def new_test_client
   VBMS::Client.new(
-    'http://test.endpoint.url/', 
-    fixture_path('test_client.p12'),
-    fixture_path('test_samltoken.xml'),
-    nil,
-    'importkey',
-    nil,
-    nil,
-    fixture_path('test_server.crt'),
-    nil
+    endpoint_url: 'http://test.endpoint.url/',
+    keypass: 'importkey',
+    client_keyfile: fixture_path('test_client.p12'),
+    server_cert: fixture_path('test_server.crt'),
+    saml: fixture_path('test_samltoken.xml'),
   )
 end
