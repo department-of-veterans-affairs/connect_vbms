@@ -125,7 +125,7 @@ describe VBMS::SoapScum do
           @crypto_options,
           [['/soapenv:Envelope/soapenv:Body',
             {soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV},
-            'Content']])
+            'Content']]).root.to_xml
 
         xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
         doc = Nokogiri::XML(ruby_encrypted_xml)
@@ -184,6 +184,10 @@ describe VBMS::SoapScum do
                                                              [['/soapenv:Envelope/soapenv:Body',
                                                                {soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV},
                                                                'Content']])
+            @ruby_encrypted_xml = @ruby_encrypted_xml.root.to_xml(
+              save_with: (Nokogiri::XML::Node::SaveOptions::AS_XML |
+                          Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+            )
 
             @parsed_ruby_xml = Nokogiri::XML(@ruby_encrypted_xml, nil, nil, Nokogiri::XML::ParseOptions::STRICT)
           end
@@ -250,6 +254,9 @@ describe VBMS::SoapScum do
                                                    [['/soapenv:Envelope/soapenv:Body',
                                                      {soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV},
                                                      'Content']])
+
+        encrypted_xml = encrypted_xml.root.to_xml(save_with: (Nokogiri::XML::Node::SaveOptions::AS_XML |
+                                                              Nokogiri::XML::Node::SaveOptions::NO_DECLARATION))
 
         parsed_doc = Nokogiri::XML encrypted_xml
         decrypted_doc = @message_processor.decrypt(parsed_doc, @client_pc12, @keypass)

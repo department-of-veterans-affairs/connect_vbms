@@ -212,9 +212,7 @@ module VBMS
           encrypt_references(xml, nodes_to_encrypt)
         end
 
-        signed_doc.root.to_xml(
-          save_with: (Nokogiri::XML::Node::SaveOptions::AS_XML |
-                      Nokogiri::XML::Node::SaveOptions::NO_DECLARATION))
+        signed_doc
       end
 
       def decrypt(soap_doc, keyfile, keypass)

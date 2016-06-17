@@ -68,14 +68,9 @@ module VBMS
                                          request.signed_elements)
 
 
-      # TODO[astone]: Improve! ugh! serialize, parse, rinse and repeat
-      encrypted_doc = parse_xml_strictly(encrypted_doc)
-
       inject_saml(encrypted_doc)
-
       remove_must_understand(encrypted_doc)
       serialized_doc = serialize_document(encrypted_doc)
-
       body = create_body(request, serialized_doc)
 
       http_request = build_request(
