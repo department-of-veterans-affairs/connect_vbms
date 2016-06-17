@@ -34,7 +34,7 @@ module VBMS
       end
 
       # rubocop:disable Metrics/AbcSize
-      def render_xml
+      def soap_doc
         filename = File.basename(@pdf_file)
 
         VBMS::Requests.soap do |xml|

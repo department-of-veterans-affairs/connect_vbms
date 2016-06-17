@@ -62,56 +62,19 @@ module VBMS
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def send_request(request)
-      unencrypted_xml = request.render_xml
-
-      log(
-        :unencrypted_xml,
-        unencrypted_body: unencrypted_xml
-      )
-
-      # JAVA ENCRYPTION
-      # ----------------------------------------------------
-      # java_output = VBMS.encrypted_soap_document_xml(
-      #   parse_xml_strictly(unencrypted_xml),
-      #   @java_keyfile,
-      #   @keypass,
-      #   request.name)
-      # java_doc = parse_xml_strictly(java_output)
-      # inject_saml(java_doc)
-      # remove_must_understand(java_doc)
-      # java_serialized_doc = serialize_document(java_doc)
-
-      # /JAVA ENCRYPTION
-      # ----------------------------------------------------
-
-      # RUBY ENCRYPTION
-      # ----------------------------------------------------
-      soap_doc = @processor.wrap_in_soap(unencrypted_xml)
-      encrypted_doc = @processor.encrypt(soap_doc,
+      encrypted_doc = @processor.encrypt(request.soap_doc,
                                          request.name,
                                          crypto_options,
                                          request.signed_elements)
 
+
       # TODO[astone]: Improve! ugh! serialize, parse, rinse and repeat
       encrypted_doc = parse_xml_strictly(encrypted_doc)
+
       inject_saml(encrypted_doc)
+
       remove_must_understand(encrypted_doc)
       serialized_doc = serialize_document(encrypted_doc)
-      # /RUBY ENCRYPTION
-      # ----------------------------------------------------
-
-      # File.open('java_req.xml', 'w') do |file|
-      #   file.truncate(0)
-      #   file.write java_serialized_doc
-      # end
-      # `gorgeous -i java_req.xml`
-
-      # File.open('ruby_req.xml', 'w') do |file|
-      #   file.truncate(0)
-      #   file.write serialized_doc
-      # end
-      # `gorgeous -i ruby_req.xml`
-      # ---------------------
 
       body = create_body(request, serialized_doc)
 

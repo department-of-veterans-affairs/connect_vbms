@@ -41,7 +41,7 @@ describe VBMS::Client do
                         source: 'CUI tests',
                         name: 'uploadDocumentWithAssociations',
                         new_mail: '',
-                        render_xml: '<xml></xml>',
+                        soap_doc:  VBMS::Requests.soap { "body" },
                         signed_elements: [['/soapenv:Envelope/soapenv:Body',
                                            { soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV },
                                            'Content']]
@@ -49,8 +49,9 @@ describe VBMS::Client do
       @response = double('response', code: 200, body: 'response')
     end
 
-    it 'creates two log messages' do
-      body = Nokogiri::XML('<xml>body</xml')
+    it 'creates log message' do
+      body = VBMS::Requests.soap { "body" }
+      puts body
       allow(HTTPI).to receive(:post).and_return(@response)
 
       allow(@client).to receive(:process_response).and_return(nil)
@@ -60,7 +61,6 @@ describe VBMS::Client do
       allow(@client).to receive(:serialize_document).and_return(body.to_s)
       allow(@client).to receive(:process_body)
 
-      expect(@client).to receive(:log).with(:unencrypted_xml, unencrypted_body: @request.render_xml)
       expect(@client).to receive(:log).with(:request, response_code: @response.code,
                                                       request_body: body.to_s,
                                                       response_body: @response.body,

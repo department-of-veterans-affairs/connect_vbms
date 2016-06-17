@@ -9,7 +9,7 @@ module VBMS
         'fetchDocumentById'
       end
 
-      def render_xml
+      def soap_doc
         VBMS::Requests.soap do |xml|
           xml['v4'].fetchDocumentById do
             xml['v4'].documentId @document_id

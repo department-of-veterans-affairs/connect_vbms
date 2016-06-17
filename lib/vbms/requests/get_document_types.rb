@@ -5,7 +5,7 @@ module VBMS
         'getDocumentTypes'
       end
 
-      def render_xml
+      def soap_doc
         VBMS::Requests.soap do |xml|
           xml['v4'].getDocumentTypes
         end

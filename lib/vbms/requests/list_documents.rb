@@ -9,7 +9,7 @@ module VBMS
         'listDocuments'
       end
 
-      def render_xml
+      def soap_doc
         VBMS::Requests.soap do |xml|
           xml['v4'].listDocuments do
             xml['v4'].fileNumber @file_number

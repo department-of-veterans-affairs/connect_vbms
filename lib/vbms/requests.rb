@@ -9,14 +9,12 @@ module VBMS
     }.freeze
 
     def self.soap
-      doc = Nokogiri::XML::Builder.new do |xml|
+      Nokogiri::XML::Builder.new do |xml|
         xml['soapenv'].Envelope(VBMS::Requests::NAMESPACES) do
           xml['soapenv'].Header
           xml['soapenv'].Body { yield(xml) }
         end
-      end
-
-      doc.to_xml(encoding: 'UTF-8', save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+      end.doc
     end
 
     def self.body

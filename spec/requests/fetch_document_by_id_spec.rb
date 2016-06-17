@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe VBMS::Requests::FetchDocumentById do
-  describe 'render_xml' do
+  describe 'soap_doc' do
     subject { VBMS::Requests::FetchDocumentById.new('a document id') }
 
-    it 'generates valid XML' do
-      xml = subject.render_xml
+    it 'generates valid SOAP' do
+      xml = subject.soap_doc.to_xml
       xsd = Nokogiri::XML::Schema(fixture('soap.xsd'))
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
