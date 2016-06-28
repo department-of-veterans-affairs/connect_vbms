@@ -43,7 +43,7 @@ describe VBMS::Client do
                         new_mail: '',
                         soap_doc:  VBMS::Requests.soap { "body" },
                         signed_elements: [['/soapenv:Envelope/soapenv:Body',
-                                           { soapenv: VBMS::SoapScum::XMLNamespaces::SOAPENV },
+                                           { soapenv: SoapScum::XMLNamespaces::SOAPENV },
                                            'Content']]
                        )
       @response = double('response', code: 200, body: 'response')
@@ -84,183 +84,99 @@ describe VBMS::Client do
     end
   end
 
-  describe 'from_env_vars' do
-    let(:vbms_env_vars) do
-      { 'CONNECT_VBMS_ENV_DIR' => '/my/path/to/credentials',
-        'CONNECT_VBMS_URL' => 'http://example.com/fake_vbms',
-        'CONNECT_VBMS_CLIENT_KEY_FILE' => 'fake_keyfile.some_ext',
-        'CONNECT_VBMS_SAML' => 'fake_saml_token',
-        'CONNECT_VBMS_KEY' => 'fake_keyname',
-        'CONNECT_VBMS_KEYPASS' => 'fake_keypass',
-        'CONNECT_VBMS_CACERT' => 'fake_cacert',
-        'CONNECT_VBMS_CERT' => 'fake_cert',
-        'CONNECT_VBMS_SERVER_KEY_FILE' => 'some_keyfile.some_ext',
-        'CONNECT_VBMS_JAVA_KEYFILE' => 'some_java_keystore.some_ext' }
-    end
 
-    before do
-      allow_any_instance_of(VBMS::SoapScum::KeyStore).to receive(:add_pc12)
-    end
+  describe 'process_response' do
+    let(:request) { double('request') }
+    let(:response_body) { '' }
+    let(:response) { double('response', body: response_body, headers: {}) }
 
-    before(:each) do
-      allow_any_instance_of(HTTPClient::SSLConfig).to receive(:set_trust_ca)
-      allow_any_instance_of(HTTPClient::SSLConfig).to receive(:set_client_cert_file)
-    end
+    subject { @client.process_response(request, response) }
 
-    it 'smoke test that it initializes when all environment variables are set' do
-      stub_const('ENV', vbms_env_vars)
-      expect(VBMS::Client.from_env_vars).not_to be_nil
-    end
+    context 'when it is given valid encrypted XML' do
+      pending('A sane crypto configuration, and re-encrypted files')
+      let(:response_body) { encrypted_xml_file(fixture_path('requests/fetch_document.xml'), fixture_path('test_server.jks'), 'fetchDocumentResponse') }
 
-    describe 'required environment variables' do
-      it 'needs CONNECT_VBMS_ENV_DIR set' do
-        vbms_env_vars.delete('CONNECT_VBMS_ENV_DIR')
-        stub_const('ENV', vbms_env_vars)
-        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                             /CONNECT_VBMS_ENV_DIR must be set/)
-      end
+      it 'should return a decrypted XML document' do
+        expect(request).to receive(:handle_response) do |doc|
+          expect(doc).to be_a(Nokogiri::XML::Document)
+          expect(doc.at_xpath('//soapenv:Envelope', VBMS::XML_NAMESPACES)).to_not be_nil
+        end
 
-      it 'needs CONNECT_VBMS_URL set' do
-        vbms_env_vars.delete('CONNECT_VBMS_URL')
-        stub_const('ENV', vbms_env_vars)
-        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                             /CONNECT_VBMS_URL must be set/)
-      end
-
-      it 'needs CONNECT_VBMS_CLIENT_KEY_FILE set' do
-        vbms_env_vars.delete('CONNECT_VBMS_CLIENT_KEY_FILE')
-        stub_const('ENV', vbms_env_vars)
-        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                             /CONNECT_VBMS_CLIENT_KEY_FILE must be set/)
-      end
-
-      it 'needs CONNECT_VBMS_SAML set' do
-        vbms_env_vars.delete('CONNECT_VBMS_SAML')
-        stub_const('ENV', vbms_env_vars)
-        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                             /CONNECT_VBMS_SAML must be set/)
-      end
-
-      it 'needs CONNECT_VBMS_KEYPASS set' do
-        vbms_env_vars.delete('CONNECT_VBMS_KEYPASS')
-        stub_const('ENV', vbms_env_vars)
-        expect { VBMS::Client.from_env_vars }.to raise_error(VBMS::EnvironmentError,
-                                                             /CONNECT_VBMS_KEYPASS must be set/)
+        expect { subject }.to_not raise_error
       end
     end
 
-    describe 'required environment variables' do
-      it 'needs CONNECT_VBMS_KEY set' do
-        vbms_env_vars.delete('CONNECT_VBMS_KEY')
-        stub_const('ENV', vbms_env_vars)
-        expect(VBMS::Client.from_env_vars).not_to be_nil
-      end
+    context 'when it is given an unencrypted XML' do
+      let(:response_body) { fixture_path('requests/fetch_document.xml') }
 
-      it 'needs CONNECT_VBMS_CACERT set' do
-        vbms_env_vars.delete('CONNECT_VBMS_CACERT')
-        stub_const('ENV', vbms_env_vars)
-        expect(VBMS::Client.from_env_vars).not_to be_nil
-      end
-
-      it 'needs CONNECT_VBMS_CERT set' do
-        vbms_env_vars.delete('CONNECT_VBMS_CERT')
-        stub_const('ENV', vbms_env_vars)
-        expect(VBMS::Client.from_env_vars).not_to be_nil
+      it 'should raise a SOAPError' do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(VBMS::SOAPError)
+          expect(error.message).to eq('Unable to parse SOAP message')
+          expect(error.body).to eq(response_body)
+        end
       end
     end
 
-    describe 'process_response' do
-      let(:request) { double('request') }
-      let(:response_body) { '' }
-      let(:response) { double('response', body: response_body, headers: {}) }
-
-      subject { @client.process_response(request, response) }
-
-      context 'when it is given valid encrypted XML' do
-        pending('A sane crypto configuration, and re-encrypted files')
-        let(:response_body) { encrypted_xml_file(fixture_path('requests/fetch_document.xml'), 'fetchDocumentResponse') }
-
-        it 'should return a decrypted XML document' do
-          expect(request).to receive(:handle_response) do |doc|
-            expect(doc).to be_a(Nokogiri::XML::Document)
-            expect(doc.at_xpath('//soapenv:Envelope', VBMS::XML_NAMESPACES)).to_not be_nil
-          end
-
-          expect { subject }.to_not raise_error
-        end
+    context "when it is given a document that won't decrypt" do
+      let(:response_body) do
+        encrypted_xml_file(
+          fixture_path('requests/fetch_document.xml'),
+          fixture_path('test_server.jks'),
+          'fetchDocumentResponse'
+        ).gsub(
+          %r{<xenc:CipherValue>.+</xenc:CipherValue>},
+          '<xenc:CipherValue></xenc:CipherValue>'
+        )
       end
 
-      context 'when it is given an unencrypted XML' do
-        let(:response_body) { fixture_path('requests/fetch_document.xml') }
-
-        it 'should raise a SOAPError' do
-          expect { subject }.to raise_error do |error|
-            expect(error).to be_a(VBMS::SOAPError)
-            expect(error.message).to eq('Unable to parse SOAP message')
-            expect(error.body).to eq(response_body)
-          end
+      it 'should raise an OpenSSL error' do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(OpenSSL::PKey::RSAError)
         end
       end
+    end
 
-      context "when it is given a document that won't decrypt" do
-        let(:response_body) do
-          encrypted_xml_file(
-            fixture_path('requests/fetch_document.xml'),
-            'fetchDocumentResponse'
-          ).gsub(
-            %r{<xenc:CipherValue>.+</xenc:CipherValue>},
-            '<xenc:CipherValue></xenc:CipherValue>'
-          )
-        end
-
-        it 'should raise an OpenSSL error' do
-          expect { subject }.to raise_error do |error|
-            expect(error).to be_a(OpenSSL::PKey::RSAError)
-          end
-        end
+    context 'when it is given a document that contains a SOAP fault' do
+      let(:response_body) do
+        <<-EOF
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+          <soap:Header/>
+          <soap:Body>
+            <soap:Fault>
+              <faultcode>soap:Client</faultcode>
+              <faultstring>Message does not have necessary info</faultstring>
+              <faultactor>http://foo.com</faultactor>
+              <detail>Detailed fault information</detail>
+            </soap:Fault>
+          </soap:Body>
+        </soap:Envelope>
+        EOF
       end
 
-      context 'when it is given a document that contains a SOAP fault' do
-        let(:response_body) do
-          <<-EOF
-          <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-            <soap:Header/>
-            <soap:Body>
-              <soap:Fault>
-                <faultcode>soap:Client</faultcode>
-                <faultstring>Message does not have necessary info</faultstring>
-                <faultactor>http://foo.com</faultactor>
-                <detail>Detailed fault information</detail>
-              </soap:Fault>
-            </soap:Body>
-          </soap:Envelope>
-          EOF
-        end
-
-        it 'should raise a SOAPError' do
-          expect { subject }.to raise_error do |error|
-            expect(error).to be_a(VBMS::SOAPError)
-            expect(error.message).to eq('SOAP Fault returned')
-            expect(error.body).to eq(response_body)
-          end
+      it 'should raise a SOAPError' do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(VBMS::SOAPError)
+          expect(error.message).to eq('SOAP Fault returned')
+          expect(error.body).to eq(response_body)
         end
       end
+    end
 
-      context 'when the server sends an HTML response error page' do
-        let(:response_body) do
-          <<-EOF
-            <html><head><title>An error has occurred</title></head>
-            <body><p>I know you were expecting HTML, but sometimes sites do this</p></body>
-            </html>
-          EOF
-        end
+    context 'when the server sends an HTML response error page' do
+      let(:response_body) do
+        <<-EOF
+          <html><head><title>An error has occurred</title></head>
+          <body><p>I know you were expecting HTML, but sometimes sites do this</p></body>
+          </html>
+        EOF
+      end
 
-        it 'should raise a SOAPError' do
-          expect { subject }.to raise_error do |error|
-            expect(error).to be_a(VBMS::SOAPError)
-            expect(error.message).to eq('No SOAP envelope found in response')
-            expect(error.body).to eq(response_body)
-          end
+      it 'should raise a SOAPError' do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(VBMS::SOAPError)
+          expect(error.message).to eq('No SOAP envelope found in response')
+          expect(error.body).to eq(response_body)
         end
       end
     end

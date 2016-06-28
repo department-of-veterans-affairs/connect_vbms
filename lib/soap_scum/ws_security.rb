@@ -1,8 +1,14 @@
+require 'xmldsig'
+require 'securerandom'
+require 'xmlenc'
+
 module SoapScum
   ##
   # Singleton class used to encrypt and decrypt SOAP Nokogiri documents
   class WSSecurity
     class << self
+      attr_reader :client_cert, :client_key
+
       ##
       # Used to set encryption keys and algorithms.
       #

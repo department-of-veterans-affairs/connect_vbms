@@ -17,7 +17,6 @@ require 'vbms/common'
 require 'vbms/client'
 require 'vbms/version'
 require 'vbms/requests'
-require 'vbms/soap_scum'
 
 require 'vbms/responses/document'
 require 'vbms/responses/document_type'

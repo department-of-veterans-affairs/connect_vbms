@@ -11,7 +11,6 @@ require 'vbms'
 require 'nokogiri'
 require 'rspec/matchers'
 require 'equivalent-xml'
-require 'vbms_spec_helper'
 require 'pry'
 require 'httplog' if ENV['CONNECT_VBMS_HTTPLOG'] && ENV['CONNECT_VBMS_HTTPLOG'] == 1
 require 'byebug' if RUBY_PLATFORM != 'java'
@@ -21,6 +20,11 @@ if ENV.key?('CONNECT_VBMS_RUN_EXTERNAL_TESTS')
   puts "WARNING: CONNECT_VBMS_RUN_EXTERNAL_TESTS set, the tests will connect to live VBMS test servers\n"
 else
   require 'webmock/rspec'
+end
+
+def decrypted_symmetric_key(cipher, p12_file)
+  server_p12 = OpenSSL::PKCS12.new(File.read(p12_file), @keypass)
+  server_p12.key.private_decrypt(cipher)
 end
 
 def env_path(env_dir, env_var_name)
@@ -49,8 +53,6 @@ DO_WSSE = File.join(FILEDIR, '../src/do_wsse.sh')
 # I want them to continue to call the Java WSSE utility even when encryption/decryption in
 # gem is done in Ruby, so we can check as against Ruby methods
 def encrypted_xml_file(response_path, keyfile, request_name)
-  keystore_path = fixture_path('godkey.jks')
-
   args = [DO_WSSE,
           '-e',
           '-i', response_path,
@@ -74,43 +76,43 @@ def encrypted_xml_buffer(xml, keyfile, request_name)
   end
 end
 
-  def java_decrypt_file(infile,
-                        keyfile,
-                        keypass,
-                        ignore_timestamp = false)
-    args = [DO_WSSE,
-            '-i', infile,
-            '-k', keyfile,
-            '-p', keypass,
-            '-l', "decrypt.log",
-            ignore_timestamp ? '-t' : '']
-    begin
-      output, errors, status = Open3.capture3(*args)
-    rescue TypeError
-      # sometimes one of the Open3 return values is a nil and it complains about coercion
-      raise VBMS::ExecutionError.new(DO_WSSE + args.join(' ') + ': DecryptMessage', errors) if status != 0
-    end
-
-    fail VBMS::ExecutionError.new(DO_WSSE + ' DecryptMessage', errors) if status != 0
-
-    output
-  end
-
-  def java_decrypt_xml(xml,
-                       keyfile,
-                       keypass,
-                       ignore_timestamp = false)
-
-    Tempfile.open('tmp') do |t|
-      t.write(xml)
-      t.flush
-      return java_decrypt_file(t.path, keyfile, keypass,
-                             ignore_timestamp: ignore_timestamp)
-    end
-  end
-
 def get_encrypted_file(filename, request_name)
-  encrypted_xml_file(fixture_path("requests/#{filename}.xml"), request_name)
+  encrypted_xml_file(fixture_path("requests/#{filename}.xml"), fixture_path('test_server.jks'), request_name)
+end
+
+def java_decrypt_file(infile,
+                      keyfile,
+                      keypass,
+                      ignore_timestamp = false)
+  args = [DO_WSSE,
+          '-i', infile,
+          '-k', keyfile,
+          '-p', keypass,
+          '-l', "decrypt.log",
+          ignore_timestamp ? '-t' : '']
+  begin
+    output, errors, status = Open3.capture3(*args)
+  rescue TypeError
+    # sometimes one of the Open3 return values is a nil and it complains about coercion
+    raise VBMS::ExecutionError.new(DO_WSSE + args.join(' ') + ': DecryptMessage', errors) if status != 0
+  end
+
+  fail VBMS::ExecutionError.new(DO_WSSE + ' DecryptMessage', errors) if status != 0
+
+  output
+end
+
+def java_decrypt_xml(xml,
+                     keyfile,
+                     keypass,
+                     ignore_timestamp = false)
+
+  Tempfile.open('tmp') do |t|
+    t.write(xml)
+    t.flush
+    return java_decrypt_file(t.path, keyfile, keypass,
+                           ignore_timestamp: ignore_timestamp)
+  end
 end
 
 def webmock_soap_response(endpoint_url, response_file, request_name)
@@ -136,6 +138,26 @@ def webmock_multipart_response(endpoint_url, response_file, request_name)
   body = ERB.new(body_text).result(binding)
 
   stub_request(:post, endpoint_url).to_return(body: body, headers: headers)
+end
+
+def parsed_timestamp(xml)
+  x = xml.at_xpath('//wsu:Timestamp', VBMS::XML_NAMESPACES)
+
+  {
+    id: x['wsu:Id'],
+    created: x.at_xpath('//wsu:Created', VBMS::XML_NAMESPACES).text,
+    expires: x.at_xpath('//wsu:Expires', VBMS::XML_NAMESPACES).text
+  }
+end
+
+def new_test_client
+  VBMS::Client.new(
+    endpoint_url: 'http://test.endpoint.url/',
+    keypass: 'importkey',
+    client_keyfile: fixture_path('test_client.p12'),
+    server_cert: fixture_path('test_server.crt'),
+    saml: fixture_path('test_samltoken.xml'),
+  )
 end
 
 RSpec.configure do |config|

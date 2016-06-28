@@ -17,16 +17,13 @@ module VBMS
       @keypass = keypass
       @cacert = ca_cert
       @server_key = server_cert
-
-      # TODO: remove @keystore and improve access via processor
-      @keystore = SoapScum::KeyStore.new
-
-      @keystore.add_pc12(@keyfile, @keypass) if @keyfile
-      @keystore.add_cert(@server_key) if @server_key && @server_key.match(/.crt/)
-
-      @processor = SoapScum::MessageProcessor.new(@keystore)
-
       @logger = logger
+
+      SoapScum::WSSecurity.configure(
+        client_keyfile: client_keyfile,
+        server_cert: server_cert,
+        keypass: keypass
+      )
     end
 
     def self.from_env_vars(logger: nil, env_name: 'test', lang: 'ruby')
@@ -64,11 +61,7 @@ module VBMS
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def send_request(request)
-      encrypted_doc = @processor.encrypt(request.soap_doc,
-                                         request.name,
-                                         crypto_options,
-                                         request.signed_elements)
-
+      encrypted_doc = SoapScum::WSSecurity.encrypt(request.soap_doc, request.signed_elements)
 
       inject_saml(encrypted_doc)
       remove_must_understand(encrypted_doc)
@@ -140,36 +133,15 @@ module VBMS
     def build_request(body, headers)
       request = HTTPI::Request.new(@endpoint_url)
 
-      if @keystore.all.length > 0
-        request.auth.ssl.cert_key          = @keystore.all.first.key
-        request.auth.ssl.cert_key_password = @keypass
-        request.auth.ssl.cert              = @keystore.all.first.certificate
-        request.auth.ssl.ca_cert_file      = @cacert
-        request.auth.ssl.verify_mode       = :peer
-      else
-        # TODO: this can't really be correct
-        request.auth.ssl.verify_mode = :none
-      end
-
+      request.auth.ssl.cert_key          = SoapScum::WSSecurity.client_key
+      request.auth.ssl.cert_key_password = @keypass
+      request.auth.ssl.cert              = SoapScum::WSSecurity.client_cert
+      request.auth.ssl.ca_cert_file      = @cacert
+      request.auth.ssl.verify_mode       = :peer
       request.body = body
       request.headers = headers
-      request
-    end
 
-    def crypto_options
-      {
-        server: {
-          certificate: @keystore.all.last.certificate,
-          keytransport_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::RSA_PKCS1_15,
-          cipher_algorithm: SoapScum::MessageProcessor::CryptoAlgorithms::AES128
-        },
-        client: {
-          certificate: @keystore.all.first.certificate,
-          private_key: @keystore.all.first.key,
-          digest_algorithm: 'http://www.w3.org/2000/09/xmldsig#sha1',
-          signature_algorithm: 'http://www.w3.org/2000/09/xmldsig#rsa-sha1'
-        }
-      }
+      request
     end
 
     def parse_xml_strictly(xml_string)
@@ -238,11 +210,7 @@ module VBMS
       doc = parse_xml_strictly(body)
       check_soap_errors(doc, response)
 
-      data = VBMS.decrypt_message_xml_ruby(
-        doc.to_xml,
-        @keystore.all.first.key,
-        @keypass
-      )
+      data = SoapScum::WSSecurity.decrypt(doc.to_xml)
 
       log(:decrypted_message, decrypted_data: data, request: request)
 
