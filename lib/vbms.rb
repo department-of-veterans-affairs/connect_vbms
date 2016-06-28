@@ -9,6 +9,10 @@ require 'uri'
 require 'nokogiri'
 require 'mail'
 
+require 'soap_scum/crypto_algorithms'
+require 'soap_scum/xml_namespaces'
+require 'soap_scum/ws_security'
+
 require 'vbms/common'
 require 'vbms/client'
 require 'vbms/version'

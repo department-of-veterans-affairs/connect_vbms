@@ -48,13 +48,13 @@ DO_WSSE = File.join(FILEDIR, '../src/do_wsse.sh')
 # Note: these should not be replaced with calls to the similar functions in VBMS, since
 # I want them to continue to call the Java WSSE utility even when encryption/decryption in
 # gem is done in Ruby, so we can check as against Ruby methods
-def encrypted_xml_file(response_path, request_name)
-  keystore_path = fixture_path('test_server.jks')
+def encrypted_xml_file(response_path, keyfile, request_name)
+  keystore_path = fixture_path('godkey.jks')
 
   args = [DO_WSSE,
           '-e',
           '-i', response_path,
-          '-k', keystore_path,
+          '-k', keyfile,
           '-p', 'importkey',
           '-n', request_name]
   output, errors, status = Open3.capture3(*args)
@@ -66,13 +66,48 @@ def encrypted_xml_file(response_path, request_name)
   output
 end
 
-def encrypted_xml_buffer(xml, request_name)
+def encrypted_xml_buffer(xml, keyfile, request_name)
   Tempfile.open('tmp') do |t|
     t.write(xml)
     t.flush
-    return encrypted_xml_file(t.path, request_name)
+    return encrypted_xml_file(t.path, keyfile, request_name)
   end
 end
+
+  def java_decrypt_file(infile,
+                        keyfile,
+                        keypass,
+                        ignore_timestamp = false)
+    args = [DO_WSSE,
+            '-i', infile,
+            '-k', keyfile,
+            '-p', keypass,
+            '-l', "decrypt.log",
+            ignore_timestamp ? '-t' : '']
+    begin
+      output, errors, status = Open3.capture3(*args)
+    rescue TypeError
+      # sometimes one of the Open3 return values is a nil and it complains about coercion
+      raise VBMS::ExecutionError.new(DO_WSSE + args.join(' ') + ': DecryptMessage', errors) if status != 0
+    end
+
+    fail VBMS::ExecutionError.new(DO_WSSE + ' DecryptMessage', errors) if status != 0
+
+    output
+  end
+
+  def java_decrypt_xml(xml,
+                       keyfile,
+                       keypass,
+                       ignore_timestamp = false)
+
+    Tempfile.open('tmp') do |t|
+      t.write(xml)
+      t.flush
+      return java_decrypt_file(t.path, keyfile, keypass,
+                             ignore_timestamp: ignore_timestamp)
+    end
+  end
 
 def get_encrypted_file(filename, request_name)
   encrypted_xml_file(fixture_path("requests/#{filename}.xml"), request_name)
