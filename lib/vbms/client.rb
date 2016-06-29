@@ -32,8 +32,8 @@ module VBMS
       VBMS::Client.new(
         endpoint_url: get_env('CONNECT_VBMS_URL'),
         keypass: get_env('CONNECT_VBMS_KEYPASS'),
-        client_keyfile: env_path(env_dir, 'CONNECT_VBMS_CLIENT_KEY_FILE'),
-        server_cert: env_path(env_dir, 'CONNECT_VBMS_SERVER_KEY_FILE', allow_empty: true),
+        client_keyfile: env_path(env_dir, 'CONNECT_VBMS_CLIENT_KEYFILE'),
+        server_cert: env_path(env_dir, 'CONNECT_VBMS_SERVER_CERT', allow_empty: true),
         ca_cert: env_path(env_dir, 'CONNECT_VBMS_CACERT', allow_empty: true),
         saml: env_path(env_dir, 'CONNECT_VBMS_SAML'),
         logger: logger
