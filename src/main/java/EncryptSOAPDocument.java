@@ -119,7 +119,7 @@ public class EncryptSOAPDocument
                                      String requestType) throws Exception
   {
     WSSecEncrypt builder = new WSSecEncrypt();
-    builder.setUserInfo("vbms_server_key", "importkey");
+    builder.setUserInfo("public", "importkey");
     Document doc = getSOAPDoc(document);
     WSSecHeader secHeader = new WSSecHeader();
     secHeader.insertSecurityHeader(doc);

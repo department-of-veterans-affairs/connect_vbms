@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cdm="http://vbms.vba.va.gov/cdm" xmlns:doc="http://vbms.vba.va.gov/cdm/document/v4" xmlns:v4="http://vbms.vba.va.gov/external/eDocumentService/v4" xmlns:xop="http://www.w3.org/2004/08/xop/include">
+   <soapenv:Header>
+      <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+         <xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="EK-FC99CA112F8354F13214460542840994">
+            <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+               <wsse:SecurityTokenReference>
+                  <ds:X509Data>
+                     <ds:X509IssuerSerial>
+                        <ds:X509IssuerName>CN=AIDE CA2,OU=CA2,O=AIDE,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                        <ds:X509SerialNumber>236</ds:X509SerialNumber>
+                     </ds:X509IssuerSerial>
+                  </ds:X509Data>
+               </wsse:SecurityTokenReference>
+            </ds:KeyInfo>
+            <xenc:CipherData>
+               <xenc:CipherValue>Ze8lZmFzzbrkCgJLYc7M9fqreXvA8aVE8bKmr26YdtUXh6EX7/7tGyQTb5uQmpqPC9O24UZkgXACz3CFSHiTlVMFf2RxsqvrJXoQ/yCkwbxc+1oLgP0e7RECM/IHO2ygtGLj+m5cGuqaOwv3I4o75UEm001c6glgTseGAha3lReBgGSxtqkZQd19FLlY9WcosR/e7ccCGsNf8nHDW7VJXbdFIj/caDA8j5G/lZE27iEl+buC+GGgIa3frw/AAJiZ6DxDCN6X84Nu3RpcpuIJeT5vGyKGyiIdSIUJZnDJqcg+F1qrxNZETS0oxVfE9t3vVm4us934XJAPHV00/qBxCw==</xenc:CipherValue>
+            </xenc:CipherData>
+            <xenc:ReferenceList>
+               <xenc:DataReference URI="#ED-4"/>
+            </xenc:ReferenceList>
+         </xenc:EncryptedKey>
+         <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-3">
+            <ds:SignedInfo>
+               <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                  <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="cdm doc soapenv v4 xop"/>
+               </ds:CanonicalizationMethod>
+               <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+               <ds:Reference URI="#TS-1">
+                  <ds:Transforms>
+                     <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                        <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="wsse cdm doc soapenv v4 xop"/>
+                     </ds:Transform>
+                  </ds:Transforms>
+                  <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                  <ds:DigestValue>xsF0sKpt9UbnZ/z71TstaarNvy4=</ds:DigestValue>
+               </ds:Reference>
+               <ds:Reference URI="#id-2">
+                  <ds:Transforms>
+                     <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                        <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="cdm doc v4 xop"/>
+                     </ds:Transform>
+                  </ds:Transforms>
+                  <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                  <ds:DigestValue>62E7ufHXLOq3EbqKLQEvKo+qi0E=</ds:DigestValue>
+               </ds:Reference>
+            </ds:SignedInfo>
+            <ds:SignatureValue>QDugFGIIzIgiCZu6iAwXRcfUGEF56xCXG7l7rGp8ji7Xi7N6rBrLMY68xo2zclVG4bF52X0H+Ujbp8mO9uNdgspcmnJrm6MjwuBo1FgcKieHNEwbbTP4EAoWZgy7ZAYiE1tpRZnt1d9Bibvn+QkLOxjgGAZYlEIq0ZmT1MXCJjLRSoFYvwgoMw6JeFodwDMQYLES84SH/sUT+PVSR6OazQRHiOJcOHxGWwYjxRhydwJgST6U7vHBQS6mEESs3MEVCKs6JvLNNEjGqwrzQtEJaci9DWLUE/YdVK5gIvcqdKN5Cui7hlq558FFoVWKiCbR91BdJN5BBGlkpeD9NpZmyQ==</ds:SignatureValue>
+            <ds:KeyInfo Id="KI-FC99CA112F8354F13214460542833722">
+               <wsse:SecurityTokenReference wsu:Id="STR-FC99CA112F8354F13214460542833743">
+                  <ds:X509Data>
+                     <ds:X509IssuerSerial>
+                        <ds:X509IssuerName>CN=cui to VBMS,OU=VBMS,O=VA,L=Charleston,ST=SC,C=US</ds:X509IssuerName>
+                        <ds:X509SerialNumber>10750083120540719457</ds:X509SerialNumber>
+                     </ds:X509IssuerSerial>
+                  </ds:X509Data>
+               </wsse:SecurityTokenReference>
+            </ds:KeyInfo>
+         </ds:Signature>
+         <wsu:Timestamp wsu:Id="TS-1">
+            <wsu:Created>2015-10-28T17:44:43.255Z</wsu:Created>
+            <wsu:Expires>2015-10-28T17:49:43.255Z</wsu:Expires>
+         </wsu:Timestamp>
+         <saml2:Assertion xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xs="http://www.w3.org/2001/XMLSchema" ID="e97eb951-0b1f-478c-8de8-270cfd4fa573" IssueInstant="2014-08-18T16:47:59.635Z" Version="2.0">
+            <saml2:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">http://www.test.vbms.aide.oit.va.gov</saml2:Issuer>
+            <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+               <ds:SignedInfo>
+                  <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+                  <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                  <ds:Reference URI="#e97eb951-0b1f-478c-8de8-270cfd4fa573">
+                     <ds:Transforms>
+                        <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+                        <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                           <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="xs"/>
+                        </ds:Transform>
+                     </ds:Transforms>
+                     <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                     <ds:DigestValue>tp2MuljVGarZSKEKPmBLYosdvWE=</ds:DigestValue>
+                  </ds:Reference>
+               </ds:SignedInfo>
+               <ds:SignatureValue>HMsSk02IkQHAdR/prhWC4dWZirA5xrDwxiWdQRkKxnK4q4sQUDXJLtryoeO9B10WOWYF/4ccNbGJJ4vTeNDgyKDkV0pXdSnraeQY5XuvDnNHGntEbYE3gGf8F3UMYRACC/4xCiSRtIUT6ABqRgWSGHDDSn3eW6e6YpjKHcwGnQa6ZyOuI5RGLYDwK0FCYo5QQMA05bQ2C4HN7qSfV1P5hlqyxsJ6ZObC7aKcQeY8a4NVCTg5clobHyUJZSHHjvmwJ47cNPDxrDU0TvWitbl991+QdA+LquiX31k5jG4fIvn53EoGycvy/tg6CBoPe457M77MFRlGUSDU3QnQCKvvTg==</ds:SignatureValue>
+               <ds:KeyInfo>
+                  <ds:X509Data>
+                     <ds:X509Certificate>MIIERzCCAy+gAwIBAgICAOwwDQYJKoZIhvcNAQEFBQAwYzELMAkGA1UEBhMCVVMxETAPBgNVBAgT
+CFZpcmdpbmlhMREwDwYDVQQHEwhDdWxwZXBlcjENMAsGA1UEChMEQUlERTEMMAoGA1UECxMDQ0Ey
+MREwDwYDVQQDEwhBSURFIENBMjAeFw0xMzEyMTgxMzIzNThaFw0yMzEyMTYxMzIzNThaMHQxCzAJ
+BgNVBAYTAlVTMREwDwYDVQQIEwhWaXJnaW5pYTENMAsGA1UEChMEQUlERTEWMBQGA1UECxMNVEVT
+VCBWQk1TIENNUzErMCkGA1UEAxMidmJtcy5jbXMudGVzdC52Ym1zLmFpZGUub2l0LnZhLmdvdjCC
+ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKR6URn02VkhdL57x84mG6TkFimEH2OFvyuj
+wQMCo/lalDI+1TwfXU03DWs+qkMe3Erf2mQwS7vVg89P357w/njmUZ9JvvfTW81DK0DbdLf4ChbG
+VQAdDVyLHZRk26DQtpLG5G6g1jKKRaogKcrEaVrjWH5x9K/GiFT21WY0ipq1UkpUjoMy3NgfFOpE
+yMiWQRWQ9x7pc3k5ydrpJXQtw2LRYW4qiQcv83sjFnQqE0QlKWaJQk2uvNJ+203YrkBp1CL5hFtL
+LLBLtQevdWZGLBwVojWFexYI4ef7sLmbzzawuKGhLWgv3UQquPx34CC1MwRYjRz7i9fd6+G+u83g
+ORsCAwEAAaOB8zCB8DAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRl
+ZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQUdPFbmUl4enbu+erdrLSQqa1RqSMwgZUGA1UdIwSBjTCB
+ioAUqlkdJ1qNuzjLGGn+yiasp1bYBFyhZ6RlMGMxCzAJBgNVBAYTAlVTMREwDwYDVQQIEwhWaXJn
+aW5pYTERMA8GA1UEBxMIQ3VscGVwZXIxDTALBgNVBAoTBEFJREUxDDAKBgNVBAsTA0NBMjERMA8G
+A1UEAxMIQUlERSBDQTKCCQCVn6iVks7FUzANBgkqhkiG9w0BAQUFAAOCAQEAODXPAgdBtdXTB7/9
+DPxXKAETjCfHkQ6cUr5d+L0WwJz/xgzp1cP2GVBjhqH83Dpks+uDHo/qZz7R3HKkd6GCWW5bny7S
+liV3Nrijy4kFkCUzoGSEzpdLwSElEshRlqJbPsuy9uC4CsWTliNweP9IHDnMC9f/zjwxfMppWAVn
++p1tUhDEVXTm/r7IGmz4YB2rfFqKC/GuFmAxOnOIUbsqxrk9Fys651wvPpv6KHesPjJQvxHWLMYw
+e/0Dc9X5tjyTHL//HmMilrZRtZA/C85HBX0GB85BZYBvlE3+2y76JLiL4HfpJ2LD5UoDAEgB6qbT
+RYk1jjuDS+Nkw489Qd/6zw==</ds:X509Certificate>
+                  </ds:X509Data>
+               </ds:KeyInfo>
+            </ds:Signature>
+            <saml2:Subject>
+               <saml2:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent">cui</saml2:NameID>
+               <saml2:SubjectConfirmation>
+                  <saml2:SubjectConfirmationData NotBefore="2014-08-18T16:47:59.635Z" NotOnOrAfter="2024-08-15T16:47:59.635Z" Recipient="https://www.cui-tst.gov/tst"/>
+               </saml2:SubjectConfirmation>
+            </saml2:Subject>
+            <saml2:Conditions>
+               <saml2:AudienceRestriction>
+                  <saml2:Audience>http://www.test.vbms.aide.oit.va.gov</saml2:Audience>
+               </saml2:AudienceRestriction>
+            </saml2:Conditions>
+            <saml2:AuthnStatement AuthnInstant="2014-08-18T16:47:59.655Z" SessionIndex="e97eb951-0b1f-478c-8de8-270cfd4fa573" SessionNotOnOrAfter="2024-08-15T16:47:59.655Z">
+               <saml2:AuthnContext>
+                  <saml2:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:Password</saml2:AuthnContextClassRef>
+               </saml2:AuthnContext>
+            </saml2:AuthnStatement>
+            <saml2:AttributeStatement>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Establish Claim Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Update Claim Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Get Claim Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Remove Claim Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Create Contentions Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Update Contention Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">List Contentions Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Remove Contention Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Upload Document Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Fetch Document Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Upload Document with Associations Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Upload Letter Document Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Upload Form Document Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Get Document Types Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Get Form Fields For Document Type Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Fetch Document By Id Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/vbms/service-operation">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">List Documents Service</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/css/common/stationId">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">0</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/css/common/subjectId">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">0</saml2:AttributeValue>
+               </saml2:Attribute>
+               <saml2:Attribute Name="http://vba.va.gov/css/common/securityLevel">
+                  <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">0</saml2:AttributeValue>
+               </saml2:Attribute>
+            </saml2:AttributeStatement>
+         </saml2:Assertion>
+      </wsse:Security>
+   </soapenv:Header>
+   <soapenv:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-2">
+      <xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="ED-4" Type="http://www.w3.org/2001/04/xmlenc#Content">
+         <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/>
+         <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+            <wsse:SecurityTokenReference xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsse11="http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd" wsse11:TokenType="http://docs.oasis-open.org/wss/oasis-wss-soap-message-security-1.1#EncryptedKey">
+               <wsse:Reference URI="#EK-FC99CA112F8354F13214460542840994"/>
+            </wsse:SecurityTokenReference>
+         </ds:KeyInfo>
+         <xenc:CipherData>
+            <xenc:CipherValue>ADMlvFYU+ihOGPWXxOyCIQ2TZM4yuNYgeG4f4O8ljZJC1JcVXXvSXEjCZJiL8Razu9qmXaPyLq1vZnoF27uucuF2wj4dNn8KgT/VvB+SAy7cYVzMitPSkeqfYHoXLYY12A/P+JKUQj9qjer1rvY8xgTWfvvshfFWQVog4HyYkAk=</xenc:CipherValue>
+         </xenc:CipherData>
+      </xenc:EncryptedData>
+   </soapenv:Body>
+</soapenv:Envelope>

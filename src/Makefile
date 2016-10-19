@@ -12,10 +12,10 @@ endif
 all: EncryptSOAPDocument.class DecryptMessage.class
 
 EncryptSOAPDocument.class: main/java/EncryptSOAPDocument.java
-	javac $(SOURCE_ARG) $(TARGET_ARG) $(BOOTCLASSPATH_ARG) -classpath '../lib/*:../main/properties' -d ../classes main/java/EncryptSOAPDocument.java
+	javac $(SOURCE_ARG) $(TARGET_ARG) $(BOOTCLASSPATH_ARG) -classpath '../java/*:../main/properties' -d ../classes main/java/EncryptSOAPDocument.java
 
 DecryptMessage.class: main/java/DecryptMessage.java
-	javac $(SOURCE_ARG) $(TARGET_ARG) $(BOOTCLASSPATH_ARG) -classpath '../lib/*:../main/properties' -d ../classes main/java/DecryptMessage.java
+	javac $(SOURCE_ARG) $(TARGET_ARG) $(BOOTCLASSPATH_ARG) -classpath '../java/*:../main/properties' -d ../classes main/java/DecryptMessage.java
 
 .PHONY: build
 build: EncryptSOAPDocument.class DecryptMessage.class

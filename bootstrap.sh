@@ -24,14 +24,14 @@ apt-get -y autoremove
 color_echo 'Cleaning package information cache...'
 apt-get -y autoclean
 
-color_echo 'Installing Java7...'
-wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_java7_64.sh
-bash equip_java7_64.sh
+# color_echo 'Installing Java7...'
+# wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_java7_64.sh
+# bash equip_java7_64.sh
 
 # => Uncomment to install Java8 instead
-# color_echo 'Installing Java8...'
-# wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_java8.sh
-# bash equip_java8.sh
+color_echo 'Installing Java8...'
+wget --no-check-certificate https://github.com/aglover/ubuntu-equip/raw/master/equip_java8.sh
+bash equip_java8.sh
 
 install 'Python and dependencies' python python-dev libjs-jquery libjs-jquery-ui iso-codes gettext python-pip bzr
 
@@ -56,6 +56,8 @@ color_echo 'Installing Ruby 2.2.2...'
 sudo -u vagrant -H bash -l -c '/home/vagrant/.rvm/bin/rvm install ruby-2.2.2 \
   --quiet-curl --autolibs=enabled --auto-dotfiles --binary --max-time 30 \
   && rvm alias create default 2.2.2'
+
+sudo chown vagrant:vagrant -R ~/.rvm
 
 cd $app_path && rvm use 2.2.2@default
 color_echo 'Upgrading Rubygems...'

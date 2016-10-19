@@ -16,22 +16,22 @@ module VBMS
       end
   
       def self.create_from_xml(el)
-        received_date = el.at_xpath('ns2:receivedDt/text()', VBMS::XML_NAMESPACES)
+        received_date = el.at_xpath("ns2:receivedDt/text()", VBMS::XML_NAMESPACES)
 
-        new(document_id: el['id'],
-            filename: el['filename'],
-            doc_type: el['docType'],
+        new(document_id: el["id"],
+            filename: el["filename"],
+            doc_type: el["docType"],
             alt_doc_types: extract_alt_doc_types(el),
-            source: el['source'],
-            mime_type: el['mimeType'],
+            source: el["source"],
+            mime_type: el["mimeType"],
             received_at: received_date.nil? ? nil : Time.parse(received_date.content).to_date)
       end
 
       def self.extract_alt_doc_types(el)
-        if el['metadata']
-          metadata = JSON.parse(el['metadata'])
+        if el["metadata"]
+          metadata = JSON.parse(el["metadata"])
 
-          return JSON.parse(metadata['altDocType']) if metadata['altDocType']
+          return JSON.parse(metadata["altDocType"]) if metadata["altDocType"]
         end
       end
 
