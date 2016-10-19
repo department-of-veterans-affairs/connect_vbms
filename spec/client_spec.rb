@@ -1,12 +1,12 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe VBMS::Client do
   before(:example) do
     @client = new_test_client
   end
 
-  describe 'remove_must_understand' do
-    it 'takes a Nokogiri document and deletes the mustUnderstand attribute' do
+  describe "remove_must_understand" do
+    it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
       doc = Nokogiri::XML(<<-EOF)
       <?xml version="1.0" encoding="UTF-8"?>
       <soapenv:Envelope
@@ -21,7 +21,7 @@ describe VBMS::Client do
 
       @client.remove_must_understand(doc)
 
-      expect(doc.to_s).not_to include('mustUnderstand')
+      expect(doc.to_s).not_to include("mustUnderstand")
     end
   end
 
@@ -29,27 +29,27 @@ describe VBMS::Client do
     before do
       @client = new_test_client
 
-      @request = double('request',
-                        file_number: '123456788',
+      @request = double("request",
+                        file_number: "123456788",
                         received_at: DateTime.new(2010, 01, 01),
-                        first_name: 'Joe',
-                        middle_name: 'Eagle',
-                        last_name: 'Citizen',
-                        exam_name: 'Test Fixture Exam',
-                        pdf_file: '',
-                        doc_type: '',
-                        source: 'CUI tests',
-                        name: 'uploadDocumentWithAssociations',
-                        new_mail: '',
+                        first_name: "Joe",
+                        middle_name: "Eagle",
+                        last_name: "Citizen",
+                        exam_name: "Test Fixture Exam",
+                        pdf_file: "",
+                        doc_type: "",
+                        source: "CUI tests",
+                        name: "uploadDocumentWithAssociations",
+                        new_mail: "",
                         soap_doc:  VBMS::Requests.soap { "body" },
-                        signed_elements: [['/soapenv:Envelope/soapenv:Body',
+                        signed_elements: [["/soapenv:Envelope/soapenv:Body",
                                            { soapenv: SoapScum::XMLNamespaces::SOAPENV },
-                                           'Content']]
+                                           "Content"]]
                        )
-      @response = double('response', code: 200, body: 'response')
+      @response = double("response", code: 200, body: "response")
     end
 
-    it 'creates log message' do
+    it "creates log message" do
       body = VBMS::Requests.soap { "body" }
       puts body
       allow(HTTPI).to receive(:post).and_return(@response)
@@ -70,49 +70,53 @@ describe VBMS::Client do
     end
   end
 
-  describe 'multipart_boundary' do
-    it 'should extract the boundary from the header' do
+  describe "multipart_boundary" do
+    it "should extract the boundary from the header" do
       headers = {
-        'Content-Type' => 'multipart/related; '\
+        "Content-Type" => "multipart/related; "\
                           'type="application/xop+xml"; '\
                           'boundary="uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d"; '\
                           'start="<root.message@cxf.apache.org>"; '\
                           'start-info="text/xml"'
       }
 
-      expect(@client.multipart_boundary(headers)).to eq('uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d')
+      expect(@client.multipart_boundary(headers)).to eq("uuid:a10f73c8-60e9-4985-ab2c-ac5fcd8baf2d")
     end
   end
 
-
-  describe 'process_response' do
-    let(:request) { double('request') }
-    let(:response_body) { '' }
-    let(:response) { double('response', body: response_body, headers: {}) }
+  describe "process_response" do
+    let(:request) { double("request") }
+    let(:response_body) { "" }
+    let(:response) { double("response", body: response_body, headers: {}) }
 
     subject { @client.process_response(request, response) }
 
-    context 'when it is given valid encrypted XML' do
-      pending('A sane crypto configuration, and re-encrypted files')
-      let(:response_body) { encrypted_xml_file(fixture_path('requests/fetch_document.xml'), fixture_path('test_server.jks'), 'fetchDocumentResponse') }
+    context "when it is given valid encrypted XML" do
+      pending("A sane crypto configuration, and re-encrypted files")
+      let(:response_body) do
+        encrypted_xml_file(
+          fixture_path("requests/fetch_document.xml"),
+          fixture_path("test_server.jks"),
+          "fetchDocumentResponse")
+      end
 
-      it 'should return a decrypted XML document' do
+      it "should return a decrypted XML document" do
         expect(request).to receive(:handle_response) do |doc|
           expect(doc).to be_a(Nokogiri::XML::Document)
-          expect(doc.at_xpath('//soapenv:Envelope', VBMS::XML_NAMESPACES)).to_not be_nil
+          expect(doc.at_xpath("//soapenv:Envelope", VBMS::XML_NAMESPACES)).to_not be_nil
         end
 
         expect { subject }.to_not raise_error
       end
     end
 
-    context 'when it is given an unencrypted XML' do
-      let(:response_body) { fixture_path('requests/fetch_document.xml') }
+    context "when it is given an unencrypted XML" do
+      let(:response_body) { fixture_path("requests/fetch_document.xml") }
 
-      it 'should raise a SOAPError' do
+      it "should raise a SOAPError" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(VBMS::SOAPError)
-          expect(error.message).to eq('Unable to parse SOAP message')
+          expect(error.message).to eq("Unable to parse SOAP message")
           expect(error.body).to eq(response_body)
         end
       end
@@ -121,23 +125,23 @@ describe VBMS::Client do
     context "when it is given a document that won't decrypt" do
       let(:response_body) do
         encrypted_xml_file(
-          fixture_path('requests/fetch_document.xml'),
-          fixture_path('test_server.jks'),
-          'fetchDocumentResponse'
+          fixture_path("requests/fetch_document.xml"),
+          fixture_path("test_server.jks"),
+          "fetchDocumentResponse"
         ).gsub(
           %r{<xenc:CipherValue>.+</xenc:CipherValue>},
-          '<xenc:CipherValue></xenc:CipherValue>'
+          "<xenc:CipherValue></xenc:CipherValue>"
         )
       end
 
-      it 'should raise an OpenSSL error' do
+      it "should raise an OpenSSL error" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(OpenSSL::PKey::RSAError)
         end
       end
     end
 
-    context 'when it is given a document that contains a SOAP fault' do
+    context "when it is given a document that contains a SOAP fault" do
       let(:response_body) do
         <<-EOF
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -154,16 +158,16 @@ describe VBMS::Client do
         EOF
       end
 
-      it 'should raise a SOAPError' do
+      it "should raise a SOAPError" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(VBMS::SOAPError)
-          expect(error.message).to eq('SOAP Fault returned')
+          expect(error.message).to eq("SOAP Fault returned")
           expect(error.body).to eq(response_body)
         end
       end
     end
 
-    context 'when the server sends an HTML response error page' do
+    context "when the server sends an HTML response error page" do
       let(:response_body) do
         <<-EOF
           <html><head><title>An error has occurred</title></head>
@@ -172,10 +176,10 @@ describe VBMS::Client do
         EOF
       end
 
-      it 'should raise a SOAPError' do
+      it "should raise a SOAPError" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(VBMS::SOAPError)
-          expect(error.message).to eq('No SOAP envelope found in response')
+          expect(error.message).to eq("No SOAP envelope found in response")
           expect(error.body).to eq(response_body)
         end
       end

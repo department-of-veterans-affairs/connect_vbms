@@ -1,3 +1,6 @@
+AllCops:
+  TargetRubyVersion: 2.3
+
 Lint/ParenthesesAsGroupedExpression:
   Description: Checks for method calls with a space before the opening parenthesis.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#parens-no-spaces
@@ -14,10 +17,10 @@ Metrics/ClassLength:
   Max: 500
 
 Metrics/LineLength:
-  Description: Limit lines to 120 characters.
+  Description: Limit lines to 140 characters.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#80-character-limits
   Enabled: true
-  Max: 120
+  Max: 140
   AllowURI: true
   URISchemes:
   - http
@@ -79,13 +82,7 @@ Style/GuardClause:
   MinBodyLength: 1
 
 Style/StringLiterals:
-  Description: Checks if uses of quotes match the configured preference.
-  StyleGuide: https://github.com/bbatsov/ruby-style-guide#consistent-string-literals
-  Enabled: true
-  EnforcedStyle: single_quotes
-  SupportedStyles:
-  - single_quotes
-  - double_quotes
+  EnforcedStyle: double_quotes
 
 Style/RaiseArgs:
   Enabled: false

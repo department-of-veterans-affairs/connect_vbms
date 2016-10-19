@@ -9,8 +9,8 @@ module VBMS
       end
   
       def self.create_from_xml(el)
-        new(type_id: el['id'],
-            description: el['description'])
+        new(type_id: el["id"],
+            description: el["description"])
       end
 
       def to_h

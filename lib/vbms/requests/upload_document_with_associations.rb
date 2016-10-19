@@ -18,7 +18,7 @@ module VBMS
       end
 
       def name
-        'uploadDocumentWithAssociations'
+        "uploadDocumentWithAssociations"
       end
 
       # received_date returns a string representing the date the document was
@@ -30,17 +30,16 @@ module VBMS
       #
       # Date spec: http://www.w3.org/TR/xmlschema-2/#date
       def received_date
-        @received_at.getlocal('-05:00').strftime('%Y-%m-%d-05:00')
+        @received_at.getlocal("-05:00").strftime("%Y-%m-%d-05:00")
       end
 
-      # rubocop:disable Metrics/AbcSize
       def soap_doc
         filename = File.basename(@pdf_file)
 
         VBMS::Requests.soap do |xml|
-          xml['v4'].uploadDocumentWithAssociations do
-            xml['v4'].document(
-              externalId: '123',
+          xml["v4"].uploadDocumentWithAssociations do
+            xml["v4"].document(
+              externalId: "123",
               fileNumber: @file_number,
               filename: filename,
               docType: @doc_type,
@@ -51,11 +50,11 @@ module VBMS
               newMail: @new_mail,
               source: @source
             ) do
-              xml['doc'].receivedDt received_date
+              xml["doc"].receivedDt received_date
             end
-            xml['v4'].documentContent do
-              xml['doc'].data do
-                xml['xop'].Include(href: filename)
+            xml["v4"].documentContent do
+              xml["doc"].data do
+                xml["xop"].Include(href: filename)
               end
             end
           end
@@ -64,9 +63,9 @@ module VBMS
       # rubocop:enable Metrics/AbcSize
 
       def signed_elements
-        [['//v4:document',
-          { v4: 'http://vbms.vba.va.gov/external/eDocumentService/v4' },
-          'Element']]
+        [["//v4:document",
+          { v4: "http://vbms.vba.va.gov/external/eDocumentService/v4" },
+          "Element"]]
       end
 
       def multipart?

@@ -6,21 +6,21 @@ module VBMS
       end
 
       def name
-        'listDocuments'
+        "listDocuments"
       end
 
       def soap_doc
         VBMS::Requests.soap do |xml|
-          xml['v4'].listDocuments do
-            xml['v4'].fileNumber @file_number
+          xml["v4"].listDocuments do
+            xml["v4"].fileNumber @file_number
           end
         end
       end
 
       def signed_elements
-        [['/soapenv:Envelope/soapenv:Body',
+        [["/soapenv:Envelope/soapenv:Body",
           { soapenv: SoapScum::XMLNamespaces::SOAPENV },
-          'Content']]
+          "Content"]]
       end
 
       def multipart?
@@ -29,7 +29,7 @@ module VBMS
 
       def handle_response(doc)
         doc.xpath(
-          '//v4:listDocumentsResponse/v4:result', VBMS::XML_NAMESPACES
+          "//v4:listDocumentsResponse/v4:result", VBMS::XML_NAMESPACES
         ).map do |el|
           VBMS::Responses::Document.create_from_xml(el)
         end

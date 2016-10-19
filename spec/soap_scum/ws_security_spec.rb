@@ -1,17 +1,17 @@
 def wrap_in_soap(doc)
   Nokogiri::XML::Builder.new do |xml|
-    xml['soapenv'].Envelope(VBMS::Requests::NAMESPACES) do
-      xml['soapenv'].Body { xml.parent << doc.root }
+    xml["soapenv"].Envelope(VBMS::Requests::NAMESPACES) do
+      xml["soapenv"].Body { xml.parent << doc.root }
     end
   end.doc
 end
 
 describe SoapScum::WSSecurity do
-  let(:client_keyfile) { fixture_path('test_client.p12') }
-  let(:server_keyfile) { fixture_path('test_client.p12') }
-  let(:server_cert) { fixture_path('test_server.crt') }
-  let(:client_cert) { fixture_path('test_client.crt') }
-  let(:server_java_keyfile) { fixture_path('test_server.jks') }
+  let(:client_keyfile) { fixture_path("test_client.p12") }
+  let(:server_keyfile) { fixture_path("test_client.p12") }
+  let(:server_cert) { fixture_path("test_server.crt") }
+  let(:client_cert) { fixture_path("test_client.crt") }
+  let(:server_java_keyfile) { fixture_path("test_server.jks") }
   let(:keypass) { "importkey" }
 
   let(:content_xml) do
@@ -32,12 +32,12 @@ describe SoapScum::WSSecurity do
     )
   end
 
- describe '#encrypt' do
+  describe '#encrypt' do
     let(:signed_elements) do
-      [['/soapenv:Envelope/soapenv:Body', { soapenv: SoapScum::XMLNamespaces::SOAPENV }, 'Content']]
+      [["/soapenv:Envelope/soapenv:Body", { soapenv: SoapScum::XMLNamespaces::SOAPENV }, "Content"]]
     end
 
-    let(:soap_schema) { Nokogiri::XML::Schema(fixture('soap.xsd')) }
+    let(:soap_schema) { Nokogiri::XML::Schema(fixture("soap.xsd")) }
     let(:result) { SoapScum::WSSecurity.encrypt(soap_document, signed_elements) }
 
     it "returns valid SOAP" do
@@ -45,10 +45,10 @@ describe SoapScum::WSSecurity do
     end
 
     it "is verifyable and decryptable by Java WSSecurity library" do
-      decrypted_doc = java_decrypt_xml(result, fixture_path('test_server.jks'), keypass, true)
+      decrypted_doc = java_decrypt_xml(result, fixture_path("test_server.jks"), keypass, true)
       decrypted_doc = Nokogiri::XML(decrypted_doc)
 
-      expect(decrypted_doc.xpath('//v4:fileNumber').text).to eq('784449089')
+      expect(decrypted_doc.xpath("//v4:fileNumber").text).to eq("784449089")
     end
 
     it "is decryptable by Ruby WSSecurity library" do
@@ -62,18 +62,18 @@ describe SoapScum::WSSecurity do
       decrypted_doc = SoapScum::WSSecurity.decrypt(result.to_xml)
       decrypted_doc = Nokogiri::XML(decrypted_doc)
 
-      expect(decrypted_doc.xpath('//v4:fileNumber').text).to eq('784449089')
+      expect(decrypted_doc.xpath("//v4:fileNumber").text).to eq("784449089")
     end
   end
 
   describe '#decrypt' do
-    let(:java_encrypted_xml) { encrypted_xml_buffer(soap_document, fixture_path('test_server.jks'), 'listDocuments') }
+    let(:java_encrypted_xml) { encrypted_xml_buffer(soap_document, fixture_path("test_server.jks"), "listDocuments") }
 
     it "it decrypts soap message encrypted by Java WSSecurity library" do
       decrypted_doc = SoapScum::WSSecurity.decrypt(java_encrypted_xml)
       decrypted_doc = Nokogiri::XML(decrypted_doc)
 
-      expect(decrypted_doc.xpath('//v4:fileNumber').text).to eq('784449089')
+      expect(decrypted_doc.xpath("//v4:fileNumber").text).to eq("784449089")
     end
   end
 end

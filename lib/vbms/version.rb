@@ -13,5 +13,5 @@ module VBMS
 
   # Full release version.
   # @return [String]
-  VERSION = [MAJOR, MINOR, PATCH].join('.').freeze
+  VERSION = [MAJOR, MINOR, PATCH].join(".").freeze
 end

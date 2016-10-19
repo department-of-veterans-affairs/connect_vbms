@@ -1,5 +1,4 @@
 module VBMS
-  # rubocop:disable Metrics/ClassLength
   class Client
     attr_reader :endpoint_url
 
@@ -26,16 +25,16 @@ module VBMS
       )
     end
 
-    def self.from_env_vars(logger: nil, env_name: 'test', lang: 'ruby')
-      env_dir = File.join(get_env('CONNECT_VBMS_ENV_DIR'), env_name)
+    def self.from_env_vars(logger: nil, env_name: "test")
+      env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
       VBMS::Client.new(
-        endpoint_url: get_env('CONNECT_VBMS_URL'),
-        keypass: get_env('CONNECT_VBMS_KEYPASS'),
-        client_keyfile: env_path(env_dir, 'CONNECT_VBMS_CLIENT_KEYFILE'),
-        server_cert: env_path(env_dir, 'CONNECT_VBMS_SERVER_CERT', allow_empty: true),
-        ca_cert: env_path(env_dir, 'CONNECT_VBMS_CACERT', allow_empty: true),
-        saml: env_path(env_dir, 'CONNECT_VBMS_SAML'),
+        endpoint_url: get_env("CONNECT_VBMS_URL"),
+        keypass: get_env("CONNECT_VBMS_KEYPASS"),
+        client_keyfile: env_path(env_dir, "CONNECT_VBMS_CLIENT_KEYFILE"),
+        server_cert: env_path(env_dir, "CONNECT_VBMS_SERVER_CERT", allow_empty: true),
+        ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
+        saml: env_path(env_dir, "CONNECT_VBMS_SAML"),
         logger: logger
       )
     end
@@ -59,7 +58,6 @@ module VBMS
       @logger.log(event, data) if @logger
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def send_request(request)
       encrypted_doc = SoapScum::WSSecurity.encrypt(request.soap_doc, request.signed_elements)
 
@@ -70,7 +68,7 @@ module VBMS
 
       http_request = build_request(
         body,
-        'Content-Type' => 'Multipart/Related; '\
+        "Content-Type" => "Multipart/Related; "\
                   'type="application/xop+xml"; '\
                   'start-info="application/soap+xml"; '\
                   'boundary="boundary_1234"')
@@ -92,7 +90,6 @@ module VBMS
 
       process_response(request, response)
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def send(request)
       # the Gem::Deprecate method didn't work because this method was named send
@@ -105,31 +102,31 @@ module VBMS
     def inject_saml(doc)
       saml_doc = Nokogiri::XML(File.read(@saml)).root
       doc.at_xpath(
-        '//wsse:Security',
-        wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
+        "//wsse:Security",
+        wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       ) << saml_doc
     end
 
     def remove_must_understand(doc)
       node = doc.at_xpath(
-        '//wsse:Security',
-        wsse: 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'
-      ).attributes['mustUnderstand']
+        "//wsse:Security",
+        wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+      ).attributes["mustUnderstand"]
       node.remove if node
     end
 
+    # rubocop:disable Style/GuardClause
     def create_body(request, doc)
       if request.multipart?
         filepath = request.multipart_file
         filename = File.basename(filepath)
         content = File.read(filepath)
-        return VBMS.load_erb('mtom_request.erb').result(binding)
+        return VBMS.load_erb("mtom_request.erb").result(binding)
       else
-        return VBMS.load_erb('request.erb').result(binding)
+        return VBMS.load_erb("request.erb").result(binding)
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     def build_request(body, headers)
       request = HTTPI::Request.new(@endpoint_url)
 
@@ -153,27 +150,27 @@ module VBMS
           Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET
         )
       rescue Nokogiri::XML::SyntaxError
-        raise SOAPError.new('Unable to parse SOAP message', xml_string)
+        raise SOAPError.new("Unable to parse SOAP message", xml_string)
       end
       xml
     end
 
     def serialize_document(doc)
       doc.serialize(
-        encoding: 'UTF-8',
+        encoding: "UTF-8",
         save_with: Nokogiri::XML::Node::SaveOptions::AS_XML
       )
     end
 
     def parse_body(xml)
       doc = parse_xml_strictly(xml)
-      doc.at_xpath('/soapenv:Envelope/soapenv:Body',
-                   soapenv: 'http://schemas.xmlsoap.org/soap/envelope/')
+      doc.at_xpath("/soapenv:Envelope/soapenv:Body",
+                   soapenv: "http://schemas.xmlsoap.org/soap/envelope/")
     end
 
     def multipart_boundary(headers)
-      return nil unless headers.key?('Content-Type')
-      Mail::Field.new('Content-Type', headers['Content-Type']).parameters['boundary']
+      return nil unless headers.key?("Content-Type")
+      Mail::Field.new("Content-Type", headers["Content-Type"]).parameters["boundary"]
     end
 
     def multipart_sections(response)
@@ -186,7 +183,7 @@ module VBMS
     end
 
     def multipart?(response)
-      !(response.headers['Content-Type'] =~ /^multipart/im).nil?
+      !(response.headers["Content-Type"] =~ /^multipart/im).nil?
     end
 
     def get_body(response)
@@ -220,12 +217,12 @@ module VBMS
 
     def check_soap_errors(doc, response)
       # the envelope should be the root node of the document
-      soap = doc.at_xpath('/soapenv:Envelope', VBMS::XML_NAMESPACES)
-      fail SOAPError.new('No SOAP envelope found in response', response.body) if
+      soap = doc.at_xpath("/soapenv:Envelope", VBMS::XML_NAMESPACES)
+      fail SOAPError.new("No SOAP envelope found in response", response.body) if
         soap.nil?
 
-      fail SOAPError.new('SOAP Fault returned', response.body) if
-        soap.at_xpath('//soapenv:Fault', VBMS::XML_NAMESPACES)
+      fail SOAPError.new("SOAP Fault returned", response.body) if
+        soap.at_xpath("//soapenv:Fault", VBMS::XML_NAMESPACES)
     end
   end
 end
