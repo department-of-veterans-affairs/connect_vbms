@@ -26,6 +26,7 @@ require "vbms/requests/upload_document_with_associations"
 require "vbms/requests/list_documents"
 require "vbms/requests/fetch_document_by_id"
 require "vbms/requests/get_document_types"
+require "vbms/requests/establish_claim"
 
 # require 'xmldsig'
 require "xmldsig/signature_override"
