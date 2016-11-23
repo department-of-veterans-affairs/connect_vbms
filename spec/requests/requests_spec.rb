@@ -5,7 +5,7 @@ describe VBMS::Requests do
     @client = if ENV.key?("CONNECT_VBMS_RUN_EXTERNAL_TESTS")
                 # We're doing it live and connecting to VBMS test server
                 # otherwise, just use @client from above and webmock
-                VBMS::Client.from_env_vars
+                VBMS::Client.from_env_vars(env_name: ENV["CONNECT_VBMS_ENV"])
               else
                 new_test_client
               end
