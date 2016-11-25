@@ -12,4 +12,4 @@ jdk:
 cache: bundler
 
 before_script:
-  - bundle exec rake build_java
+  - bundle exec rake tests:prepare
