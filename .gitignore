@@ -14,3 +14,6 @@ pkg
 coverage
 Vagrantfile
 .vagrant
+.DS_Store
+spec/fixtures/test_client.*
+spec/fixtures/test_server.*

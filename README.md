@@ -14,24 +14,18 @@ Connect VBMS is a Ruby gem for communicating with version 4 of the eDocumentServ
 
 The library currently uses Java for some encryption functionality. When this is replaced, the integration tests will continue to use the Java encryption/decryption utilities as a reference to check against. Python is currently used to generate documentation.
 
-## Build
+## Tests
 
-From the root directory, run:
+For the first run of the tests, install the Ruby dependencies and prepare the Java files & test creds:
 
 ```
 > bundle install
-> bundle exec rake build
+> bundle exec rake tests:prepare
 ```
-
-## Tests
-
-For the first run of the tests, install the Ruby dependencies:
-
-`bundle install`
 
 Every other time, just run the below from the root directory:
 
-`bundle exec rake default`
+`bundle exec rake`
 
 This will run all the tests and also runs [rubocop](http://batsov.com/rubocop/) to identify any stylistic problems in the code. You must ensure your code passes all tests and has no Rubocop violations before submitting a pull request.
 
