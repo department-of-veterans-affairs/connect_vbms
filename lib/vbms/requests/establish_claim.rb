@@ -8,8 +8,6 @@ module VBMS
       }.freeze
 
       def initialize(veteran_record, claim)
-        validate(veteran_record, claim)
-
         @veteran_record = veteran_record
         @claim = claim
       end
