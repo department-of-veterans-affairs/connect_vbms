@@ -151,7 +151,7 @@ end
 
 def new_test_client
   VBMS::Client.new(
-    endpoint_url: "http://test.endpoint.url/",
+    base_url: "http://test.endpoint.url/",
     keypass: "importkey",
     client_keyfile: fixture_path("test_client.p12"),
     server_cert: fixture_path("test_server.crt"),

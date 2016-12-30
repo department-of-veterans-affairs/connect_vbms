@@ -21,11 +21,14 @@ require "vbms/requests"
 require "vbms/responses/document"
 require "vbms/responses/document_type"
 require "vbms/responses/document_with_content"
+require "vbms/responses/claim"
 
+require "vbms/requests/base_request"
 require "vbms/requests/upload_document_with_associations"
 require "vbms/requests/list_documents"
 require "vbms/requests/fetch_document_by_id"
 require "vbms/requests/get_document_types"
+require "vbms/requests/establish_claim"
 
 # require 'xmldsig'
 require "xmldsig/signature_override"

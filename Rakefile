@@ -17,7 +17,7 @@ task :build_java do
 end
 
 task :fixtures do
-  generate_test_creds()
+  generate_test_creds
 end
 
 task :docs do

@@ -1,6 +1,6 @@
 module VBMS
   module Requests
-    class GetDocumentTypes
+    class GetDocumentTypes < BaseRequest
       def name
         "getDocumentTypes"
       end
@@ -9,6 +9,14 @@ module VBMS
         VBMS::Requests.soap do |xml|
           xml["v4"].getDocumentTypes
         end
+      end
+
+      def inject_header_content(xml)
+        xml
+      end
+
+      def endpoint_url(base_url)
+        "#{base_url}#{VBMS::ENDPOINTS[:efolder]}"
       end
 
       def signed_elements

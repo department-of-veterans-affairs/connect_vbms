@@ -1,12 +1,16 @@
 module VBMS
   module Requests
-    class FetchDocumentById
+    class FetchDocumentById < BaseRequest
       def initialize(document_id)
         @document_id = document_id
       end
 
       def name
         "fetchDocumentById"
+      end
+
+      def endpoint_url(base_url)
+        "#{base_url}#{VBMS::ENDPOINTS[:efolder]}"
       end
 
       def soap_doc
