@@ -88,10 +88,6 @@ module VBMS
           "Content"]]
       end
 
-      def multipart?
-        false
-      end
-
       def handle_response(doc)
         el = doc.at_xpath(
           "//claimV4:establishClaimResponse/claimV4:establishedClaim",

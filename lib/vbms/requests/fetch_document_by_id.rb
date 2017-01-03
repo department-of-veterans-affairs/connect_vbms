@@ -27,10 +27,6 @@ module VBMS
           "Content"]]
       end
 
-      def multipart?
-        false
-      end
-
       def handle_response(doc)
         el = doc.at_xpath(
           "//v4:fetchDocumentResponse/v4:result", VBMS::XML_NAMESPACES
