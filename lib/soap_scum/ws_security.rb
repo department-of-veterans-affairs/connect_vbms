@@ -113,7 +113,7 @@ module SoapScum
       end
 
       def iv
-        @iv ||= SecureRandom.random_bytes(block_cipher.key_len)
+        @iv ||= SecureRandom.random_bytes(block_cipher.iv_len)
       end
 
       def symmetric_key
