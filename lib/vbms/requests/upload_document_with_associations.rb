@@ -1,6 +1,6 @@
 module VBMS
   module Requests
-    class UploadDocumentWithAssociations
+    class UploadDocumentWithAssociations < BaseRequest
       attr_reader :file_number
 
       def initialize(file_number, received_at, first_name, middle_name,
@@ -19,6 +19,10 @@ module VBMS
 
       def name
         "uploadDocumentWithAssociations"
+      end
+
+      def endpoint_url(base_url)
+        "#{base_url}#{VBMS::ENDPOINTS[:efolder]}"
       end
 
       # received_date returns a string representing the date the document was

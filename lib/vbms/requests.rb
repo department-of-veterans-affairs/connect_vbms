@@ -8,20 +8,12 @@ module VBMS
       "xmlns:xop" => "http://www.w3.org/2004/08/xop/include"
     }.freeze
 
-    def self.soap
+    def self.soap(more_namespaces: {})
       Nokogiri::XML::Builder.new do |xml|
-        xml["soapenv"].Envelope(VBMS::Requests::NAMESPACES) do
-          xml["soapenv"].Header
+        xml["soapenv"].Envelope(VBMS::Requests::NAMESPACES.merge(more_namespaces)) do
           xml["soapenv"].Body { yield(xml) }
         end
       end.doc
-    end
-
-    def self.body
-      Nokogiri::XML::Builder.new do |xml|
-        # xml['soapenv'].Body { yield(xml) }
-        yield xml
-      end
     end
   end
 end

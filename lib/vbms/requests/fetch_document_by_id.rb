@@ -1,12 +1,16 @@
 module VBMS
   module Requests
-    class FetchDocumentById
+    class FetchDocumentById < BaseRequest
       def initialize(document_id)
         @document_id = document_id
       end
 
       def name
         "fetchDocumentById"
+      end
+
+      def endpoint_url(base_url)
+        "#{base_url}#{VBMS::ENDPOINTS[:efolder]}"
       end
 
       def soap_doc
@@ -21,10 +25,6 @@ module VBMS
         [["/soapenv:Envelope/soapenv:Body",
           { soapenv: SoapScum::XMLNamespaces::SOAPENV },
           "Content"]]
-      end
-
-      def multipart?
-        false
       end
 
       def handle_response(doc)

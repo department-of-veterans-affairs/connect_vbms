@@ -41,11 +41,16 @@ describe VBMS::Client do
                         source: "CUI tests",
                         name: "uploadDocumentWithAssociations",
                         new_mail: "",
+                        multipart?: false,
                         soap_doc:  VBMS::Requests.soap { "body" },
                         signed_elements: [["/soapenv:Envelope/soapenv:Body",
                                            { soapenv: SoapScum::XMLNamespaces::SOAPENV },
                                            "Content"]]
                        )
+
+      @request.should_receive(:inject_header_content)
+      @request.should_receive(:endpoint_url)
+
       @response = double("response", code: 200, body: "response")
     end
 

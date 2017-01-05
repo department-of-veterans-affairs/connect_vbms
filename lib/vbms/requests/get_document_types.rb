@@ -1,6 +1,6 @@
 module VBMS
   module Requests
-    class GetDocumentTypes
+    class GetDocumentTypes < BaseRequest
       def name
         "getDocumentTypes"
       end
@@ -11,14 +11,18 @@ module VBMS
         end
       end
 
+      def inject_header_content(xml)
+        xml
+      end
+
+      def endpoint_url(base_url)
+        "#{base_url}#{VBMS::ENDPOINTS[:efolder]}"
+      end
+
       def signed_elements
         [["/soapenv:Envelope/soapenv:Body",
           { soapenv: SoapScum::XMLNamespaces::SOAPENV },
           "Content"]]
-      end
-
-      def multipart?
-        false
       end
 
       def handle_response(doc)

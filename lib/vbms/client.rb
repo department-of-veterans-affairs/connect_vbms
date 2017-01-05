@@ -1,8 +1,8 @@
 module VBMS
   class Client
-    attr_reader :endpoint_url
+    attr_reader :base_url
 
-    def initialize(endpoint_url:,
+    def initialize(base_url:,
                    keypass:,
                    client_keyfile:,
                    server_cert:,
@@ -10,7 +10,7 @@ module VBMS
                    saml:,
                    logger: nil)
 
-      @endpoint_url = endpoint_url
+      @base_url = base_url
       @keyfile = client_keyfile
       @saml = saml
       @keypass = keypass
@@ -29,7 +29,7 @@ module VBMS
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
       VBMS::Client.new(
-        endpoint_url: get_env("CONNECT_VBMS_URL"),
+        base_url: get_env("CONNECT_VBMS_BASE_URL"),
         keypass: get_env("CONNECT_VBMS_KEYPASS"),
         client_keyfile: env_path(env_dir, "CONNECT_VBMS_CLIENT_KEYFILE"),
         server_cert: env_path(env_dir, "CONNECT_VBMS_SERVER_CERT", allow_empty: true),
@@ -61,17 +61,15 @@ module VBMS
     def send_request(request)
       encrypted_doc = SoapScum::WSSecurity.encrypt(request.soap_doc, request.signed_elements)
 
+      inject_header_content(encrypted_doc, request)
       inject_saml(encrypted_doc)
       remove_must_understand(encrypted_doc)
       serialized_doc = serialize_document(encrypted_doc)
       body = create_body(request, serialized_doc)
 
       http_request = build_request(
-        body,
-        "Content-Type" => "Multipart/Related; "\
-                  'type="application/xop+xml"; '\
-                  'start-info="application/soap+xml"; '\
-                  'boundary="boundary_1234"')
+        request.endpoint_url(@base_url),
+        body, "Content-Type" => content_type(request))
 
       HTTPI.log = false
       response = HTTPI.post(http_request)
@@ -91,6 +89,17 @@ module VBMS
       process_response(request, response)
     end
 
+    def content_type(request)
+      if request.multipart?
+        "Multipart/Related; "\
+          'type="application/xop+xml"; '\
+          'start-info="application/soap+xml"; '\
+          'boundary="boundary_1234"'
+      else
+        "text/xml;charset=UTF-8"
+      end
+    end
+
     def send(request)
       # the Gem::Deprecate method didn't work because this method was named send
       msg = "NOTE: Client#send is deprecated and will be removed in version 1.0; use #send_request instead\n" \
@@ -105,6 +114,10 @@ module VBMS
         "//wsse:Security",
         wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       ) << saml_doc
+    end
+
+    def inject_header_content(doc, request)
+      request.inject_header_content(doc.at_xpath("/soapenv:Envelope/soapenv:Header"))
     end
 
     def remove_must_understand(doc)
@@ -127,8 +140,8 @@ module VBMS
       end
     end
 
-    def build_request(body, headers)
-      request = HTTPI::Request.new(@endpoint_url)
+    def build_request(endpoint_url, body, headers)
+      request = HTTPI::Request.new(endpoint_url)
 
       request.auth.ssl.cert_key          = SoapScum::WSSecurity.client_key
       request.auth.ssl.cert_key_password = @keypass

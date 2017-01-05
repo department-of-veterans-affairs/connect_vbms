@@ -1,12 +1,16 @@
 module VBMS
   module Requests
-    class ListDocuments
+    class ListDocuments < BaseRequest
       def initialize(file_number)
         @file_number = file_number
       end
 
       def name
         "listDocuments"
+      end
+
+      def endpoint_url(base_url)
+        "#{base_url}#{VBMS::ENDPOINTS[:efolder]}"
       end
 
       def soap_doc
@@ -21,10 +25,6 @@ module VBMS
         [["/soapenv:Envelope/soapenv:Body",
           { soapenv: SoapScum::XMLNamespaces::SOAPENV },
           "Content"]]
-      end
-
-      def multipart?
-        false
       end
 
       def handle_response(doc)

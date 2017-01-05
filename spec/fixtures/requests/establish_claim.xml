@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<S:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+  </env:Header>
+  <S:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-462">
+    <establishClaimResponse xmlns="http://vbms.vba.va.gov/external/ClaimService/v4" xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://vbms.vba.va.gov/cdm/claim/v4" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns2="http://vbms.vba.va.gov/cdm/participant/v4"><establishedClaim benefitTypeCd="CPL" claimLevelStatusCd="PEND" currentStationOfJurisdiction="317" gulfWarRegistry="false" id="600091508" label="AMC-Cert to BVA" modifiedEndProductCd="071" participantPersonId="600113642" payeeCd="00" preDischarge="false" priority="unknown" sectionUnit="123725" stationOfJurisdiction="499" suspenseReasonCd="062" veteranPersonId="600113642"><ns0:endProductClaimType code="070CERT2AMC" name="AMC-Cert to BVA"/><ns0:claimDateDt>2016-12-10-05:00</ns0:claimDateDt><ns0:suspenseDate>2017-01-09-05:00</ns0:suspenseDate><ns0:suppressAckLetter>false</ns0:suppressAckLetter><ns0:futureReason>Pending Initial Development - Std 5103 Notice Not Required</ns0:futureReason></establishedClaim></establishClaimResponse>
+  </S:Body>
+</S:Envelope>
