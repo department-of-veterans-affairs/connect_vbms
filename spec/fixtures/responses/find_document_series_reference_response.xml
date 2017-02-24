@@ -1,0 +1,2671 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+      <xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="EK-D8C5459A5313328BCF1487880776620328">
+        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <wsse:SecurityTokenReference>
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=Scanning CA,OU=Scanning CA,O=Scanning CA,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>49</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+        <xenc:CipherData>
+          <xenc:CipherValue>Y6wm4An+t91pjSzHY+NLdYAKN3TbSZDBQG5nkv6gxDVUnhGufpU6Tr+MyPCjLDflRn7siAoZpMm91yuKlWtH6WYRWdbsqCx79/fepv9LzT+hTTiFNRiJdR+b+nHPWXunYTzH//D83hAkVAzGTDI3lNa1OeFQwechqqrv7n0fc96vKQwVtK21TmtwXp6t7hhhK22H/Ogsq2cBi6ifBhJSlfs53CYuZ6cxrwURLDywaGiAG4I7Aeuc5EZQ+elLrQ90duFXCQZXw/XdkrAH0vEvdVZmhKGDGfiDmc50EJ6/GnLnY7bUR313ZrfcySnovEZgC3JbG9og5R7zmhIcpmCGnQ==</xenc:CipherValue>
+        </xenc:CipherData>
+        <xenc:ReferenceList>
+          <xenc:DataReference URI="#ED-328"/>
+        </xenc:ReferenceList>
+      </xenc:EncryptedKey>
+      <wsu:Timestamp wsu:Id="TS-325">
+        <wsu:Created>2017-02-23T20:12:56.582Z</wsu:Created>
+        <wsu:Expires>2017-02-23T20:17:56.582Z</wsu:Expires>
+      </wsu:Timestamp>
+      <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-327">
+        <ds:SignedInfo>
+          <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+            <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="env"/>
+          </ds:CanonicalizationMethod>
+          <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <ds:Reference URI="#TS-325">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="wsse env"/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>ysYhOwU8jr+vN226YX/yW+7YRwA=</ds:DigestValue>
+          </ds:Reference>
+          <ds:Reference URI="#id-326">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList=""/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>G3QfWlyFNvBFX0tSl6+ayC7TBLI=</ds:DigestValue>
+          </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue>GmPhit5o8c5Xh0mDwzpXHVkPunne+1poB0v2DR6yclsFa+6I+Be5FrX2luxeoqkgS/+BLHAYFnNH
+WIzGeDLWSHyUm3OBmCV4+HD7MzIpnfqW3z2Rd6/5ZiezzVvLNv6tvxaAAQJMl0Z7T5cWc3bnRoPR
+r0l5pL4NCgJgsiAIxn77vbuTN1P16OWlxsA1PC2PfV2AoYKXlfL6gI5FlhFRwQ20i2ki3e0cVnBh
+hv18Prj3vVR4WcmYTBIqanRVmb3AkSyw0Dk+JsMlSHFlCecHM/RvpHoPvZMLQVgcIAhQZgKFeqSk
+YXTTU5Qj4itwph3AWjLS5TNMuXzh2d1QWyhBBg==</ds:SignatureValue>
+        <ds:KeyInfo Id="KI-D8C5459A5313328BCF1487880776586326">
+          <wsse:SecurityTokenReference wsu:Id="STR-D8C5459A5313328BCF1487880776586327">
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=AIDE CA2,OU=CA2,O=AIDE,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>4</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+      </ds:Signature>
+    </wsse:Security>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-326">
+    <findDocumentSeriesReferenceResponse xmlns="http://service.efolder.vbms.vba.va.gov/eFolderReadService" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns2="http://vbms.vba.va.gov/cdm/document/v5" xmlns:ns3="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:ns5="http://service.efolder.vbms.vba.va.gov/eFolderReadService">
+      <ns5:result id="{95FD13DE-5ADD-488F-BF45-50C0993AEE34}" seriesName="784449089/cuiaf9bf9ed-3f8a-4261-a372-73881729de96.pdf">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{95FD13DE-5ADD-488F-BF45-50C0993AEE34}" documentVersionRefId="{68A9F5E8-8937-4106-96AE-7066E1FC0E15}" mimeType="application/pdf" previousVersionId="{5B8D57C5-270F-4BFC-9A3B-1235EB5EF62F}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-01</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{95FD13DE-5ADD-488F-BF45-50C0993AEE34}" documentVersionRefId="{5B8D57C5-270F-4BFC-9A3B-1235EB5EF62F}" mimeType="application/pdf" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-01</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" seriesName="784449089/test.pdf">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{7989485C-6368-4ED9-AFDF-7B8AFF6D7102}" mimeType="text/plain" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-01</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{CE67177F-F63F-436B-8EC7-376606459FA1}" mimeType="text/plain" previousVersionId="{7989485C-6368-4ED9-AFDF-7B8AFF6D7102}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-01</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{7AF86D13-5E7A-4DE1-9E03-BEB260D85184}" mimeType="application/pdf" previousVersionId="{CE67177F-F63F-436B-8EC7-376606459FA1}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-03</ns2:vbmsUploadDate>
+          <ns2:version major="3"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{39E7CFBB-AF64-478D-AE9D-32FAEEC9A036}" mimeType="application/pdf" previousVersionId="{7AF86D13-5E7A-4DE1-9E03-BEB260D85184}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-03</ns2:vbmsUploadDate>
+          <ns2:version major="4"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{B410D42E-9A9A-40AE-8F8B-17972E81FC1C}" mimeType="application/pdf" previousVersionId="{39E7CFBB-AF64-478D-AE9D-32FAEEC9A036}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="5"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{489C9077-3005-49FE-8B0F-EB0F869EC88A}" mimeType="application/pdf" previousVersionId="{B410D42E-9A9A-40AE-8F8B-17972E81FC1C}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="6"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{3807ABF1-5CD6-4CE3-AC90-09B785DA947D}" mimeType="application/pdf" previousVersionId="{489C9077-3005-49FE-8B0F-EB0F869EC88A}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="7"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{4B5C3E5C-A5BC-45EA-8318-D2BC4ED6E5E8}" mimeType="application/pdf" previousVersionId="{3807ABF1-5CD6-4CE3-AC90-09B785DA947D}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="8"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{9EBD8789-B9B3-4ACD-8FAE-2CB8CF1DF269}" mimeType="application/pdf" previousVersionId="{4B5C3E5C-A5BC-45EA-8318-D2BC4ED6E5E8}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="9"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{AA1EB27B-1EA7-4C28-BE5B-16F4A4A4B032}" mimeType="application/pdf" previousVersionId="{9EBD8789-B9B3-4ACD-8FAE-2CB8CF1DF269}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="10"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+      </ns5:result>
+      <ns5:result id="{C0E3EA51-0000-C91F-9702-A722CFF8E939}" seriesName="22222222/form9.pdf">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="22222222"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{C0E3EA51-0000-C91F-9702-A722CFF8E939}" documentVersionRefId="{9909502E-E797-421C-BE2F-7650E2F2E7F1}" mimeType="application/pdf" subject="Form 9">
+          <ns2:typeCategory categoryDescriptionText="Appeals" categoryId="19" typeDescriptionText="Substantive Appeal (In Lieu of VA Form 9)" typeId="857" typeLabelText="L857"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Snuffy</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="altDocType">
+            <ns2:value>["Appeals - Notice of Disagreement (NOD)","Appeals - Statement of the Case (SOC)","Appeals - Substantive Appeal to Board of Veterans' Appeals","Appeals - Supplemental Statement of the Case (SSOC)"]</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-04-30</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2015-12-28</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="VACOLS"/>
+        </ns2:versions>
+      </ns5:result>
+      <ns5:result id="{00E04F55-0000-C219-A0E1-0EEDAD1D6B32}" seriesName="784449089/tmp20160614-9434-wbve9r">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{00E04F55-0000-C219-A0E1-0EEDAD1D6B32}" documentVersionRefId="{C7A6DA43-A368-4831-A68B-D32F0C164C22}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{00E04F55-0000-C219-A0E1-0EEDAD1D6B32}" documentVersionRefId="{00E04F55-0000-C182-A5AC-FD645B3C9315}" mimeType="text/plain" previousVersionId="{C7A6DA43-A368-4831-A68B-D32F0C164C22}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{30E14F55-0000-C815-9E17-05144E5459EC}" seriesName="784449089/tmp20160614-10584-y2u53a">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{30E14F55-0000-C815-9E17-05144E5459EC}" documentVersionRefId="{BD9DEEE6-30EA-469E-A66E-EE8B7FBDB6D9}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{30E14F55-0000-C815-9E17-05144E5459EC}" documentVersionRefId="{30E14F55-0000-CA85-9F5C-73D3EBD43DCF}" mimeType="text/plain" previousVersionId="{BD9DEEE6-30EA-469E-A66E-EE8B7FBDB6D9}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{40E34F55-0000-CD1F-A2EB-DC1961BCE973}" seriesName="784449089/tmp20160614-12043-se2589">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{40E34F55-0000-CD1F-A2EB-DC1961BCE973}" documentVersionRefId="{20AA6948-8074-4696-937A-552F29A288E7}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{40E34F55-0000-CD1F-A2EB-DC1961BCE973}" documentVersionRefId="{40E34F55-0000-C48B-B910-4D8D52BF129C}" mimeType="text/plain" previousVersionId="{20AA6948-8074-4696-937A-552F29A288E7}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{10E54F55-0000-C212-A4C8-C23A17C48702}" seriesName="784449089/tmp20160614-13326-oibawt">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{10E54F55-0000-C212-A4C8-C23A17C48702}" documentVersionRefId="{636A1CCA-CA36-4790-AAD2-8A549319D093}" mimeType="text/plain" previousVersionId="{10E54F55-0000-CE82-A79D-1DEE68070798}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{10E54F55-0000-C212-A4C8-C23A17C48702}" documentVersionRefId="{10E54F55-0000-CE82-A79D-1DEE68070798}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{90DF4F55-0000-C111-9AD1-35D2D7398132}" seriesName="784449089/tmp20160614-9358-1sixr9e">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{90DF4F55-0000-C111-9AD1-35D2D7398132}" documentVersionRefId="{B904D576-4CD5-47F2-B2CA-B7F6E1986E46}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{90DF4F55-0000-C111-9AD1-35D2D7398132}" documentVersionRefId="{90DF4F55-0000-C78E-B04F-5FA998733870}" mimeType="text/plain" previousVersionId="{B904D576-4CD5-47F2-B2CA-B7F6E1986E46}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{00E14F55-0000-C214-8F2E-3B85F0441CA5}" seriesName="784449089/tmp20160614-10056-1do3qeg">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{00E14F55-0000-C214-8F2E-3B85F0441CA5}" documentVersionRefId="{73FBBF65-ADB5-4632-B48C-23F2CA50EE13}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{00E14F55-0000-C214-8F2E-3B85F0441CA5}" documentVersionRefId="{10E14F55-0000-C11D-95FD-ED5A6CB30D48}" mimeType="text/plain" previousVersionId="{73FBBF65-ADB5-4632-B48C-23F2CA50EE13}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{D0E14F55-0000-C41A-835B-5761351EB352}" seriesName="784449089/tmp20160614-11322-abmqkt">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{D0E14F55-0000-C41A-835B-5761351EB352}" documentVersionRefId="{299EFBF6-7FE5-4748-900F-EA29C35C82E6}" mimeType="text/plain" previousVersionId="{D0E14F55-0000-C083-9A37-40A3388BA8A0}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{D0E14F55-0000-C41A-835B-5761351EB352}" documentVersionRefId="{D0E14F55-0000-C083-9A37-40A3388BA8A0}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{E0E34F55-0000-C91F-8E0B-B981CFD5ECA5}" seriesName="784449089/tmp20160614-12656-m499zm">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{E0E34F55-0000-C91F-8E0B-B981CFD5ECA5}" documentVersionRefId="{F297DDDB-8E37-42E5-BBBF-38960138FC13}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{E0E34F55-0000-C91F-8E0B-B981CFD5ECA5}" documentVersionRefId="{F0E34F55-0000-CF1E-9880-D311CBB95390}" mimeType="text/plain" previousVersionId="{F297DDDB-8E37-42E5-BBBF-38960138FC13}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{20E64F55-0000-CF1C-B978-A81A346D20A0}" seriesName="784449089/tmp20160614-13932-ph969q">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{20E64F55-0000-CF1C-B978-A81A346D20A0}" documentVersionRefId="{BD1289C0-0C43-428B-9FB9-025036C2A6F9}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{20E64F55-0000-CF1C-B978-A81A346D20A0}" documentVersionRefId="{20E64F55-0000-C681-9CBD-3D689B30C5F5}" mimeType="text/plain" previousVersionId="{BD1289C0-0C43-428B-9FB9-025036C2A6F9}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{E0E74F55-0000-C91F-99FC-1B73C93ED098}" seriesName="784449089/tmp20160614-15189-qkdzn2">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{E0E74F55-0000-C91F-99FC-1B73C93ED098}" documentVersionRefId="{1F103EAB-72FC-440F-B2FC-C9A09545AD5E}" mimeType="text/plain" previousVersionId="{E0E74F55-0000-C58A-B2CB-95EE1E1C8BD5}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{E0E74F55-0000-C91F-99FC-1B73C93ED098}" documentVersionRefId="{E0E74F55-0000-C58A-B2CB-95EE1E1C8BD5}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{80EE4F55-0000-CC12-8A02-0CD098A44EF6}" seriesName="784449089/tmp20160614-16889-1allktc">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{80EE4F55-0000-CC12-8A02-0CD098A44EF6}" documentVersionRefId="{8930E7FF-8D55-4CDA-8E82-0A043F1CB166}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{80EE4F55-0000-CC12-8A02-0CD098A44EF6}" documentVersionRefId="{90EE4F55-0000-CE14-8DC2-31D67B8DAFD5}" mimeType="text/plain" previousVersionId="{8930E7FF-8D55-4CDA-8E82-0A043F1CB166}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{00385055-0000-C515-AE2F-809A42F4AE9B}" seriesName="784449089/tmp20160614-20757-elofte">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{00385055-0000-C515-AE2F-809A42F4AE9B}" documentVersionRefId="{D4F72EAD-2F6B-4004-A6EC-DC0B831DDD65}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{00385055-0000-C515-AE2F-809A42F4AE9B}" documentVersionRefId="{10385055-0000-C81C-BF18-80CF8F1006D6}" mimeType="text/plain" previousVersionId="{D4F72EAD-2F6B-4004-A6EC-DC0B831DDD65}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{F0385055-0000-C416-8838-F6DD56739DC7}" seriesName="784449089/tmp20160614-21148-d2o0wb">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{F0385055-0000-C416-8838-F6DD56739DC7}" documentVersionRefId="{FECB93C7-4228-4A78-BD69-9C5F7D35B95B}" mimeType="text/plain" previousVersionId="{F0385055-0000-CA85-8C28-9655F0EF2B01}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{F0385055-0000-C416-8838-F6DD56739DC7}" documentVersionRefId="{F0385055-0000-CA85-8C28-9655F0EF2B01}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{B0395055-0000-C618-82DE-541CE9B5B46C}" seriesName="784449089/tmp20160614-21531-qa16mq">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{B0395055-0000-C618-82DE-541CE9B5B46C}" documentVersionRefId="{5BAC2392-BD52-4FDA-9143-4350FD26B9B4}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{B0395055-0000-C618-82DE-541CE9B5B46C}" documentVersionRefId="{B0395055-0000-CF80-91B6-56168491DC9B}" mimeType="text/plain" previousVersionId="{5BAC2392-BD52-4FDA-9143-4350FD26B9B4}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{A03A5055-0000-C710-B425-FE0C24625864}" seriesName="784449089/tmp20160614-21994-ozt71x">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{A03A5055-0000-C710-B425-FE0C24625864}" documentVersionRefId="{5DA80C3A-56A8-4C48-B942-BE4684EECEBE}" mimeType="text/plain" previousVersionId="{A03A5055-0000-C78B-BCFA-9E8D9134F82E}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{A03A5055-0000-C710-B425-FE0C24625864}" documentVersionRefId="{A03A5055-0000-C78B-BCFA-9E8D9134F82E}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{703B5055-0000-CB1B-ACD8-3E5C83B93D4D}" seriesName="784449089/tmp20160614-22379-erkpgw">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{703B5055-0000-CB1B-ACD8-3E5C83B93D4D}" documentVersionRefId="{DF2433C5-5BCE-44E5-A427-1D43DC405D96}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{703B5055-0000-CB1B-ACD8-3E5C83B93D4D}" documentVersionRefId="{703B5055-0000-C98E-8D35-80AA27D9DEA1}" mimeType="text/plain" previousVersionId="{DF2433C5-5BCE-44E5-A427-1D43DC405D96}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{B03B5055-0000-C718-AF21-D8934B248836}" seriesName="784449089/tmp20160614-22782-15kj7yg">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{B03B5055-0000-C718-AF21-D8934B248836}" documentVersionRefId="{9AB46D54-4841-4355-BFDD-4C0951F58C48}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{B03B5055-0000-C718-AF21-D8934B248836}" documentVersionRefId="{B03B5055-0000-CA84-9BFE-407A3F71F8A1}" mimeType="text/plain" previousVersionId="{9AB46D54-4841-4355-BFDD-4C0951F58C48}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{803C5055-0000-C11E-8574-212829F053EB}" seriesName="784449089/tmp20160614-23190-1gcfjcp">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{803C5055-0000-C11E-8574-212829F053EB}" documentVersionRefId="{D880E442-B1C6-4848-9246-74D74EAD1740}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{803C5055-0000-C11E-8574-212829F053EB}" documentVersionRefId="{803C5055-0000-C084-B321-712D22B52C69}" mimeType="text/plain" previousVersionId="{D880E442-B1C6-4848-9246-74D74EAD1740}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{00E74F55-0000-CB1C-8472-058FA0CDD075}" seriesName="784449089/tmp20160614-14518-1kvei6w">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{00E74F55-0000-CB1C-8472-058FA0CDD075}" documentVersionRefId="{2F7C4C0D-7534-4930-B065-ED78BC629665}" mimeType="text/plain" previousVersionId="{00E74F55-0000-C985-AD22-94A44E55E61B}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{00E74F55-0000-CB1C-8472-058FA0CDD075}" documentVersionRefId="{00E74F55-0000-C985-AD22-94A44E55E61B}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{D0E84F55-0000-C914-AD96-28FF645AEF9D}" seriesName="784449089/tmp20160614-15818-steafi">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{D0E84F55-0000-C914-AD96-28FF645AEF9D}" documentVersionRefId="{A2E04766-515C-47FA-9BB8-A1C5E6862671}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{D0E84F55-0000-C914-AD96-28FF645AEF9D}" documentVersionRefId="{D0E84F55-0000-CF83-88D8-58B862D6EBB6}" mimeType="text/plain" previousVersionId="{A2E04766-515C-47FA-9BB8-A1C5E6862671}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{80365055-0000-CE11-AAF6-7D514E94FCEB}" seriesName="784449089/tmp20160614-19806-15tm1ou">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{80365055-0000-CE11-AAF6-7D514E94FCEB}" documentVersionRefId="{2C9F83E3-BC0C-4165-B41E-9940C1DCD80A}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{80365055-0000-CE11-AAF6-7D514E94FCEB}" documentVersionRefId="{90365055-0000-C610-8F95-ECE4CC7E0749}" mimeType="text/plain" previousVersionId="{2C9F83E3-BC0C-4165-B41E-9940C1DCD80A}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{10465055-0000-C712-AC98-A937A61FCFCB}" seriesName="784449089/tmp20160614-26533-jmj04o">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{10465055-0000-C712-AC98-A937A61FCFCB}" documentVersionRefId="{46BD1A39-9989-4B10-A5CF-4DCAF8F54ED3}" mimeType="text/plain" previousVersionId="{10465055-0000-CE8C-9072-1B39E372A994}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{10465055-0000-C712-AC98-A937A61FCFCB}" documentVersionRefId="{10465055-0000-CE8C-9072-1B39E372A994}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{E0465055-0000-C311-9EE5-3C9356C01E68}" seriesName="784449089/tmp20160614-27330-1dn599e">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{E0465055-0000-C311-9EE5-3C9356C01E68}" documentVersionRefId="{354C7FA5-8678-4A70-A246-79C01B86DB97}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{E0465055-0000-C311-9EE5-3C9356C01E68}" documentVersionRefId="{E0465055-0000-CA8B-B7FE-B204A36B239D}" mimeType="text/plain" previousVersionId="{354C7FA5-8678-4A70-A246-79C01B86DB97}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{703D5055-0000-CA1C-8C91-6398992761C3}" seriesName="784449089/tmp20160614-23577-n9dxoz">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{703D5055-0000-CA1C-8C91-6398992761C3}" documentVersionRefId="{2D04F727-1C4C-4373-9158-8D7DB30093F2}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{703D5055-0000-CA1C-8C91-6398992761C3}" documentVersionRefId="{703D5055-0000-CF88-9C0C-F22B9F2C43B9}" mimeType="text/plain" previousVersionId="{2D04F727-1C4C-4373-9158-8D7DB30093F2}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{503F5055-0000-C41A-8C6E-C7DE158A3D57}" seriesName="784449089/tmp20160614-24171-3hix2k">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{503F5055-0000-C41A-8C6E-C7DE158A3D57}" documentVersionRefId="{CB801254-1808-462A-8ABF-F3CD07B5F3EB}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{503F5055-0000-C41A-8C6E-C7DE158A3D57}" documentVersionRefId="{503F5055-0000-C18E-A25D-0B67AB9E7790}" mimeType="text/plain" previousVersionId="{CB801254-1808-462A-8ABF-F3CD07B5F3EB}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{A03F5055-0000-CC12-BB5F-9C9A43F17B64}" seriesName="784449089/tmp20160614-24558-kb6tbq">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{A03F5055-0000-CC12-BB5F-9C9A43F17B64}" documentVersionRefId="{D4B78EDE-08B9-4EFF-B98D-3DEE303E73CC}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{A03F5055-0000-CC12-BB5F-9C9A43F17B64}" documentVersionRefId="{A03F5055-0000-CD83-B18B-E5D3A74375B4}" mimeType="text/plain" previousVersionId="{D4B78EDE-08B9-4EFF-B98D-3DEE303E73CC}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{70405055-0000-CB1E-AF00-CA98AB4C3837}" seriesName="784449089/tmp20160614-24947-vo8s7t">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{70405055-0000-CB1E-AF00-CA98AB4C3837}" documentVersionRefId="{E6F44F39-96AA-4047-AFF5-9D4A7062A7D9}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{70405055-0000-CB1E-AF00-CA98AB4C3837}" documentVersionRefId="{70405055-0000-C185-AAA0-8B3CD9861ADA}" mimeType="text/plain" previousVersionId="{E6F44F39-96AA-4047-AFF5-9D4A7062A7D9}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{10445055-0000-CE1E-A6F6-219B49F09A49}" seriesName="784449089/tmp20160614-25981-kteprn">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{10445055-0000-CE1E-A6F6-219B49F09A49}" documentVersionRefId="{2B74E94A-37AA-4CEF-AEDD-69BF5AD3E81C}" mimeType="text/plain" previousVersionId="{10445055-0000-C48C-8300-272870C26A90}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{10445055-0000-CE1E-A6F6-219B49F09A49}" documentVersionRefId="{10445055-0000-C48C-8300-272870C26A90}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{A0465055-0000-CD16-89A2-563FD56C57FD}" seriesName="784449089/tmp20160614-26918-73itvo">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{A0465055-0000-CD16-89A2-563FD56C57FD}" documentVersionRefId="{A62F4798-8BED-4E22-BFC6-3D9D14081994}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{A0465055-0000-CD16-89A2-563FD56C57FD}" documentVersionRefId="{A0465055-0000-C785-8880-88C27C753A46}" mimeType="text/plain" previousVersionId="{A62F4798-8BED-4E22-BFC6-3D9D14081994}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{E06A5055-0000-C617-8C62-47C11A484762}" seriesName="784449089/tmp20160614-32166-11fhtdf">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{E06A5055-0000-C617-8C62-47C11A484762}" documentVersionRefId="{16B47652-75EE-4C9A-9329-287055824C6B}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{E06A5055-0000-C617-8C62-47C11A484762}" documentVersionRefId="{E06A5055-0000-C887-BE5E-DCC9F53E3D50}" mimeType="text/plain" previousVersionId="{16B47652-75EE-4C9A-9329-287055824C6B}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{506C5055-0000-C215-90A3-FF571B128E5B}" seriesName="784449089/tmp20160614-471-g3m88b">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{506C5055-0000-C215-90A3-FF571B128E5B}" documentVersionRefId="{2F7D2048-8001-4A80-AD61-A46F4478202C}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{506C5055-0000-C215-90A3-FF571B128E5B}" documentVersionRefId="{606C5055-0000-C21D-8531-3D37D80DA8EA}" mimeType="text/plain" previousVersionId="{2F7D2048-8001-4A80-AD61-A46F4478202C}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{C06B5055-0000-CD1D-AF5F-2EEDF6A69511}" seriesName="784449089/tmp20160614-32550-1c5hy3y">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{C06B5055-0000-CD1D-AF5F-2EEDF6A69511}" documentVersionRefId="{7C31A0D4-D63D-45A2-A65F-50AE468476F9}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{C06B5055-0000-CD1D-AF5F-2EEDF6A69511}" documentVersionRefId="{C06B5055-0000-CF88-A374-4398CC38E2D4}" mimeType="text/plain" previousVersionId="{7C31A0D4-D63D-45A2-A65F-50AE468476F9}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{A0705055-0000-C81A-A3C4-788BCD730143}" seriesName="784449089/tmp20160614-926-1q65eax">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{A0705055-0000-C81A-A3C4-788BCD730143}" documentVersionRefId="{7E844B04-973B-4821-8054-2A6092AC712F}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{A0705055-0000-C81A-A3C4-788BCD730143}" documentVersionRefId="{A0705055-0000-CA8B-9E05-9B7FD254B46A}" mimeType="text/plain" previousVersionId="{7E844B04-973B-4821-8054-2A6092AC712F}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-14</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-14</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{30735455-0000-C916-A55F-CAD1DD7A32FB}" seriesName="784449089/tmp20160615-19327-kaxqzm">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{30735455-0000-C916-A55F-CAD1DD7A32FB}" documentVersionRefId="{63698C43-002A-4697-AF3D-7040AF56FDF6}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{30735455-0000-C916-A55F-CAD1DD7A32FB}" documentVersionRefId="{30735455-0000-CC80-90C5-F24A2E289245}" mimeType="text/plain" previousVersionId="{63698C43-002A-4697-AF3D-7040AF56FDF6}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{B07D5455-0000-C312-817F-4CFB735D638E}" seriesName="784449089/tmp20160615-20821-1wmnru0">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{B07D5455-0000-C312-817F-4CFB735D638E}" documentVersionRefId="{2C82D95C-38E4-4EF6-98F2-363FE1054188}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{B07D5455-0000-C312-817F-4CFB735D638E}" documentVersionRefId="{C07D5455-0000-C31B-BBDD-4A3D34BB5BEC}" mimeType="text/plain" previousVersionId="{2C82D95C-38E4-4EF6-98F2-363FE1054188}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{C07F5455-0000-C216-9E7D-A684A9E20C55}" seriesName="784449089/tmp20160615-20973-a1dmy2">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{C07F5455-0000-C216-9E7D-A684A9E20C55}" documentVersionRefId="{00E7EE9F-EE3A-447F-ADC4-3B6E4726132F}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{C07F5455-0000-C216-9E7D-A684A9E20C55}" documentVersionRefId="{C07F5455-0000-C68D-9B26-68C8D2B19E08}" mimeType="text/plain" previousVersionId="{00E7EE9F-EE3A-447F-ADC4-3B6E4726132F}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{C0805455-0000-CF18-9909-BFA473194699}" seriesName="784449089/tmp20160615-21779-1vjvgfj">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{C0805455-0000-CF18-9909-BFA473194699}" documentVersionRefId="{1A0BBCEC-7718-4137-81E1-793B5E2093D5}" mimeType="text/plain" previousVersionId="{C0805455-0000-C58D-AB8E-CC38C7AF7F83}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{C0805455-0000-CF18-9909-BFA473194699}" documentVersionRefId="{C0805455-0000-C58D-AB8E-CC38C7AF7F83}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{60855455-0000-CD15-A21B-041F8477D207}" seriesName="784449089/tmp20160615-22997-1afuyrh">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{60855455-0000-CD15-A21B-041F8477D207}" documentVersionRefId="{27F0DA59-9A08-44B4-A24A-F4CF31BAEB00}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{60855455-0000-CD15-A21B-041F8477D207}" documentVersionRefId="{60855455-0000-C488-9A47-B261E5F67B68}" mimeType="text/plain" previousVersionId="{27F0DA59-9A08-44B4-A24A-F4CF31BAEB00}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{60875455-0000-C81B-A345-140AB6F37F50}" seriesName="784449089/tmp20160615-23981-14qvpel">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{60875455-0000-C81B-A345-140AB6F37F50}" documentVersionRefId="{0B7A0DF4-C98F-48B3-A20C-8BA40FC8E03D}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{60875455-0000-C81B-A345-140AB6F37F50}" documentVersionRefId="{60875455-0000-CD87-B1EF-A04472990494}" mimeType="text/plain" previousVersionId="{0B7A0DF4-C98F-48B3-A20C-8BA40FC8E03D}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{F0885455-0000-CF16-BE72-D5B378608E58}" seriesName="784449089/tmp20160615-24963-thke1v">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{F0885455-0000-CF16-BE72-D5B378608E58}" documentVersionRefId="{D169857C-FA9D-47AA-87BD-01E8387EB461}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{F0885455-0000-CF16-BE72-D5B378608E58}" documentVersionRefId="{00895455-0000-CE11-A908-4A1BA9952036}" mimeType="text/plain" previousVersionId="{D169857C-FA9D-47AA-87BD-01E8387EB461}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{107A5455-0000-CA19-8017-02455C9F77E0}" seriesName="784449089/tmp20160615-20128-ijwdnm">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{107A5455-0000-CA19-8017-02455C9F77E0}" documentVersionRefId="{8DECFCCA-487C-4364-A2EE-B692DFFA8336}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{107A5455-0000-CA19-8017-02455C9F77E0}" documentVersionRefId="{107A5455-0000-CA87-AA37-86F5F0E2A42C}" mimeType="text/plain" previousVersionId="{8DECFCCA-487C-4364-A2EE-B692DFFA8336}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{80805455-0000-C01C-A99A-F2816D1FCED0}" seriesName="784449089/tmp20160615-21368-1bq74ai">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{80805455-0000-C01C-A99A-F2816D1FCED0}" documentVersionRefId="{80961867-E7E0-4D30-8D23-10B572B1AB21}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{80805455-0000-C01C-A99A-F2816D1FCED0}" documentVersionRefId="{80805455-0000-CF89-8731-43129B7435E3}" mimeType="text/plain" previousVersionId="{80961867-E7E0-4D30-8D23-10B572B1AB21}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{C0815455-0000-CC12-839B-46149EEB07AE}" seriesName="784449089/tmp20160615-22305-gnxsqr">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{C0815455-0000-CC12-839B-46149EEB07AE}" documentVersionRefId="{B39EA5A2-2591-4D89-9C06-D4FD8D3BF26A}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{C0815455-0000-CC12-839B-46149EEB07AE}" documentVersionRefId="{C0815455-0000-C589-AB82-E109126EA35F}" mimeType="text/plain" previousVersionId="{B39EA5A2-2591-4D89-9C06-D4FD8D3BF26A}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{30865455-0000-CA1E-998D-C2EF91CF0E31}" seriesName="784449089/tmp20160615-23481-1vjp6u7">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{30865455-0000-CA1E-998D-C2EF91CF0E31}" documentVersionRefId="{AE5FE160-BCCE-44CD-AA59-1E191BC4D07A}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{30865455-0000-CA1E-998D-C2EF91CF0E31}" documentVersionRefId="{30865455-0000-C28C-999C-61A2ED8A4EB3}" mimeType="text/plain" previousVersionId="{AE5FE160-BCCE-44CD-AA59-1E191BC4D07A}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{30885455-0000-CA1E-9CCA-81FCA6605518}" seriesName="784449089/tmp20160615-24431-so1461">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{30885455-0000-CA1E-9CCA-81FCA6605518}" documentVersionRefId="{21D48730-D678-4B7D-9C61-574BB486A434}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{30885455-0000-CA1E-9CCA-81FCA6605518}" documentVersionRefId="{30885455-0000-CB8E-A025-0D8D6240331A}" mimeType="text/plain" previousVersionId="{21D48730-D678-4B7D-9C61-574BB486A434}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-06-15</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-06-15</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{7031AC58-0000-C211-8053-87F006DC39C5}" seriesName="784449089/tmp20161128-45035-o43cd4">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{7031AC58-0000-C211-8053-87F006DC39C5}" documentVersionRefId="{54FFC24D-2A06-459A-AC3A-F5175F9EDA0B}" mimeType="text/plain" previousVersionId="{CC1C0170-4598-40EC-99B5-92408B3E95F8}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-11-28</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-11-28</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{7031AC58-0000-C211-8053-87F006DC39C5}" documentVersionRefId="{CC1C0170-4598-40EC-99B5-92408B3E95F8}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-11-28</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-11-28</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{2081AC58-0000-C61E-83A9-9711BCD33C08}" seriesName="784449089/tmp20161128-65003-6qd4pi">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{2081AC58-0000-C61E-83A9-9711BCD33C08}" documentVersionRefId="{9F37E3C6-B2D8-4060-AF08-97A83CF2DCAF}" mimeType="text/plain" previousVersionId="{5146997C-C4F3-423B-BA3C-7DC13CA4EFF5}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-11-28</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-11-28</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{2081AC58-0000-C61E-83A9-9711BCD33C08}" documentVersionRefId="{5146997C-C4F3-423B-BA3C-7DC13CA4EFF5}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-11-28</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-11-28</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{E030AC58-0000-C82A-A49A-17C9D1AB859E}" seriesName="784449089/tmp20161128-44931-1ltwoun">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{E030AC58-0000-C82A-A49A-17C9D1AB859E}" documentVersionRefId="{76B6798C-A76C-4A2F-9D7D-1304C4F6E538}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-11-28</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-11-28</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{E030AC58-0000-C82A-A49A-17C9D1AB859E}" documentVersionRefId="{5A767FA4-CE17-4878-A604-A45D6376DAE2}" mimeType="text/plain" previousVersionId="{76B6798C-A76C-4A2F-9D7D-1304C4F6E538}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-11-28</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-11-28</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{7085DB58-0000-CA10-BEC9-8DB01A7DFCFF}" seriesName="784449089/tmp20161207-50234-1hte7d6">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{7085DB58-0000-CA10-BEC9-8DB01A7DFCFF}" documentVersionRefId="{A82826FC-3101-419A-9B40-EC6546626EA7}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-12-07</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-12-07</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{7085DB58-0000-CA10-BEC9-8DB01A7DFCFF}" documentVersionRefId="{8023A3E1-5071-4028-9C92-2BE4F3B0DD17}" mimeType="text/plain" previousVersionId="{A82826FC-3101-419A-9B40-EC6546626EA7}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-12-07</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-12-07</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{702D5159-0000-CC1D-A2C1-DBFD65962760}" seriesName="784449089/tmp20161230-28173-12f0klh">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{702D5159-0000-CC1D-A2C1-DBFD65962760}" documentVersionRefId="{D8987076-ACCF-4580-9BC2-D3A2392F7330}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-12-30</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-12-30</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{702D5159-0000-CC1D-A2C1-DBFD65962760}" documentVersionRefId="{26AE2088-345C-48C6-9DCF-A5E6F4FF8DF8}" mimeType="text/plain" previousVersionId="{D8987076-ACCF-4580-9BC2-D3A2392F7330}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-12-30</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-12-30</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{502E5159-0000-CA19-9A92-E2EDE0325F01}" seriesName="784449089/tmp20161230-28324-1fb9un8">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{502E5159-0000-CA19-9A92-E2EDE0325F01}" documentVersionRefId="{B85CC9F2-A9A1-4649-B169-0E7F4639DA38}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-12-30</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-12-30</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{502E5159-0000-CA19-9A92-E2EDE0325F01}" documentVersionRefId="{4FA60EBC-27BC-43B3-B7B7-6DD7B8E7AB34}" mimeType="text/plain" previousVersionId="{B85CC9F2-A9A1-4649-B169-0E7F4639DA38}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2016-12-30</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2016-12-30</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{101EF559-0000-C016-98E5-1FFCADD3445E}" seriesName="784449089/tmp20170131-82093-10o7971">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{101EF559-0000-C016-98E5-1FFCADD3445E}" documentVersionRefId="{A522D1D6-3DCC-40E2-8F6E-FB9C5A85F440}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2017-01-31</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2017-01-31</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{101EF559-0000-C016-98E5-1FFCADD3445E}" documentVersionRefId="{32E574BC-F449-4B7C-8A0D-CF9DB0F722D1}" mimeType="application/pdf" previousVersionId="{A522D1D6-3DCC-40E2-8F6E-FB9C5A85F440}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2017-01-31</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2017-01-31</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result><ns5:result id="{40DBF559-0000-CE12-9052-4085752E9C4B}" seriesName="784449089/tmp20170131-15729-6orpf5">
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{40DBF559-0000-CE12-9052-4085752E9C4B}" documentVersionRefId="{90F36A9D-1C3C-4081-B176-978A2927865D}" mimeType="text/plain" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2017-01-31</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2017-01-31</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{40DBF559-0000-CE12-9052-4085752E9C4B}" documentVersionRefId="{1DB235C5-C248-440D-A6B8-1E6ACC589D58}" mimeType="application/pdf" previousVersionId="{90F36A9D-1C3C-4081-B176-978A2927865D}" subject="knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Jane</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranMiddleName">
+            <ns2:value>Q</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userFacilityJob">
+            <ns2:value>Developer VSR , Rating Coach</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="systemSource">
+            <ns2:value>BVAE</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="userSARL">
+            <ns2:value>9</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2017-01-31</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2017-01-31</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="Connect VBMS test"/>
+        </ns2:versions>
+      </ns5:result>
+    </findDocumentSeriesReferenceResponse>
+  </env:Body>
+</env:Envelope>
