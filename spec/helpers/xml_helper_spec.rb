@@ -1,7 +1,6 @@
+# frozen_string_literal: true
 describe XMLHelper do
-
   context ".convert_to_hash" do
-
     let(:xml) { "<tag>This is the contents</tag>" }
 
     subject { XMLHelper.convert_to_hash(xml) }
@@ -12,7 +11,6 @@ describe XMLHelper do
   end
 
   context ".find_hash_by_key" do
-
     subject { XMLHelper.find_hash_by_key(metadata, "Bar") }
 
     context "returns hash by key if the key exists" do
@@ -27,7 +25,6 @@ describe XMLHelper do
   end
 
   context ".most_recent_version" do
-
     let(:h1) { { version: { :@major => "45" } } }
     let(:h2) { { version: { :@major => "88" } } }
 
