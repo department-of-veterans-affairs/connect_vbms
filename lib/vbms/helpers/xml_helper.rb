@@ -1,14 +1,14 @@
-require 'nori'
+# frozen_string_literal: true
+require "nori"
 
 module XMLHelper
-
   def self.convert_to_hash(xml)
     parser.parse(xml)
   end
 
   # XML to Hash translator
   def self.parser
-    @parser ||= Nori.new(convert_tags_to: lambda { |tag| tag.snakecase.to_sym },
+    @parser ||= Nori.new(convert_tags_to: ->(tag) { tag.snakecase.to_sym },
                          parser: :nokogiri,
                          strip_namespaces: true)
   end
@@ -17,7 +17,7 @@ module XMLHelper
   # example => [ { :value => "Joe", :@key => "VeteranFirstName" },
   #              { :value => "Snuffy", :@key => "VeteranLastName" },
   #              { :value => false, :@key => "restricted" } ]
-  def self.extract_value(metadata, key)
+  def self.find_hash_by_key(metadata, key)
     metadata.select { |i| i[:@key] == key }[0]
   end
 

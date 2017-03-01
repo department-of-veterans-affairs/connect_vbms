@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 module VBMS
   module Requests
     # This call returns a list of DocumentSeries objects containing the metadata
     # for documents that match search criteria.
-    # It maps to listDocuments in eDocument Service v4 (deprecated)
+    # This service replaces listDocuments in eDocument Service v4, which is deprecated as of March 2017
     class FindDocumentSeriesReference < BaseRequest
       def initialize(file_number)
         @file_number = file_number
@@ -22,7 +23,7 @@ module VBMS
             xml["efol"].criteria do
               xml["v5"].veteran(
                 "fileNumber" => @file_number
-                )
+              )
             end
           end
         end
@@ -38,16 +39,16 @@ module VBMS
         doc.xpath(
           "//efol:findDocumentSeriesReferenceResponse/efol:result", VBMS::XML_NAMESPACES
         ).map do |el|
-          constuct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
+          construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
         end
       end
 
       private
 
-      def constuct_response(result)
+      def construct_response(result)
         version = XMLHelper.most_recent_version(result[:versions])
-        alt_doc_types = XMLHelper.extract_value(version[:metadata], "altDocType")
-        restricted = XMLHelper.extract_value(version[:metadata], "restricted")
+        alt_doc_types = XMLHelper.find_hash_by_key(version[:metadata], "altDocType")
+        restricted = XMLHelper.find_hash_by_key(version[:metadata], "restricted")
         {
           document_id: version[:@document_version_ref_id],
           type_description: version[:type_category][:@type_description_text],

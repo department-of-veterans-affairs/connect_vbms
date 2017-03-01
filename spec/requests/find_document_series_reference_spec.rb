@@ -1,7 +1,7 @@
+# frozen_string_literal: true
 require "spec_helper"
 
 describe VBMS::Requests::FindDocumentSeriesReference do
-
   describe "parsing the XML response" do
     before(:all) do
       request = VBMS::Requests::FindDocumentSeriesReference.new("784449089")
