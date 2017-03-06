@@ -149,6 +149,7 @@ def parsed_timestamp(xml)
   }
 end
 
+# to generate test files, run rake fixtures
 def new_test_client
   VBMS::Client.new(
     base_url: "http://test.endpoint.url/",

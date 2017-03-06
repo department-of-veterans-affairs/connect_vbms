@@ -25,6 +25,8 @@ module VBMS
   XML_NAMESPACES = {
     v4: "http://vbms.vba.va.gov/external/eDocumentService/v4",
     ns2: "http://vbms.vba.va.gov/cdm/document/v4",
+    efol: "http://service.efolder.vbms.vba.va.gov/eFolderReadService",
+    v5: "http://vbms.vba.va.gov/cdm/document/v5",
     soapenv: "http://schemas.xmlsoap.org/soap/envelope/",
     wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
     wsu: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd",
@@ -35,7 +37,12 @@ module VBMS
 
   ENDPOINTS = {
     claims: "/vbmsp2-cs/ClaimServiceV4",
-    efolder: "/vbmsp2-cms/streaming/eDocumentService-v4"
+    efolder: "/vbmsp2-cms/streaming/eDocumentService-v4",
+    efolder_svc_v1: {
+      read: "/vbms-efolder-svc/read-v1/eFolderReadService",
+      upload: "/vbms-efolder-svc/upload-v1/eFolderUploadService",
+      association: "/vbms-efolder-svc/association-v1/eFolderAssociationService"
+    }
   }.freeze
 
   class ClientError < StandardError
