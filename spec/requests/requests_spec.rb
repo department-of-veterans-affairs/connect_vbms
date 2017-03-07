@@ -72,6 +72,23 @@ describe VBMS::Requests do
     end
   end
 
+  describe "GetDocumentContent" do
+    it "executes succesfully when pointed at VBMS" do
+      # Use FindDocumentSeriesReference to find a document to fetch
+      request = VBMS::Requests::FindDocumentSeriesReference.new("784449089")
+      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read]}",
+                            "find_document_series_reference",
+                            "findDocumentSeriesReferenceResponse")
+      result = @client.send_request(request)
+
+      request = VBMS::Requests::GetDocumentContent.new(result[0][:document_id])
+      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read_inline]}",
+                            "get_document_content",
+                            "getDocumentContentResponse")
+      @client.send_request(request)
+    end
+  end
+
   describe "GetDocumentTypes" do
     it "executes succesfully when pointed at VBMS" do
       request = VBMS::Requests::GetDocumentTypes.new

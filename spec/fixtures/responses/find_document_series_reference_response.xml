@@ -284,7 +284,7 @@ YXTTU5Qj4itwph3AWjLS5TNMuXzh2d1QWyhBBg==</ds:SignatureValue>
             <ns2:value>Snuffy</ns2:value>
           </ns2:metadata>
           <ns2:metadata key="restricted">
-            <ns2:value>false</ns2:value>
+            <ns2:value>true</ns2:value>
           </ns2:metadata>
           <ns2:metadata key="altDocType">
             <ns2:value>["Appeals - Notice of Disagreement (NOD)","Appeals - Statement of the Case (SOC)","Appeals - Substantive Appeal to Board of Veterans' Appeals","Appeals - Supplemental Statement of the Case (SSOC)"]</ns2:value>

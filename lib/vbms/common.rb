@@ -40,6 +40,7 @@ module VBMS
     efolder: "/vbmsp2-cms/streaming/eDocumentService-v4",
     efolder_svc_v1: {
       read: "/vbms-efolder-svc/read-v1/eFolderReadService",
+      read_inline: "/vbms-efolder-svc/read-v1/eFolderReadServiceInline",
       upload: "/vbms-efolder-svc/upload-v1/eFolderUploadService",
       association: "/vbms-efolder-svc/association-v1/eFolderAssociationService"
     }
