@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 describe VBMS::Requests::GetDocumentContent do
   describe "soap_doc" do
     subject { VBMS::Requests::GetDocumentContent.new("{CE67177F-F63F-436B-8EC7-376606459FA1}") }
