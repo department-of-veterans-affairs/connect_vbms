@@ -1,7 +1,17 @@
 # frozen_string_literal: true
-require "spec_helper"
-
 describe VBMS::Requests::FindDocumentSeriesReference do
+  describe "soap_doc" do
+    subject {  VBMS::Requests::FindDocumentSeriesReference.new("784449089") }
+
+    it "generates valid SOAP" do
+      xml = subject.soap_doc.to_xml
+      xsd = Nokogiri::XML::Schema(fixture("soap.xsd"))
+      expect(xsd.errors).to eq []
+      errors = xsd.validate(parse_strict(xml))
+      expect(errors).to eq []
+    end
+  end
+
   describe "parsing the XML response" do
     before(:all) do
       request = VBMS::Requests::FindDocumentSeriesReference.new("784449089")
@@ -34,7 +44,7 @@ describe VBMS::Requests::FindDocumentSeriesReference do
       expect(doc2[:type_description]).to eq "Substantive Appeal (In Lieu of VA Form 9)"
       expect(doc2[:type_id]).to eq "857"
       expect(doc2[:source]).to eq "VACOLS"
-      expect(doc2[:restricted]).to eq false
+      expect(doc2[:restricted]).to eq true
       expect(doc2[:va_receive_date]).to eq Date.parse("2014-04-30-04:00")
     end
   end
