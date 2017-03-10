@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-208">
+    <initializeUploadResponse xmlns="http://service.efolder.vbms.vba.va.gov/eFolderUploadService" xmlns:com="http://vbms.vba.va.gov/cdm/common/v4" xmlns:doc="http://vbms.vba.va.gov/cdm/document/v5" xmlns:efc="http://service.efolder.vbms.vba.va.gov/common" xmlns:efu="http://service.efolder.vbms.vba.va.gov/eFolderUploadService" xmlns:part="http://vbms.vba.va.gov/cdm/participant/v4"><uploadToken xmlns="">{1587FC2D-63FA-40EA-8E59-D99FF790395B}</uploadToken></initializeUploadResponse>
+  </env:Body>
+</env:Envelope>

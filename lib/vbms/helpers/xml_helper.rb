@@ -26,4 +26,8 @@ module XMLHelper
   def self.most_recent_version(versions)
     versions.is_a?(Array) ? versions.sort_by { |v| v[:version][:@major].to_i }.last : versions
   end
+
+  def self.remove_namespaces(nodes)
+    nodes.each { |node| node.namespace = nil }
+  end
 end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "spec_helper"
 
 describe VBMS::Requests do
@@ -35,6 +36,35 @@ describe VBMS::Requests do
     end
   end
 
+  describe "UploadDocument" do
+    it "executes succesfully when pointed at VBMS" do
+      file = Tempfile.new(["tmp", ".txt"])
+      file.write("hello world")
+      file.rewind
+      content_hash = Digest::SHA1.hexdigest(file.read)
+      request = VBMS::Requests::InitializeUpload.new(content_hash: content_hash,
+                                                     filename: File.basename(file),
+                                                     file_number: "784449089",
+                                                     va_receive_date: Time.now,
+                                                     doc_type: "356",
+                                                     source: "VHA_CUI")
+
+      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:upload]}",
+                            "initialize_upload",
+                            "initializeUploadResponse")
+      result = @client.send_request(request)
+
+      request = VBMS::Requests::UploadDocument.new(upload_token: result[:upload_token],
+                                                   filepath: file.path)
+      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:upload]}",
+                            "upload_document",
+                            "uploadDocumentResponse")
+      @client.send_request(request)
+      file.close
+      file.unlink
+    end
+  end
+
   describe "ListDocuments" do
     it "executes succesfully when pointed at VBMS" do
       request = VBMS::Requests::ListDocuments.new("784449089")
@@ -51,6 +81,22 @@ describe VBMS::Requests do
       webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read]}",
                             "find_document_series_reference",
                             "findDocumentSeriesReferenceResponse")
+      @client.send_request(request)
+    end
+  end
+
+  describe "InitializeUpload" do
+    it "executes succesfully when pointed at VBMS" do
+      request = VBMS::Requests::InitializeUpload.new(content_hash: "1a1389d7934dc6444ce6471beb9fcf16ff57221f",
+                                                     filename: "test1.pdf",
+                                                     file_number: "784449089",
+                                                     va_receive_date: Time.now,
+                                                     doc_type: "356",
+                                                     source: "Connect VBMS test")
+
+      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:upload]}",
+                            "initialize_upload",
+                            "initializeUploadResponse")
       @client.send_request(request)
     end
   end
