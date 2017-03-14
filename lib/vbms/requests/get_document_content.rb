@@ -17,8 +17,8 @@ module VBMS
 
       def soap_doc
         VBMS::Requests.soap do |xml|
-          xml["efol"].getDocumentContent do
-            xml["efol"].documentVersionRefID @document_id
+          xml["read"].getDocumentContent do
+            xml["read"].documentVersionRefID @document_id
           end
         end
       end
@@ -31,7 +31,7 @@ module VBMS
 
       def handle_response(doc)
         el = doc.at_xpath(
-          "//efol:getDocumentContentResponse/efol:result", VBMS::XML_NAMESPACES
+          "//read:getDocumentContentResponse/read:result", VBMS::XML_NAMESPACES
         )
         construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
       end

@@ -52,6 +52,9 @@ module SoapScum
         verify_header_node(soap_doc)
         add_timestamp_node(soap_doc)
 
+        # Double encryption must not be used on operations uploadDocument and updateDocument.
+        return soap_doc if nodes.empty?
+
         Nokogiri::XML::Builder.with(soap_doc.at("/soap:Envelope/soap:Header/wsse:Security",
                                                 soap: XMLNamespaces::SOAPENV,
                                                 "xmlns:wsse" => XMLNamespaces::WSSE,

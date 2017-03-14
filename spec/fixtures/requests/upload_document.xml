@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-91">
+    <uploadDocumentResponse xmlns="http://service.efolder.vbms.vba.va.gov/eFolderUploadService" xmlns:com="http://vbms.vba.va.gov/cdm/common/v4" xmlns:efc="http://service.efolder.vbms.vba.va.gov/common" xmlns:efu="http://service.efolder.vbms.vba.va.gov/eFolderUploadService" xmlns:part="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:doc="http://vbms.vba.va.gov/cdm/document/v5" newDocumentVersionRefId="{2F1A4BCB-F80F-45BF-82A6-CC9E5DAF3B81}" documentSeriesRefId="{60494099-3440-4624-9BAC-E791589914A0}" mimeType="application/pdf">
+      <veteranReference xmlns="">
+        <doc:id fileNumber="784449089"/>
+      </veteranReference>
+      <typeCategory xmlns="" categoryId="44" categoryDescriptionText="Medical Records" typeId="356" typeDescriptionText="C&amp;P Exam" typeLabelText="L214"/>
+      <vaReceiveDate xmlns="">2017-03-10-05:00</vaReceiveDate>
+      <vbmsUploadDate xmlns="">2017-03-10-05:00</vbmsUploadDate>
+    </uploadDocumentResponse>
+  </env:Body>
+</env:Envelope>

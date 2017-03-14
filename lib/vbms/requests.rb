@@ -4,7 +4,8 @@ module VBMS
       "xmlns:soapenv" => "http://schemas.xmlsoap.org/soap/envelope/",
       "xmlns:v4" => "http://vbms.vba.va.gov/external/eDocumentService/v4",
       "xmlns:doc" => "http://vbms.vba.va.gov/cdm/document/v4",
-      "xmlns:efol" => "http://service.efolder.vbms.vba.va.gov/eFolderReadService",
+      "xmlns:upload" => "http://service.efolder.vbms.vba.va.gov/eFolderUploadService",
+      "xmlns:read" => "http://service.efolder.vbms.vba.va.gov/eFolderReadService",
       "xmlns:v5" => "http://vbms.vba.va.gov/cdm/document/v5",
       "xmlns:cdm" => "http://vbms.vba.va.gov/cdm",
       "xmlns:xop" => "http://www.w3.org/2004/08/xop/include"

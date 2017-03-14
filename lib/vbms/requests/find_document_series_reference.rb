@@ -19,8 +19,8 @@ module VBMS
 
       def soap_doc
         VBMS::Requests.soap do |xml|
-          xml["efol"].findDocumentSeriesReference do
-            xml["efol"].criteria do
+          xml["read"].findDocumentSeriesReference do
+            xml["read"].criteria do
               xml["v5"].veteran(
                 "fileNumber" => @file_number
               )
@@ -37,7 +37,7 @@ module VBMS
 
       def handle_response(doc)
         doc.xpath(
-          "//efol:findDocumentSeriesReferenceResponse/efol:result", VBMS::XML_NAMESPACES
+          "//read:findDocumentSeriesReferenceResponse/read:result", VBMS::XML_NAMESPACES
         ).map do |el|
           construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
         end
