@@ -28,7 +28,7 @@ module VBMS
           end
         end
         # in Nokogiri, children inherit their parents' namespace
-        # eFolder Service Version 1.0 in InitializeUpload, does not expect
+        # eFolder Service Version 1.0 in UploadDocument, does not expect
         # namespaces inside the 'uploadDocument' element
         XMLHelper.remove_namespaces(document.at_xpath("//upload:uploadDocument").children)
         document
