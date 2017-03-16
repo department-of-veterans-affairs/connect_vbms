@@ -3,13 +3,15 @@ module VBMS
   module Requests
     # Call this service with metadata to receive a token used in the second call, uploadDocument
     class InitializeUpload < BaseRequest
-      def initialize(content_hash:, filename:, file_number:, va_receive_date:, doc_type:, source:)
+      def initialize(content_hash:, filename:, file_number:, va_receive_date:, doc_type:, source:, subject:, new_mail:)
         @content_hash = content_hash
         @filename = filename
         @file_number = file_number
         @va_receive_date = va_receive_date
         @doc_type = doc_type
         @source = source
+        @subject = subject
+        @new_mail = new_mail
       end
 
       def name
@@ -35,6 +37,12 @@ module VBMS
             xml.source @source
             xml.vaReceiveDate va_receive_date
             xml.veteranIdentifier(fileNumber: @file_number)
+            xml.versionMetadata(key: "subject") do
+              xml["v5"].value @subject
+            end
+            xml.versionMetadata(key: "newMail") do
+              xml["v5"].value @new_mail
+            end
           end
         end
         # in Nokogiri, children inherit their parents' namespace
