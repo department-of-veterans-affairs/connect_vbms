@@ -47,7 +47,9 @@ describe VBMS::Requests do
                                                      file_number: "784449089",
                                                      va_receive_date: Time.now,
                                                      doc_type: "356",
-                                                     source: "VHA_CUI")
+                                                     source: "VHA_CUI",
+                                                     subject: "knee",
+                                                     new_mail: true)
 
       webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:upload]}",
                             "initialize_upload",
@@ -92,7 +94,9 @@ describe VBMS::Requests do
                                                      file_number: "784449089",
                                                      va_receive_date: Time.now,
                                                      doc_type: "356",
-                                                     source: "Connect VBMS test")
+                                                     source: "Connect VBMS test",
+                                                     subject: "knee",
+                                                     new_mail: true)
 
       webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:upload]}",
                             "initialize_upload",

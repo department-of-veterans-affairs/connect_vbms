@@ -34,6 +34,7 @@ describe VBMS::Requests::FindDocumentSeriesReference do
       expect(doc1[:type_description]).to eq "C&#38;P Exam"
       expect(doc1[:type_id]).to eq "356"
       expect(doc1[:source]).to eq "VHA_CUI"
+      expect(doc1[:subject]).to eq "Knee"
       expect(doc1[:restricted]).to eq false
       expect(doc1[:received_at]).to eq Date.parse("2014-11-16-04:00")
 
