@@ -49,16 +49,29 @@ module VBMS
         version = XMLHelper.most_recent_version(result[:versions])
         alt_doc_types = XMLHelper.find_hash_by_key(version[:metadata], "altDocType")
         restricted = XMLHelper.find_hash_by_key(version[:metadata], "restricted")
-        {
+        OpenStruct.new(
           document_id: version[:@document_version_ref_id],
-          type_description: version[:type_category][:@type_description_text],
-          type_id: version[:type_category][:@type_id],
-          va_receive_date: version[:va_receive_date],
-          source: version[:source][:@source_name],
+          type_description: type_description(version),
+          type_id: type_id(version),
+          doc_type: type_id(version),
+          received_at: version[:va_receive_date],
+          source: source(version),
           mime_type: version[:@mime_type],
           alt_doc_types: alt_doc_types.present? ? JSON.parse(alt_doc_types[:value]) : nil,
           restricted: restricted.present? ? restricted[:value] : nil
-        }
+        )
+      end
+
+      def type_description(version)
+        version[:type_category].present? ? version[:type_category][:@type_description_text] : nil
+      end
+
+      def type_id(version)
+        version[:type_category].present? ? version[:type_category][:@type_id] : nil
+      end
+
+      def source(version)
+        version[:source].present? ? version[:source][:@source_name] : nil
       end
     end
   end

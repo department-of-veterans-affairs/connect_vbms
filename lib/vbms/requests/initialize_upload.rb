@@ -52,7 +52,7 @@ module VBMS
 
       def handle_response(doc)
         el = doc.at_xpath("//upload:initializeUploadResponse", VBMS::XML_NAMESPACES).to_xml
-        { upload_token: XMLHelper.convert_to_hash(el)[:initialize_upload_response][:upload_token] }
+        OpenStruct.new(upload_token: XMLHelper.convert_to_hash(el)[:initialize_upload_response][:upload_token])
       end
     end
   end

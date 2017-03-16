@@ -54,7 +54,7 @@ module VBMS
     attr_reader :code, :body
 
     def initialize(code, body)
-      super("status_code=#{code}, body=#{body[0..250]}...")
+      super("status_code=#{code}, body=#{body}")
       @code = code
       @body = body
     end
