@@ -54,6 +54,7 @@ module VBMS
           type_description: type_description(version),
           type_id: type_id(version),
           doc_type: type_id(version),
+          subject: version[:@subject],
           received_at: version[:va_receive_date],
           source: source(version),
           mime_type: version[:@mime_type],
