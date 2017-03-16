@@ -71,7 +71,7 @@ module VBMS
       end
 
       def source(version)
-         version[:source].present? ? version[:source][:@source_name] : nil
+        version[:source].present? ? version[:source][:@source_name] : nil
       end
     end
   end
