@@ -45,26 +45,34 @@ module VBMS
 
       private
 
-      # rubocop:disable Metrics/CyclomaticComplexity
       def construct_response(result)
         version = XMLHelper.most_recent_version(result[:versions])
         alt_doc_types = XMLHelper.find_hash_by_key(version[:metadata], "altDocType")
         restricted = XMLHelper.find_hash_by_key(version[:metadata], "restricted")
-        type_category = version[:type_category]
-        source = version[:source]
         OpenStruct.new(
           document_id: version[:@document_version_ref_id],
-          type_description: type_category.present? ? type_category[:@type_description_text] : nil,
-          type_id: type_category.present? ? type_category[:@type_id] : nil,
-          doc_type: type_category.present? ? type_category[:@type_id] : nil,
+          type_description: type_description(version),
+          type_id: type_id(version),
+          doc_type: type_id(version),
           received_at: version[:va_receive_date],
-          source: source.present? ? source[:@source_name] : nil,
+          source: source(version),
           mime_type: version[:@mime_type],
           alt_doc_types: alt_doc_types.present? ? JSON.parse(alt_doc_types[:value]) : nil,
           restricted: restricted.present? ? restricted[:value] : nil
         )
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
+
+      def type_description(version)
+        version[:type_category].present? ? version[:type_category][:@type_description_text] : nil
+      end
+
+      def type_id(version)
+        version[:type_category].present? ? version[:type_category][:@type_id] : nil
+      end
+
+      def source(version)
+         version[:source].present? ? version[:source][:@source_name] : nil
+      end
     end
   end
 end

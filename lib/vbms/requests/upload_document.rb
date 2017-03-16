@@ -50,7 +50,7 @@ module VBMS
 
       def handle_response(doc)
         el = doc.xpath("//upload:uploadDocumentResponse", VBMS::XML_NAMESPACES).to_xml
-        XMLHelper.convert_to_hash(el)
+        OpenStruct.new(XMLHelper.convert_to_hash(el))
       end
     end
   end
