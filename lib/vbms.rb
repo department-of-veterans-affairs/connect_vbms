@@ -38,6 +38,7 @@ require "vbms/requests/initialize_upload"
 require "vbms/requests/upload_document"
 
 require "vbms/helpers/xml_helper"
+require "vbms/helpers/multipart_parser"
 
 # require 'xmldsig'
 require "xmldsig/signature_override"

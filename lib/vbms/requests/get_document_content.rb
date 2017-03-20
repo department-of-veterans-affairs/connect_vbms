@@ -12,7 +12,7 @@ module VBMS
       end
 
       def endpoint_url(base_url)
-        "#{base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read_inline]}"
+        "#{base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read]}"
       end
 
       def soap_doc
@@ -36,12 +36,20 @@ module VBMS
         construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
       end
 
+      def mime_attachment?
+        true
+      end
+
+      def attachment=(content)
+        @attachment = content
+      end
+
       private
 
       def construct_response(result)
         OpenStruct.new(
           document_id: result[:@document_version_reference_id],
-          content: Base64.decode64(result[:bytes])
+          content: @attachment
         )
       end
     end

@@ -6,6 +6,10 @@ module VBMS
         false
       end
 
+      def mime_attachment?
+        false
+      end
+
       def inject_header_content(xml)
         xml
       end

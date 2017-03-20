@@ -183,43 +183,10 @@ module VBMS
                    soapenv: "http://schemas.xmlsoap.org/soap/envelope/")
     end
 
-    def multipart_boundary(headers)
-      return nil unless headers.key?("Content-Type")
-      Mail::Field.new("Content-Type", headers["Content-Type"]).parameters["boundary"]
-    end
-
-    def multipart_sections(response)
-      boundary = multipart_boundary(response.headers)
-      return if boundary.nil?
-      Mail::Part.new(
-        headers: response.headers,
-        body: response.body
-      ).body.split!(boundary).parts
-    end
-
-    def multipart?(response)
-      !(response.headers["Content-Type"] =~ /^multipart/im).nil?
-    end
-
-    def get_body(response)
-      if multipart?(response)
-        parts = multipart_sections(response)
-        unless parts.nil?
-          # might consider looking for application/xml+xop payload in there
-          return parts.first.body.to_s
-        end
-      end
-
-      # otherwise just return the body
-      response.body
-    end
-
     def process_response(request, response)
-      body = get_body(response)
+      parser = MultipartParser.new(response)
 
-      # we could check the response content-type to make sure it's XML, but they don't seem
-      # to send any HTTP headers back, so we'll instead rely on strict XML parsing instead
-      doc = parse_xml_strictly(body)
+      doc = parse_xml_strictly(parser.xml_content)
       check_soap_errors(doc, response)
 
       data = SoapScum::WSSecurity.decrypt(doc.to_xml)
@@ -227,6 +194,9 @@ module VBMS
       log(:decrypted_message, decrypted_data: data, request: request)
 
       doc = parse_xml_strictly(data)
+      # grab MTOM file attachment if it exists in the response
+      request.attachment=(parser.attachment_content) if request.mime_attachment?
+
       request.handle_response(doc)
     end
 
