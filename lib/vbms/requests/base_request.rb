@@ -6,7 +6,7 @@ module VBMS
         false
       end
 
-      def mime_attachment?
+      def has_mtom_attachment?
         false
       end
 

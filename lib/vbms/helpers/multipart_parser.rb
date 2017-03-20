@@ -9,7 +9,7 @@ class MultipartParser
     parts.select { |part| part.header =~ /xml/ }[0].try(:body)
   end
 
-  def attachment_content
+  def mtom_content
     parts.select { |part| part.header =~ /attachment/ }[0].try(:body)
   end
 

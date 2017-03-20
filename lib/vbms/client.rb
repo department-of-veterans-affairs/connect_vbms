@@ -185,17 +185,15 @@ module VBMS
 
     def process_response(request, response)
       parser = MultipartParser.new(response)
-
       doc = parse_xml_strictly(parser.xml_content)
       check_soap_errors(doc, response)
-
       data = SoapScum::WSSecurity.decrypt(doc.to_xml)
 
       log(:decrypted_message, decrypted_data: data, request: request)
 
       doc = parse_xml_strictly(data)
-      # grab MTOM file attachment if it exists in the response
-      request.attachment=(parser.attachment_content) if request.mime_attachment?
+
+      request.mtom_attachment=(parser.mtom_content) if request.has_mtom_attachment?
 
       request.handle_response(doc)
     end
