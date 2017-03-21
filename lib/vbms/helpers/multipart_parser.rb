@@ -1,5 +1,5 @@
+# frozen_string_literal: true
 class MultipartParser
-
   def initialize(response)
     @response = response
   end
@@ -21,11 +21,13 @@ class MultipartParser
 
   def parts
     parts = split_based_on_boundary
-    # each part will contain a header info and a body which is separated by r\n\r\n
-    parts.map { |part|
-      doc_parts = part.split(/\r\n\r\n/)
-      OpenStruct.new(header: doc_parts[0], body: doc_parts[1])
-    }
+    parts.map do |part|
+      # the header and the body is always separated by r\n\r\n
+      header = part.split(/\r\n\r\n/)[0]
+      # remove the header from the part
+      part.slice!(header + "\r\n\r\n")
+      OpenStruct.new(header: header, body: part)
+    end
   end
 
   def find_boundary

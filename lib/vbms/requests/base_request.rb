@@ -6,7 +6,7 @@ module VBMS
         false
       end
 
-      def has_mtom_attachment?
+      def mtom_attachment?
         false
       end
 

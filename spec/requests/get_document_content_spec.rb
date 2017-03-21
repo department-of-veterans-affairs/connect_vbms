@@ -15,7 +15,7 @@ describe VBMS::Requests::GetDocumentContent do
   describe "parsing the XML" do
     before(:all) do
       request = VBMS::Requests::GetDocumentContent.new("{CE67177F-F63F-436B-8EC7-376606459FA1}")
-      request.mtom_attachment=("text")
+      request.mtom_attachment = "text"
       xml = fixture("responses/get_document_content_response.xml")
       doc = parse_strict(xml)
       @response = request.handle_response(doc)

@@ -1,4 +1,5 @@
 # encoding: utf-8
+# frozen_string_literal: true
 require "simplecov"
 SimpleCov.start do
 end
@@ -61,7 +62,7 @@ def encrypted_xml_file(response_path, keyfile, request_name)
   output, errors, status = Open3.capture3(*args)
 
   if status != 0
-    fail VBMS::ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors)
+    raise VBMS::ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors)
   end
 
   output
@@ -96,7 +97,7 @@ def java_decrypt_file(infile,
     raise VBMS::ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
   end
 
-  fail VBMS::ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
+  raise VBMS::ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
 
   output
 end

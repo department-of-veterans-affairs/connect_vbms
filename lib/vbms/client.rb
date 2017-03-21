@@ -193,7 +193,7 @@ module VBMS
 
       doc = parse_xml_strictly(data)
 
-      request.mtom_attachment=(parser.mtom_content) if request.has_mtom_attachment?
+      request.mtom_attachment = parser.mtom_content if request.mtom_attachment?
 
       request.handle_response(doc)
     end
