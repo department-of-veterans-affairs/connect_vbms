@@ -94,7 +94,7 @@ def java_decrypt_file(infile,
     output, errors, status = Open3.capture3(*args)
   rescue TypeError
     # sometimes one of the Open3 return values is a nil and it complains about coercion
-    fail VBMS::ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
+    raise VBMS::ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
   end
 
   fail VBMS::ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
