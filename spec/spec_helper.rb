@@ -62,7 +62,7 @@ def encrypted_xml_file(response_path, keyfile, request_name)
   output, errors, status = Open3.capture3(*args)
 
   if status != 0
-    raise VBMS::ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors)
+    fail VBMS::ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors)
   end
 
   output
@@ -94,10 +94,10 @@ def java_decrypt_file(infile,
     output, errors, status = Open3.capture3(*args)
   rescue TypeError
     # sometimes one of the Open3 return values is a nil and it complains about coercion
-    raise VBMS::ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
+    fail VBMS::ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
   end
 
-  raise VBMS::ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
+  fail VBMS::ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
 
   output
 end

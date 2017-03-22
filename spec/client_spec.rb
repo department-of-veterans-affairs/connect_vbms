@@ -78,7 +78,7 @@ describe VBMS::Client do
   describe "process_response" do
     let(:request) { double("request", mtom_attachment?: false) }
     let(:response_body) { "" }
-    let(:response) { double("response", body: response_body, headers: { "Content-Type" => "text/xml" } ) }
+    let(:response) { double("response", body: response_body, headers: { "Content-Type" => "text/xml" }) }
 
     subject { @client.process_response(request, response) }
 
