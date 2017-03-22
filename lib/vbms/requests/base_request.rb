@@ -6,6 +6,10 @@ module VBMS
         false
       end
 
+      def mtom_attachment?
+        false
+      end
+
       def inject_header_content(xml)
         xml
       end

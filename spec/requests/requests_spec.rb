@@ -132,7 +132,7 @@ describe VBMS::Requests do
       result = @client.send_request(request)
 
       request = VBMS::Requests::GetDocumentContent.new(result[0][:document_id])
-      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read_inline]}",
+      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read]}",
                             "get_document_content",
                             "getDocumentContentResponse")
       @client.send_request(request)

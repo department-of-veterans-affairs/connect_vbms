@@ -1,8 +1,11 @@
+# frozen_string_literal: true
 module VBMS
   module Requests
     # This call gets the binary document content for a specific Document Version
     # This service replaces FetchDocumentById in eDocument Service v4, which is deprecated as of March 2017
     class GetDocumentContent < BaseRequest
+      attr_accessor :mtom_attachment
+
       def initialize(document_id)
         @document_id = document_id
       end
@@ -12,7 +15,7 @@ module VBMS
       end
 
       def endpoint_url(base_url)
-        "#{base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read_inline]}"
+        "#{base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read]}"
       end
 
       def soap_doc
@@ -36,12 +39,16 @@ module VBMS
         construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
       end
 
+      def mtom_attachment?
+        true
+      end
+
       private
 
       def construct_response(result)
         OpenStruct.new(
           document_id: result[:@document_version_reference_id],
-          content: Base64.decode64(result[:bytes])
+          content: mtom_attachment
         )
       end
     end
