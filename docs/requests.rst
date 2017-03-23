@@ -64,7 +64,7 @@ Result
 
 A ``OpenStruct`` object:
 
-* ``upload_token`` (``String``): upload token used in the second call``UploadDocument``.
+* ``upload_token`` (``String``): upload token used in the second call ``UploadDocument``.
 
 
 ``UploadDocument``
