@@ -87,6 +87,17 @@ describe VBMS::Requests do
     end
   end
 
+  describe "ListTypeCategory" do
+    it "executes succesfully when pointed at VBMS" do
+      request = VBMS::Requests::ListTypeCategory.new
+
+      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read]}",
+                            "list_type_category",
+                            "listTypeCategoryResponse")
+      @client.send_request(request)
+    end
+  end
+
   describe "InitializeUpload" do
     it "executes succesfully when pointed at VBMS" do
       request = VBMS::Requests::InitializeUpload.new(content_hash: "1a1389d7934dc6444ce6471beb9fcf16ff57221f",
