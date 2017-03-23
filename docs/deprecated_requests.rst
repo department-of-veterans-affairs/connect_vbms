@@ -1,6 +1,3 @@
-eDocument Service v4 is deprecated as of March 2017
----------------------------------------------------
-
 eDocument Service Version 4 API Requests
 ========================================
 

@@ -27,7 +27,7 @@ Attributes
 * ``subject`` (``String``): subject of the document.
 * ``source`` (``String``): where this document came from.
 * ``mime_type`` (``String``): the MIME type of the document.
-* ``received_at`` (``Date```): when the VA received this document.
+* ``received_at`` (``Date``): when the VA received this document.
 * ``restricted`` (``Boolean``): whether the document is restricted or not.
 
 
@@ -56,8 +56,8 @@ A ``OpenStruct`` object.
 .. code-block:: ruby
 
     VBMS::Requests::InitializeUpload.new(
-    '<content_hash>', '<filename>', '<file_number>', '<va_receive_date>',
-    '<doc_type>', '<source>', '<subject>', '<new_mail>'
+      '<content_hash>', '<filename>', '<file_number>', '<va_receive_date>',
+      '<doc_type>', '<source>', '<subject>', '<new_mail>'
     )
 
 ``InitializeUpload`` sends document metadata and gets a token used in the second call ``UploadDocument``
@@ -75,8 +75,7 @@ A ``OpenStruct`` object.
 
 .. code-block:: ruby
 
-    VBMS::Requests::UploadDocument.new(
-    '<upload_token>', '<filepath>')
+    VBMS::Requests::UploadDocument.new('<upload_token>', '<filepath>')
 
 ``UploadDocument`` creates a new file in the Veteran's eFolder.
 
