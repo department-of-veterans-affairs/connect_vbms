@@ -16,10 +16,7 @@ file.
 Result
 ~~~~~~
 
-An ``Array`` of ``OpenStruct`` objects.
-
-Attributes
-~~~~~~~~~~
+An ``Array`` of ``OpenStruct`` objects:
 
 * ``document_id`` (``String``): a  unique identifier for the document.
 * ``type_id`` (``String``): the id for this document type.
@@ -44,7 +41,7 @@ identifier.
 Result
 ~~~~~~
 
-A ``OpenStruct`` object.
+A ``OpenStruct`` object:
 
 * ``document_id`` (``String``): a  unique identifier for the document.
 * ``content`` (``String``): content of the document.
@@ -65,7 +62,7 @@ A ``OpenStruct`` object.
 Result
 ~~~~~~
 
-A ``OpenStruct`` object.
+A ``OpenStruct`` object:
 
 * ``upload_token`` (``String``): upload token used in the second call``UploadDocument``.
 
@@ -78,4 +75,24 @@ A ``OpenStruct`` object.
     VBMS::Requests::UploadDocument.new('<upload_token>', '<filepath>')
 
 ``UploadDocument`` creates a new file in the Veteran's eFolder.
+
+
+``ListTypeCategory``
+--------------------
+
+.. code-block:: ruby
+
+    VBMS::Requests::ListTypeCategory.new()
+
+``ListTypeCategory`` gets an ``Array`` of all the document types that VBMS
+supports.
+
+Result
+~~~~~~
+
+An ``OpenStruct`` object:
+
+* ``type_id`` (``String``): document type id.
+* ``description`` (``String``): description of the document type.
+
 

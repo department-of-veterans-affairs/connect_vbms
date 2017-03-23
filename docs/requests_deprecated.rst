@@ -1,5 +1,5 @@
-eDocument Service Version 4 API Requests
-========================================
+eDocument Service Version 4 API Requests (Deprecated as of March 2017)
+======================================================================
 
 This is a list of the requests that Connect VBMS supports.
 
