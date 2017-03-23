@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-1376">
+    <listTypeCategoryResponse xmlns="http://service.efolder.vbms.vba.va.gov/eFolderReadService" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns2="http://vbms.vba.va.gov/cdm/document/v5" xmlns:ns3="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:ns5="http://service.efolder.vbms.vba.va.gov/eFolderReadService">
+      <ns5:result categoryDescriptionText="Service Personnel Records" categoryId="35" typeDescriptionText="099 request code Camp Lejeune" typeId="708" typeLabelText="L708"/>
+      <ns5:result categoryDescriptionText="Financial Actions" categoryId="22" typeDescriptionText="30 Day Notice of Indebtedness for Fiduciary Debts" typeId="837" typeLabelText="L837"/>
+      <ns5:result categoryDescriptionText="Correspondence" categoryId="68" subCategoryText="Development Letters " typeDescriptionText="5103 / DTA Letter" typeId="706" typeLabelText="L706"/>
+      <ns5:result categoryDescriptionText="Checklist" categoryId="123" typeDescriptionText="5103 Checklist for Development" typeId="707" typeLabelText="L707"/>
+    </listTypeCategoryResponse>
+  </env:Body>
+</env:Envelope>

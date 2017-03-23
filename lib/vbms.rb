@@ -36,6 +36,7 @@ require "vbms/requests/find_document_series_reference"
 require "vbms/requests/get_document_content"
 require "vbms/requests/initialize_upload"
 require "vbms/requests/upload_document"
+require "vbms/requests/list_type_category"
 
 require "vbms/helpers/xml_helper"
 require "vbms/helpers/multipart_parser"
