@@ -83,7 +83,7 @@ module VBMS
       )
 
       if response.code != 200
-        fail VBMS::HTTPError.new(response.code, response.body)
+        fail VBMS::HTTPError.new(response.code, response.body, request)
       end
 
       process_response(request, response)
