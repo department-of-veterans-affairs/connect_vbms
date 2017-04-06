@@ -51,9 +51,9 @@ module VBMS
   end
 
   class HTTPError < ClientError
-    attr_reader :code, :body
+    attr_reader :code, :body, :request
 
-    def initialize(code, body, request)
+    def initialize(code, body, request = nil)
       super("status_code=#{code}, body=#{body}, request=#{request.inspect}")
       @code = code
       @body = body
