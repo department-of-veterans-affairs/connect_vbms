@@ -24,10 +24,14 @@ module XMLHelper
   # when Nori (XML parser) parses the versions in XML document, if it finds multiple versions
   # it creates an array of hashes; if it finds a single version, it creates a hash
   def self.most_recent_version(versions)
-    versions.is_a?(Array) ? versions.sort_by { |v| v[:version][:@major].to_i }.last : versions
+    versions.is_a?(Array) ? sort_versions(versions) : versions
   end
 
   def self.remove_namespaces(nodes)
     nodes.each { |node| node.namespace = nil }
+  end
+
+  def self.sort_versions(versions)
+    versions.sort_by { |v| v[:version].try(:[], :@major).to_i }.last
   end
 end

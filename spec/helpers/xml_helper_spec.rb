@@ -27,6 +27,7 @@ describe XMLHelper do
   context ".most_recent_version" do
     let(:h1) { { version: { :@major => "45" } } }
     let(:h2) { { version: { :@major => "88" } } }
+    let(:h3) { { version: nil } }
 
     subject { XMLHelper.most_recent_version(versions) }
 
@@ -38,6 +39,11 @@ describe XMLHelper do
     context "when versions is a hash" do
       let(:versions) { h1 }
       it { is_expected.to eq(version: { :@major => "45" }) }
+    end
+
+    context "when version is nil" do
+      let(:versions) { [h1, h3, h2] }
+      it { is_expected.to eq(version: { :@major => "88" }) }
     end
   end
 end
