@@ -10,8 +10,8 @@ module VBMS
 
       def self.create_from_xml(el)
         document = Document.create_from_xml(el.at_xpath("//v4:document", VBMS::XML_NAMESPACES))
-        content = el.at_xpath("//v4:content/ns2:data/text()", VBMS::XML_NAMESPACES).content
-        content = Base64.decode64(content)
+        content = el.at_xpath("//v4:content/ns2:data/text()", VBMS::XML_NAMESPACES).try(:content)
+        content = Base64.decode64(content) if content
 
         new(document: document, content: content)
       end
