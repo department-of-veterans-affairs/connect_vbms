@@ -1,22 +1,28 @@
 require "spec_helper"
 
 describe VBMS::Responses::DocumentWithContent do
-  describe "create_from_xml" do
-    let(:xml) { Nokogiri::XML(File.open(fixture_path("requests/fetch_document.xml"))) }
+  context "create_from_xml" do
     let(:doc) { xml.at_xpath("//v4:result", VBMS::XML_NAMESPACES) }
 
     subject { VBMS::Responses::DocumentWithContent.create_from_xml(doc) }
 
-    specify { expect(subject.document).to be_a(VBMS::Responses::Document) }
-    specify { expect(subject.content).to be_a(String) }
+    context "the associated document" do
+      let(:xml) { Nokogiri::XML(File.open(fixture_path("requests/fetch_document.xml"))) }
+      it { expect(subject.document).to be_a(VBMS::Responses::Document) }
+      it { expect(subject.content).to be_a(String) }
+      it { expect(subject.document.document_id).to eq("{9E364101-AFDD-49A7-A11F-602CCF2E5DB5}") }
+      it { expect(subject.document.filename).to eq("tmp20150506-94244-6zotzp") }
+      it { expect(subject.document.doc_type).to eq("356") }
+      it { expect(subject.document.source).to eq("VHA_CUI") }
+      it { expect(subject.document.mime_type).to eq("text/plain") }
+      it { expect(subject.document.received_at).to eq(Date.parse("2015-05-06")) }
+    end
 
-    describe "the associated document" do
-      specify { expect(subject.document.document_id).to eq("{9E364101-AFDD-49A7-A11F-602CCF2E5DB5}") }
-      specify { expect(subject.document.filename).to eq("tmp20150506-94244-6zotzp") }
-      specify { expect(subject.document.doc_type).to eq("356") }
-      specify { expect(subject.document.source).to eq("VHA_CUI") }
-      specify { expect(subject.document.mime_type).to eq("text/plain") }
-      specify { expect(subject.document.received_at).to eq(Date.parse("2015-05-06")) }
+    context "when content is empty" do
+      let(:xml) { Nokogiri::XML(File.open(fixture_path("requests/fetch_document_with_nil_content.xml"))) }
+      it { expect(subject.document).to be_a(VBMS::Responses::Document) }
+      it { expect(subject.content).to be nil }
+      it { expect(subject.document.document_id).to eq("{9E364101-AFDD-49A7-A11F-602CCF2E5DB5}") }
     end
   end
 
