@@ -26,10 +26,6 @@ module VBMS
         end
       end
 
-      def international?(veteran_record)
-        veteran_record[:country] != "USA"
-      end
-
       # More information on what the fields mean, see:
       # https://github.com/department-of-veterans-affairs/dsva-vbms/issues/66#issuecomment-266098034
       def soap_doc
@@ -54,7 +50,7 @@ module VBMS
                   "countryCode" => @veteran_record[:country],
                   "postalCode" => @veteran_record[:zip_code],
                   "preferredAddr" => "true",
-                  "type" => international?(@veteran_record) ? "INT" : ""
+                  "type" => @veteran_record[:address_type]
                 )
               end
             end
