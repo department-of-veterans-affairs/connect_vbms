@@ -13,11 +13,17 @@ module XMLHelper
                          strip_namespaces: true)
   end
 
-  # metadata is an array of hashes
+  # metadata can be an array of hashes
   # example => [ { :value => "Joe", :@key => "VeteranFirstName" },
   #              { :value => "Snuffy", :@key => "VeteranLastName" },
   #              { :value => false, :@key => "restricted" } ]
+  #
+  # OR
+  #
+  # metadata can be a hash
+  # example => { :value => "Joe", :@key => "VeteranFirstName" }
   def self.find_hash_by_key(metadata, key)
+    metadata = [metadata] if metadata.is_a?(Hash)
     metadata.select { |i| i[:@key] == key }[0]
   end
 
