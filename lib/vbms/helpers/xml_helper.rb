@@ -23,8 +23,7 @@ module XMLHelper
   # metadata can be a hash
   # example => { :value => "Joe", :@key => "VeteranFirstName" }
   def self.find_hash_by_key(metadata, key)
-    metadata = [metadata] if metadata.is_a?(Hash)
-    metadata.select { |i| i[:@key] == key }[0]
+    [metadata].flatten.select { |i| i[:@key] == key }[0]
   end
 
   # when Nori (XML parser) parses the versions in XML document, if it finds multiple versions
