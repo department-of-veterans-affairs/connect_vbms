@@ -47,6 +47,10 @@ describe VBMS::Requests::FindDocumentSeriesReference do
       expect(doc2[:source]).to eq "VACOLS"
       expect(doc2[:restricted]).to eq true
       expect(doc2[:received_at]).to eq Date.parse("2014-04-30-04:00")
+
+      doc3 = subject.fourth
+      expect(doc3[:document_id]).to eq "{00E04F55-0000-C182-A5AC-FD645B3C9315}"
+      expect(doc3[:restricted]).to eq false
     end
   end
 end

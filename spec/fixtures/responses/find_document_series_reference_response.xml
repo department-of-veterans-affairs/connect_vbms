@@ -320,15 +320,6 @@ YXTTU5Qj4itwph3AWjLS5TNMuXzh2d1QWyhBBg==</ds:SignatureValue>
         </ns2:versions>
         <ns2:versions documentSeriesRefId="{00E04F55-0000-C219-A0E1-0EEDAD1D6B32}" documentVersionRefId="{00E04F55-0000-C182-A5AC-FD645B3C9315}" mimeType="text/plain" previousVersionId="{C7A6DA43-A368-4831-A68B-D32F0C164C22}" subject="knee">
           <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
-          <ns2:metadata key="VeteranFirstName">
-            <ns2:value>Jane</ns2:value>
-          </ns2:metadata>
-          <ns2:metadata key="VeteranMiddleName">
-            <ns2:value>Q</ns2:value>
-          </ns2:metadata>
-          <ns2:metadata key="VeteranLastName">
-            <ns2:value>Citizen</ns2:value>
-          </ns2:metadata>
           <ns2:metadata key="restricted">
             <ns2:value>false</ns2:value>
           </ns2:metadata>
