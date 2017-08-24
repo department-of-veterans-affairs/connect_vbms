@@ -86,7 +86,7 @@ module VBMS
       rescue HTTPI::SSLError
         # If we get an SSL error from VBMS, we will
         # retry the request one time
-        retry if retries.zero?
+        retry if (retries += 1) <= 1
       end
 
       if response.code != 200
