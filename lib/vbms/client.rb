@@ -171,9 +171,9 @@ module VBMS
           nil,
           Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET
         )
-      rescue Nokogiri::XML::SyntaxError
-        error = SOAPError.new("Unable to parse SOAP message")
-        error.set_backtrace(caller)
+      rescue Nokogiri::XML::SyntaxError => e
+        error = SOAPError.new("Unable to parse SOAP message: #{e.message}", xml_string)
+        error.set_backtrace(e.backtrace)
         raise error
       end
       xml
