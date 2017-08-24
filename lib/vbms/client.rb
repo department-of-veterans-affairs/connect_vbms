@@ -72,15 +72,22 @@ module VBMS
         body, "Content-Type" => content_type(request))
 
       HTTPI.log = false
-      response = HTTPI.post(http_request)
 
-      log(
-        :request,
-        response_code: response.code,
-        request_body: serialized_doc.to_s,
-        response_body: response.body,
-        request: request
-      )
+      begin
+        retries ||= 0
+        response = HTTPI.post(http_request)
+        log(
+          :request,
+          response_code: response.code,
+          request_body: serialized_doc.to_s,
+          response_body: response.body,
+          request: request
+        )
+      rescue HTTPI::SSLError
+        # If we get an SSL error from VBMS, we will
+        # retry the request one time
+        retry if (retries += 1) <= 1
+      end
 
       if response.code != 200
         fail VBMS::HTTPError.new(response.code, response.body, request)
@@ -164,8 +171,10 @@ module VBMS
           nil,
           Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NONET
         )
-      rescue Nokogiri::XML::SyntaxError
-        raise SOAPError.new("Unable to parse SOAP message", xml_string)
+      rescue Nokogiri::XML::SyntaxError => e
+        error = SOAPError.new("Unable to parse SOAP message: #{e.message}", xml_string)
+        error.set_backtrace(e.backtrace)
+        raise error
       end
       xml
     end
