@@ -39,25 +39,25 @@ module VBMS
         doc.xpath(
           "//read:findDocumentSeriesReferenceResponse/read:result", VBMS::XML_NAMESPACES
         ).map do |el|
-          construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
+          result = XMLHelper.convert_to_hash(el.to_xml)[:result]
+          construct_response(XMLHelper.most_recent_version(result[:versions]))
         end
       end
 
       private
 
       def construct_response(result)
-        version = XMLHelper.most_recent_version(result[:versions])
-        alt_doc_types = XMLHelper.find_hash_by_key(version[:metadata], "altDocType")
-        restricted = XMLHelper.find_hash_by_key(version[:metadata], "restricted")
+        alt_doc_types = XMLHelper.find_hash_by_key(result[:metadata], "altDocType")
+        restricted = XMLHelper.find_hash_by_key(result[:metadata], "restricted")
         OpenStruct.new(
-          document_id: version[:@document_version_ref_id],
-          type_description: type_description(version),
-          type_id: type_id(version),
-          doc_type: type_id(version),
-          subject: version[:@subject],
-          received_at: version[:va_receive_date],
-          source: source(version),
-          mime_type: version[:@mime_type],
+          document_id: result[:@document_version_ref_id],
+          type_description: type_description(result),
+          type_id: type_id(result),
+          doc_type: type_id(result),
+          subject: result[:@subject],
+          received_at: result[:va_receive_date],
+          source: source(result),
+          mime_type: result[:@mime_type],
           alt_doc_types: alt_doc_types.present? ? JSON.parse(alt_doc_types[:value]) : nil,
           restricted: restricted.present? ? restricted[:value] : nil
         )
