@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module VBMS
   module Requests
     # This call returns a list of document version references matching the search criteria.
@@ -30,4 +31,3 @@ module VBMS
     end
   end
 end
-
