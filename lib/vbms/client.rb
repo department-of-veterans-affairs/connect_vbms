@@ -8,7 +8,8 @@ module VBMS
                    server_cert:,
                    ca_cert: nil,
                    saml:,
-                   logger: nil)
+                   logger: nil,
+                   proxy_adddress: nil)
 
       @base_url = base_url
       @keyfile = client_keyfile
@@ -17,6 +18,8 @@ module VBMS
       @cacert = ca_cert
       @server_key = server_cert
       @logger = logger
+      @proxy_address = proxy_adddress
+      @use_proxy = use_proxy
 
       SoapScum::WSSecurity.configure(
         client_keyfile: client_keyfile,
@@ -25,7 +28,7 @@ module VBMS
       )
     end
 
-    def self.from_env_vars(logger: nil, env_name: "test")
+    def self.from_env_vars(logger: nil, env_name: "test", use_proxy: false)
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
       VBMS::Client.new(
@@ -35,11 +38,13 @@ module VBMS
         server_cert: env_path(env_dir, "CONNECT_VBMS_SERVER_CERT", allow_empty: true),
         ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
         saml: env_path(env_dir, "CONNECT_VBMS_SAML"),
+        use_proxy: use_proxy,
+        proxy_adddress: get_env("CONNECT_VBMS_KEYPASS")
         logger: logger
       )
     end
 
-    def self.get_env(env_var_name, allow_empty: false)
+      def self.get_env(env_var_name, allow_empty: false)
       value = ENV[env_var_name]
       if !allow_empty && (value.nil? || value.empty?)
         fail EnvironmentError, "#{env_var_name} must be set"
@@ -67,9 +72,19 @@ module VBMS
       serialized_doc = serialize_document(encrypted_doc)
       body = create_body(request, serialized_doc)
 
-      http_request = build_request(
-        request.endpoint_url(@base_url),
-        body, "Content-Type" => content_type(request))
+      # We currently run all VBMS requests through a proxy server
+      # that automates retries and gives us a
+      if @use_proxy
+        headers = { "Content-Type" => content_type(request),
+                    "Host" => "env_name: #{@base_url}" }
+        http_request = build_request(
+          request.endpoint_url(@proxy_url),
+          body, headers)
+      else
+        http_request = build_request(
+          request.endpoint_url(@base_url),
+          body, "Content-Type" => content_type(request))
+      end
 
       HTTPI.log = false
       response = HTTPI.post(http_request)
