@@ -45,7 +45,7 @@ module VBMS
       )
     end
 
-      def self.get_env(env_var_name, allow_empty: false)
+    def self.get_env(env_var_name, allow_empty: false)
       value = ENV[env_var_name]
       if !allow_empty && (value.nil? || value.empty?)
         fail EnvironmentError, "#{env_var_name} must be set"
