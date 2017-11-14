@@ -9,7 +9,8 @@ module VBMS
                    ca_cert: nil,
                    saml:,
                    logger: nil,
-                   proxy_adddress: nil)
+                   proxy_adddress: nil,
+                   use_proxy: false)
 
       @base_url = base_url
       @keyfile = client_keyfile
@@ -39,7 +40,7 @@ module VBMS
         ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
         saml: env_path(env_dir, "CONNECT_VBMS_SAML"),
         use_proxy: use_proxy,
-        proxy_adddress: get_env("CONNECT_VBMS_KEYPASS")
+        proxy_adddress: get_env("LAYER_7_PROXY_URL"),
         logger: logger
       )
     end
