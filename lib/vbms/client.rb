@@ -73,19 +73,11 @@ module VBMS
       serialized_doc = serialize_document(encrypted_doc)
       body = create_body(request, serialized_doc)
 
-      # We currently run all VBMS requests through a proxy server
-      # that automates retries and gives us a
-      if @use_proxy
-        headers = { "Content-Type" => content_type(request),
-                    "Host" => "env_name: #{@base_url}" }
-        http_request = build_request(
-          request.endpoint_url(@proxy_url),
-          body, headers)
-      else
-        http_request = build_request(
-          request.endpoint_url(@base_url),
-          body, "Content-Type" => content_type(request))
-      end
+      url = @use_proxy ? request.endpoint_url(@proxy_url) : request.endpoint_url(@base_url)
+      http_request = build_request(url,
+        body, "Content-Type" => content_type(request))
+
+      puts http_request.inspect
 
       HTTPI.log = false
       response = HTTPI.post(http_request)
@@ -156,7 +148,10 @@ module VBMS
       end
     end
 
-    def build_request(endpoint_url, body, headers)
+    def build_request(endpoint_url, body, headers = {})
+      # If we're using a sidecar proxy, add a header.
+      headers["Host"] = "env_name: #{@base_url}" if @use_proxy
+
       request = HTTPI::Request.new(endpoint_url)
 
       request.open_timeout               = 300 # seconds
