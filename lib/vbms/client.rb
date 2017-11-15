@@ -75,7 +75,7 @@ module VBMS
 
       # If we have a sidecar proxy enabled, send the request to the
       # proxy URL instead of directly to VBMS.
-      url = @use_proxy ? request.endpoint_url(@proxy_url) : request.endpoint_url(@base_url)
+      url = @use_proxy ? request.endpoint_url(@proxy_base_url) : request.endpoint_url(@base_url)
       http_request = build_request(url,
                                    body, "Content-Type" => content_type(request))
 

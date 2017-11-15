@@ -151,13 +151,15 @@ def parsed_timestamp(xml)
 end
 
 # to generate test files, run rake fixtures
-def new_test_client
+def new_test_client(use_proxy: true)
   VBMS::Client.new(
     base_url: "http://test.endpoint.url/",
     keypass: "importkey",
     client_keyfile: fixture_path("test_client.p12"),
     server_cert: fixture_path("test_server.crt"),
-    saml: fixture_path("test_samltoken.xml")
+    saml: fixture_path("test_samltoken.xml"),
+    use_proxy: use_proxy,
+    proxy_base_url: use_proxy ? "http://test.proxy.url:10001/" : nil
   )
 end
 
