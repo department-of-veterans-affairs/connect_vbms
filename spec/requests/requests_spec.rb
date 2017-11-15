@@ -42,7 +42,7 @@ describe VBMS::Requests do
                   VBMS::Client.from_env_vars(env_name: ENV["CONNECT_VBMS_ENV"], use_proxy: true)
                 else
                   new_test_client(use_proxy: true)
-          end
+                end
 
       Tempfile.open("tmp") do |t|
         request = VBMS::Requests::UploadDocumentWithAssociations.new(
