@@ -152,7 +152,8 @@ module VBMS
 
     def build_request(endpoint_url, body, headers = {})
       # If we're using a sidecar proxy, add a header.
-      headers["Host"] = "env_name: #{@base_url}" if @use_proxy
+      base_url = @base_url.gsub("https://", "")
+      headers["Host"] = "#{base_url}" if @use_proxy
 
       request = HTTPI::Request.new(endpoint_url)
 
