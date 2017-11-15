@@ -9,7 +9,7 @@ module VBMS
                    ca_cert: nil,
                    saml:,
                    logger: nil,
-                   proxy_adddress: nil,
+                   proxy_base_url: nil,
                    use_proxy: false)
 
       @base_url = base_url
@@ -19,7 +19,7 @@ module VBMS
       @cacert = ca_cert
       @server_key = server_cert
       @logger = logger
-      @proxy_address = proxy_adddress
+      @proxy_base_url = proxy_base_url
       @use_proxy = use_proxy
 
       SoapScum::WSSecurity.configure(
@@ -40,7 +40,7 @@ module VBMS
         ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
         saml: env_path(env_dir, "CONNECT_VBMS_SAML"),
         use_proxy: use_proxy,
-        proxy_adddress: get_env("LAYER_7_PROXY_URL"),
+        proxy_base_url: get_env("LAYER_7_PROXY_URL"),
         logger: logger
       )
     end
@@ -73,6 +73,8 @@ module VBMS
       serialized_doc = serialize_document(encrypted_doc)
       body = create_body(request, serialized_doc)
 
+      # If we have a sidecar proxy enabled, send the request to the
+      # proxy URL instead of directly to VBMS.
       url = @use_proxy ? request.endpoint_url(@proxy_url) : request.endpoint_url(@base_url)
       http_request = build_request(url,
         body, "Content-Type" => content_type(request))
