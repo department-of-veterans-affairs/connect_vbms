@@ -77,9 +77,9 @@ module VBMS
       # proxy URL instead of directly to VBMS.
       url = @use_proxy ? request.endpoint_url(@proxy_url) : request.endpoint_url(@base_url)
       http_request = build_request(url,
-        body, "Content-Type" => content_type(request))
+                                   body, "Content-Type" => content_type(request))
 
-      puts http_request.inspect
+      puts http_request.headers.inspect
 
       HTTPI.log = false
       response = HTTPI.post(http_request)
