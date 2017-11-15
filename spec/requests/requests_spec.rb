@@ -34,6 +34,36 @@ describe VBMS::Requests do
         @client.send_request(request)
       end
     end
+
+    it "executes succesfully when pointed at a proxy" do
+      @client = if ENV.key?("CONNECT_VBMS_RUN_EXTERNAL_TESTS")
+                  # We're doing it live and connecting to VBMS test server
+                  # otherwise, just use @client from above and webmock
+                  VBMS::Client.from_env_vars(env_name: ENV["CONNECT_VBMS_ENV"], use_proxy: true)
+                else
+                  new_test_client(use_proxy: true)
+          end
+
+      Tempfile.open("tmp") do |t|
+        request = VBMS::Requests::UploadDocumentWithAssociations.new(
+          "784449089",
+          Time.now,
+          "Jane",
+          "Q",
+          "Citizen",
+          "knee",
+          t.path,
+          "356",
+          "Connect VBMS test",
+          true
+        )
+
+        webmock_multipart_response("http://localhost:3000#{VBMS::ENDPOINTS[:efolder]}",
+                                   "upload_document_with_associations",
+                                   "uploadDocumentWithAssociationsResponse")
+        @client.send_request(request)
+      end
+    end
   end
 
   describe "UploadDocument" do
@@ -64,36 +94,6 @@ describe VBMS::Requests do
       @client.send_request(request)
       file.close
       file.unlink
-    end
-
-    it "executes succesfully when pointed at a proxy" do
-      @client = if ENV.key?("CONNECT_VBMS_RUN_EXTERNAL_TESTS")
-            # We're doing it live and connecting to VBMS test server
-            # otherwise, just use @client from above and webmock
-            VBMS::Client.from_env_vars(env_name: ENV["CONNECT_VBMS_ENV"], use_proxy: true)
-          else
-            new_test_client(use_proxy: true)
-          end
-
-      Tempfile.open("tmp") do |t|
-        request = VBMS::Requests::UploadDocumentWithAssociations.new(
-          "784449089",
-          Time.now,
-          "Jane",
-          "Q",
-          "Citizen",
-          "knee",
-          t.path,
-          "356",
-          "Connect VBMS test",
-          true
-        )
-
-        webmock_multipart_response("#{@client.proxy_base_url}#{VBMS::ENDPOINTS[:efolder]}",
-                                   "upload_document_with_associations",
-                                   "uploadDocumentWithAssociationsResponse")
-        @client.send_request(request)
-      end
     end
   end
 
