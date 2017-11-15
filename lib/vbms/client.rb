@@ -79,8 +79,6 @@ module VBMS
       http_request = build_request(url,
                                    body, "Content-Type" => content_type(request))
 
-      puts http_request.headers.inspect
-
       HTTPI.log = false
       response = HTTPI.post(http_request)
 
@@ -152,8 +150,9 @@ module VBMS
 
     def build_request(endpoint_url, body, headers = {})
       # If we're using a sidecar proxy, add a header.
-      base_url = @base_url.gsub("https://", "")
-      headers["Host"] = "#{base_url}" if @use_proxy
+      base_url = @base_url.gsub("https://", "").gsub("http://", "")
+
+      headers["Host"] = base_url if @use_proxy
 
       request = HTTPI::Request.new(endpoint_url)
 
