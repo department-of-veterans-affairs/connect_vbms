@@ -159,7 +159,7 @@ def new_test_client(use_proxy: true)
     server_cert: fixture_path("test_server.crt"),
     saml: fixture_path("test_samltoken.xml"),
     use_proxy: use_proxy,
-    proxy_base_url: use_proxy ? "http://test.proxy.url:10001/" : nil
+    proxy_base_url: use_proxy ? "test.proxyendpoint:3000/" : nil
   )
 end
 

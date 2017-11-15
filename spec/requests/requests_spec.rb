@@ -65,6 +65,28 @@ describe VBMS::Requests do
       file.close
       file.unlink
     end
+
+    it "executes succesfully when pointed at a proxy" do
+      Tempfile.open("tmp") do |t|
+        request = VBMS::Requests::UploadDocumentWithAssociations.new(
+          "784449089",
+          Time.now,
+          "Jane",
+          "Q",
+          "Citizen",
+          "knee",
+          t.path,
+          "356",
+          "Connect VBMS test",
+          true
+        )
+
+        webmock_multipart_response("#{@client.proxy_base_url}#{VBMS::ENDPOINTS[:efolder]}",
+                                   "upload_document_with_associations",
+                                   "uploadDocumentWithAssociationsResponse")
+        @client.send_request(request)
+      end
+    end
   end
 
   describe "ListDocuments" do

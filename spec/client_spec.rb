@@ -176,4 +176,15 @@ describe VBMS::Client do
       end
     end
   end
+  describe '#build_request' do
+    before do
+      @client = new_test_client(use_proxy: true)
+    end
+
+    subject { @client.build_request("http://some.fake.endpoint") }
+
+    it "adds host header required by proxy" do
+      expect(subject.headers["Host"]).to eq("env_name: http://test.endpoint.url/")
+    end
+  end
 end
