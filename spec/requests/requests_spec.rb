@@ -67,6 +67,14 @@ describe VBMS::Requests do
     end
 
     it "executes succesfully when pointed at a proxy" do
+      @client = if ENV.key?("CONNECT_VBMS_RUN_EXTERNAL_TESTS")
+            # We're doing it live and connecting to VBMS test server
+            # otherwise, just use @client from above and webmock
+            VBMS::Client.from_env_vars(env_name: ENV["CONNECT_VBMS_ENV"], use_proxy: true)
+          else
+            new_test_client(use_proxy: true)
+          end
+
       Tempfile.open("tmp") do |t|
         request = VBMS::Requests::UploadDocumentWithAssociations.new(
           "784449089",
