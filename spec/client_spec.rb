@@ -158,6 +158,24 @@ describe VBMS::Client do
       end
     end
 
+    context "when it is given a document that does not have body" do
+      let(:response_body) do
+        <<-EOF
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+          <soap:Header/>
+        </soap:Envelope>
+        EOF
+      end
+
+      it "should raise a SOAPError" do
+        expect { subject }.to raise_error do |error|
+          expect(error).to be_a(VBMS::SOAPError)
+          expect(error.message).to eq("No SOAP body found in response")
+          expect(error.body).to eq(response_body)
+        end
+      end
+    end
+
     context "when the server sends an HTML response error page" do
       let(:response_body) do
         <<-EOF
