@@ -216,7 +216,7 @@ module VBMS
         soap.at_xpath("//soapenv:Fault", VBMS::XML_NAMESPACES)
 
       soap = doc.at_xpath("/soapenv:Envelope/soapenv:Body",
-                   soapenv: "http://schemas.xmlsoap.org/soap/envelope/")
+                          soapenv: "http://schemas.xmlsoap.org/soap/envelope/")
       fail SOAPError.new("No SOAP body found in response", response.body) if
         soap.nil?
     end
