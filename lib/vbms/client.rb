@@ -40,7 +40,7 @@ module VBMS
         ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
         saml: env_path(env_dir, "CONNECT_VBMS_SAML"),
         use_forward_proxy: use_forward_proxy,
-        proxy_base_url: get_env("PROXY_BASE_URL"),
+        proxy_base_url: get_env("CONNECT_VBMS_PROXY_BASE_URL"),
         logger: logger
       )
     end
