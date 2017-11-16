@@ -178,7 +178,7 @@ describe VBMS::Client do
   end
   describe '#build_request' do
     before do
-      @client = new_test_client(use_proxy: true)
+      @client = new_test_client(use_forward_proxy: true)
     end
 
     subject { @client.build_request("https://some.fake.endpoint", {}, {}) }

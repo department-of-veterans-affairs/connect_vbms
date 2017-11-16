@@ -10,7 +10,7 @@ module VBMS
                    saml:,
                    logger: nil,
                    proxy_base_url: nil,
-                   use_proxy: false)
+                   use_forward_proxy: false)
 
       @base_url = base_url
       @keyfile = client_keyfile
@@ -20,7 +20,7 @@ module VBMS
       @server_key = server_cert
       @logger = logger
       @proxy_base_url = proxy_base_url
-      @use_proxy = use_proxy
+      @use_forward_proxy = use_forward_proxy
 
       SoapScum::WSSecurity.configure(
         client_keyfile: client_keyfile,
@@ -29,7 +29,7 @@ module VBMS
       )
     end
 
-    def self.from_env_vars(logger: nil, env_name: "test", use_proxy: false)
+    def self.from_env_vars(logger: nil, env_name: "test", use_forward_proxy: false)
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
       VBMS::Client.new(
@@ -39,7 +39,7 @@ module VBMS
         server_cert: env_path(env_dir, "CONNECT_VBMS_SERVER_CERT", allow_empty: true),
         ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
         saml: env_path(env_dir, "CONNECT_VBMS_SAML"),
-        use_proxy: use_proxy,
+        use_forward_proxy: use_forward_proxy,
         proxy_base_url: get_env("PROXY_BASE_URL"),
         logger: logger
       )
@@ -75,7 +75,7 @@ module VBMS
 
       # If we have a sidecar proxy enabled, send the request to the
       # proxy URL instead of directly to VBMS.
-      url = @use_proxy ? request.endpoint_url(@proxy_base_url) : request.endpoint_url(@base_url)
+      url = @use_forward_proxy ? request.endpoint_url(@proxy_base_url) : request.endpoint_url(@base_url)
       http_request = build_request(url,
                                    body, "Content-Type" => content_type(request))
 
@@ -154,7 +154,7 @@ module VBMS
       # as a header.
       base_url = @base_url.gsub("https://", "").gsub("http://", "")
 
-      headers["Host"] = base_url if @use_proxy
+      headers["Host"] = base_url if @use_forward_proxy
 
       request = HTTPI::Request.new(endpoint_url)
 
