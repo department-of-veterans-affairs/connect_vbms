@@ -149,12 +149,11 @@ module VBMS
     end
 
     def build_request(endpoint_url, body, headers = {})
-      # If we're using a sidecar proxy, we'll send the
-      # request to the proxy URL and add the final destination host
-      # as a header.
-      base_url = @base_url.gsub("https://", "").gsub("http://", "")
-
-      headers["Host"] = base_url if @use_forward_proxy
+      if @use_forward_proxy
+        # If we're using a forward proxy, add the eventual
+        # destination host as a header.
+        headers["Host"] = @base_url.gsub("https://", "").gsub("http://", "")
+      end
 
       request = HTTPI::Request.new(endpoint_url)
 
