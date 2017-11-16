@@ -8,7 +8,9 @@ module VBMS
                    server_cert:,
                    ca_cert: nil,
                    saml:,
-                   logger: nil)
+                   logger: nil,
+                   proxy_base_url: nil,
+                   use_forward_proxy: false)
 
       @base_url = base_url
       @keyfile = client_keyfile
@@ -17,6 +19,8 @@ module VBMS
       @cacert = ca_cert
       @server_key = server_cert
       @logger = logger
+      @proxy_base_url = proxy_base_url
+      @use_forward_proxy = use_forward_proxy
 
       SoapScum::WSSecurity.configure(
         client_keyfile: client_keyfile,
@@ -25,7 +29,7 @@ module VBMS
       )
     end
 
-    def self.from_env_vars(logger: nil, env_name: "test")
+    def self.from_env_vars(logger: nil, env_name: "test", use_forward_proxy: false)
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
       VBMS::Client.new(
@@ -35,6 +39,8 @@ module VBMS
         server_cert: env_path(env_dir, "CONNECT_VBMS_SERVER_CERT", allow_empty: true),
         ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
         saml: env_path(env_dir, "CONNECT_VBMS_SAML"),
+        use_forward_proxy: use_forward_proxy,
+        proxy_base_url: get_env("CONNECT_VBMS_PROXY_BASE_URL"),
         logger: logger
       )
     end
@@ -67,9 +73,11 @@ module VBMS
       serialized_doc = serialize_document(encrypted_doc)
       body = create_body(request, serialized_doc)
 
-      http_request = build_request(
-        request.endpoint_url(@base_url),
-        body, "Content-Type" => content_type(request))
+      # If we have a sidecar proxy enabled, send the request to the
+      # proxy URL instead of directly to VBMS.
+      url = @use_forward_proxy ? request.endpoint_url(@proxy_base_url) : request.endpoint_url(@base_url)
+      http_request = build_request(url,
+                                   body, "Content-Type" => content_type(request))
 
       HTTPI.log = false
       response = HTTPI.post(http_request)
@@ -140,7 +148,13 @@ module VBMS
       end
     end
 
-    def build_request(endpoint_url, body, headers)
+    def build_request(endpoint_url, body, headers = {})
+      if @use_forward_proxy
+        # If we're using a forward proxy, add the eventual
+        # destination host as a header.
+        headers["Host"] = @base_url.gsub("https://", "").gsub("http://", "")
+      end
+
       request = HTTPI::Request.new(endpoint_url)
 
       request.open_timeout               = 300 # seconds
