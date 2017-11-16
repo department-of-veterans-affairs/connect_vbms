@@ -191,12 +191,6 @@ module VBMS
       )
     end
 
-    def parse_body(xml)
-      doc = parse_xml_strictly(xml)
-      doc.at_xpath("/soapenv:Envelope/soapenv:Body",
-                   soapenv: "http://schemas.xmlsoap.org/soap/envelope/")
-    end
-
     def process_response(request, response)
       parser = MultipartParser.new(response)
       doc = parse_xml_strictly(parser.xml_content)
@@ -220,6 +214,11 @@ module VBMS
 
       fail SOAPError.new("SOAP Fault returned", response.body) if
         soap.at_xpath("//soapenv:Fault", VBMS::XML_NAMESPACES)
+
+      soap = doc.at_xpath("/soapenv:Envelope/soapenv:Body",
+                   soapenv: "http://schemas.xmlsoap.org/soap/envelope/")
+      fail SOAPError.new("No SOAP body found in response", response.body) if
+        soap.nil?
     end
   end
 end
