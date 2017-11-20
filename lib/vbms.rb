@@ -22,6 +22,7 @@ require "vbms/responses/document"
 require "vbms/responses/document_type"
 require "vbms/responses/document_with_content"
 require "vbms/responses/claim"
+require "vbms/responses/contention"
 
 require "vbms/requests/base_request"
 # eDocument Service v4
@@ -30,6 +31,8 @@ require "vbms/requests/list_documents"
 require "vbms/requests/fetch_document_by_id"
 require "vbms/requests/get_document_types"
 require "vbms/requests/establish_claim"
+require "vbms/requests/create_contentions"
+require "vbms/requests/list_contentions"
 
 # eFolder Service 1.0
 require "vbms/requests/find_document_series_reference"

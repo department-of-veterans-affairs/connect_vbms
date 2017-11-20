@@ -25,6 +25,7 @@ module VBMS
   XML_NAMESPACES = {
     v4: "http://vbms.vba.va.gov/external/eDocumentService/v4",
     ns2: "http://vbms.vba.va.gov/cdm/document/v4",
+    ns0: "http://vbms.vba.va.gov/cdm/claim/v4",
     upload: "http://service.efolder.vbms.vba.va.gov/eFolderUploadService",
     read: "http://service.efolder.vbms.vba.va.gov/eFolderReadService",
     v5: "http://vbms.vba.va.gov/cdm/document/v5",
