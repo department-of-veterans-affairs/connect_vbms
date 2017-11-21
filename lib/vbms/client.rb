@@ -96,8 +96,8 @@ module VBMS
 
       process_response(request, response)
     # Add this temporarily for debugging purposes
-    rescue NoMethodError => e
-      fail VBMS::HTTPError.new(response.code, response.body, request)
+    rescue NoMethodError
+      raise VBMS::HTTPError.new(response.code, response.body, request)
     end
 
     def content_type(request)
