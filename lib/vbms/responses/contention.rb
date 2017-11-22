@@ -1,8 +1,8 @@
 module VBMS
   module Responses
     class Contention < OpenStruct
-      def self.create_from_xml(xml)
-        data = XMLHelper.convert_to_hash(xml.to_xml)[:list_of_contentions]
+      def self.create_from_xml(xml, key: :list_of_contentions)
+        data = XMLHelper.convert_to_hash(xml.to_xml)[key]
 
         new(
           id: data[:@id],

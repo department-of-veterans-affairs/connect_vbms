@@ -42,7 +42,6 @@ module VBMS
       end
 
       def handle_response(doc)
-        puts doc.to_xml
         doc.xpath(
           "//claimV4:listContentionsResponse/claimV4:listOfContentions",
           VBMS::XML_NAMESPACES

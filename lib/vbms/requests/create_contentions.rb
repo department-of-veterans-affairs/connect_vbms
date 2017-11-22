@@ -69,7 +69,7 @@ module VBMS
           "//claimV4:createContentionsResponse/claimV4:createdContentions",
           VBMS::XML_NAMESPACES
         ).map do |xml|
-          VBMS::Responses::Contention.create_from_xml(xml)
+          VBMS::Responses::Contention.create_from_xml(xml, key: :created_contentions)
         end
       end
     end
