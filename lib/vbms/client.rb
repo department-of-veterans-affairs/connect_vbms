@@ -76,8 +76,9 @@ module VBMS
       # If we have a sidecar proxy enabled, send the request to the
       # proxy URL instead of directly to VBMS.
       url = @use_forward_proxy ? request.endpoint_url(@proxy_base_url) : request.endpoint_url(@base_url)
+      headers = {"Content-Type" => content_type(request), "service" => request.name.to_s}
       http_request = build_request(url,
-                                   body, "Content-Type" => content_type(request))
+                                   body, )
 
       HTTPI.log = false
       response = HTTPI.post(http_request)
@@ -156,7 +157,6 @@ module VBMS
       end
 
       request = HTTPI::Request.new(endpoint_url)
-      headers.merge({"service" => request.name.to_s})
 
       request.open_timeout               = 300 # seconds
       request.read_timeout               = 300 # seconds
