@@ -78,7 +78,7 @@ module VBMS
       url = @use_forward_proxy ? request.endpoint_url(@proxy_base_url) : request.endpoint_url(@base_url)
       headers = {"Content-Type" => content_type(request), "service" => request.name.to_s}
       http_request = build_request(url,
-                                   body, )
+                                   body, headers)
 
       HTTPI.log = false
       response = HTTPI.post(http_request)
