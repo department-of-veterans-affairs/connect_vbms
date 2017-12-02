@@ -155,8 +155,8 @@ module VBMS
         headers["Host"] = @base_url.gsub("https://", "").gsub("http://", "")
       end
 
-      headers.merge({"service" => request.name.to_s})
       request = HTTPI::Request.new(endpoint_url)
+      headers.merge({"service" => request.name.to_s})
 
       request.open_timeout               = 300 # seconds
       request.read_timeout               = 300 # seconds
