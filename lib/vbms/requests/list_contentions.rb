@@ -7,7 +7,7 @@ module VBMS
         "xmlns:participant" => "http://vbms.vba.va.gov/cdm/participant/v4"
       }.freeze
 
-      def initialize(claim_id:)
+      def initialize(claim_id)
         @claim_id = claim_id
       end
 

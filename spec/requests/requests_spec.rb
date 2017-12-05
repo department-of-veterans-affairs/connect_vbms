@@ -58,9 +58,10 @@ describe VBMS::Requests do
           true
         )
 
-        webmock_multipart_response("http://localhost:3000#{VBMS::ENDPOINTS[:efolder]}",
-                                   "upload_document_with_associations",
-                                   "uploadDocumentWithAssociationsResponse")
+        webmock_multipart_response(
+          "http://localhost:3000/envoy-prefix-uploadDocumentWithAssociations/vbmsp2-cms/streaming/eDocumentService-v4",
+          "upload_document_with_associations",
+          "uploadDocumentWithAssociationsResponse")
         @client.send_request(request)
       end
     end
