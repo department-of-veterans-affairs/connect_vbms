@@ -75,7 +75,9 @@ module VBMS
 
       # If we have a sidecar proxy enabled, send the request to the
       # proxy URL instead of directly to VBMS.
-      url = @use_forward_proxy ? request.endpoint_url("#{@proxy_base_url}/#{request.name}") : request.endpoint_url(@base_url)
+      # the proxy uses 'envoy-prefix-requestName' to gather metrics
+      # https://www.envoyproxy.io/docs/envoy/latest/api-v1/route_config/vcluster.html
+      url = @use_forward_proxy ? request.endpoint_url("#{@proxy_base_url}/envoy-prefix-#{request.name}") : request.endpoint_url(@base_url)
       headers = { "Content-Type" => content_type(request) }
       http_request = build_request(url,
                                    body, headers)
