@@ -1,11 +1,11 @@
 module VBMS
   module Responses
     class Document
-      attr_accessor :document_id, :filename, :doc_type, :source, :received_at, :mime_type, :alt_doc_types
-  
+      attr_accessor :document_id, :filename, :doc_type, :source, :received_at, :mime_type, :alt_doc_types, :type_id
+
       def initialize(
           document_id: nil, filename: nil, doc_type: nil, source: nil,
-          received_at: nil, mime_type: nil, alt_doc_types: nil)
+          received_at: nil, mime_type: nil, alt_doc_types: nil, type_id: nil)
         self.document_id = document_id
         self.filename = filename
         self.doc_type = doc_type
@@ -13,8 +13,9 @@ module VBMS
         self.received_at = received_at
         self.mime_type = mime_type
         self.alt_doc_types = alt_doc_types
+        self.type_id = type_id
       end
-  
+
       def self.create_from_xml(el)
         received_date = el.at_xpath("ns2:receivedDt/text()", VBMS::XML_NAMESPACES)
 
@@ -24,6 +25,7 @@ module VBMS
             alt_doc_types: extract_alt_doc_types(el),
             source: el["source"],
             mime_type: el["mimeType"],
+            type_id: el["docType"],
             received_at: received_date.nil? ? nil : Time.parse(received_date.content).to_date)
       end
 
@@ -43,7 +45,8 @@ module VBMS
           doc_type: doc_type,
           source: source,
           received_at: received_at,
-          mime_type: mime_type
+          mime_type: mime_type,
+          type_id: type_id
         }
       end
 
