@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.3"
   spec.add_development_dependency "equivalent-xml", "~> 0.6"
   spec.add_development_dependency "simplecov", "~> 0.10"
-  spec.add_development_dependency "rubocop", "0.36"
+  spec.add_development_dependency "rubocop", "0.49"
   spec.add_development_dependency "bundler-audit"
   spec.add_development_dependency "webmock", "~> 1.22.0"
   spec.add_development_dependency "byebug" if RUBY_PLATFORM != "java"
@@ -42,7 +42,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "httpclient", "~> 2.8.0"
   spec.add_runtime_dependency "httpi", "~> 2.4"
-  spec.add_runtime_dependency "nokogiri", ">= 1.8.1"
+  spec.add_runtime_dependency "nokogiri", ">= 1.8.0"
   spec.add_runtime_dependency "xmlenc"
   spec.add_runtime_dependency "mail"
   spec.add_runtime_dependency "xmldsig", "~> 0.3.1"
