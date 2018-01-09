@@ -31,6 +31,8 @@ describe VBMS::Requests::FindDocumentSeriesReference do
       # document with multiple versions
       doc1 = subject.first
       expect(doc1[:document_id]).to eq "{68A9F5E8-8937-4106-96AE-7066E1FC0E15}"
+      expect(doc1[:series_id]).to eq "{95FD13DE-5ADD-488F-BF45-50C0993AEE34}"
+      expect(doc1[:version]).to eq "2"
       expect(doc1[:type_description]).to eq "C&#38;P Exam"
       expect(doc1[:type_id]).to eq "356"
       expect(doc1[:source]).to eq "VHA_CUI"

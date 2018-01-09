@@ -51,6 +51,8 @@ module VBMS
         restricted = XMLHelper.find_hash_by_key(result[:metadata], "restricted")
         OpenStruct.new(
           document_id: result[:@document_version_ref_id],
+          series_id: result[:@document_series_ref_id],
+          version: result[:version][:@major],
           type_description: type_description(result),
           type_id: type_id(result),
           doc_type: type_id(result),
