@@ -173,7 +173,7 @@ describe VBMS::Requests do
                             "findDocumentSeriesReferenceResponse")
       result = @client.send_request(request)
 
-      request = VBMS::Requests::GetDocumentContent.new(result[0][:document_id])
+      request = VBMS::Requests::GetDocumentContent.new(result[0][0][:document_id])
       webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read]}",
                             "get_document_content",
                             "getDocumentContentResponse")

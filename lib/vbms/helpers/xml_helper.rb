@@ -32,6 +32,11 @@ module XMLHelper
     versions.is_a?(Array) ? sort_versions(versions) : versions
   end
 
+  # If there is only one version we make an array out of it so we can map over it.
+  def self.versions_as_array(versions)
+    versions.is_a?(Array) ? versions : [versions]
+  end
+
   def self.remove_namespaces(nodes)
     nodes.each { |node| node.namespace = nil }
   end

@@ -40,7 +40,9 @@ module VBMS
           "//read:findDocumentSeriesReferenceResponse/read:result", VBMS::XML_NAMESPACES
         ).map do |el|
           result = XMLHelper.convert_to_hash(el.to_xml)[:result]
-          construct_response(XMLHelper.most_recent_version(result[:versions]))
+          XMLHelper.versions_as_array(result[:versions]).map do |version|
+            construct_response(version)
+          end
         end
       end
 
