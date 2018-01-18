@@ -46,4 +46,27 @@ describe XMLHelper do
       it { is_expected.to eq(version: { :@major => "88" }) }
     end
   end
+
+  context ".versions_as_array" do
+    let(:h1) { { version: { :@major => "45" } } }
+    let(:h2) { { version: { :@major => "88" } } }
+    let(:h3) { { version: nil } }
+
+    subject { XMLHelper.versions_as_array(versions) }
+
+    context "when versions is an array" do
+      let(:versions) { [h1, h2] }
+      it { is_expected.to eq(versions) }
+    end
+
+    context "when versions is a hash" do
+      let(:versions) { h1 }
+      it { is_expected.to eq([versions]) }
+    end
+
+    context "when version is nil" do
+      let(:versions) { [h1, h3, h2] }
+      it { is_expected.to eq(versions) }
+    end
+  end
 end
