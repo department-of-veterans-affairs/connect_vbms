@@ -43,6 +43,8 @@ module VBMS
         server_cert: env_path(env_dir, "CONNECT_VBMS_SERVER_CERT", allow_empty: true),
         ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
         saml: env_path(env_dir, "CONNECT_VBMS_SAML"),
+        css_id: css_id,
+        station_id: station_id,
         use_forward_proxy: use_forward_proxy,
         proxy_base_url: get_env("CONNECT_VBMS_PROXY_BASE_URL", allow_empty: true),
         logger: logger
@@ -135,12 +137,12 @@ module VBMS
       if @css_id && @station_id
         saml_doc.at_xpath(
           "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/subjectId']/saml2:AttributeValue",
-          "xmlns:saml2" => 'urn:oasis:names:tc:SAML:2.0:assertion'
+          "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
         ).child.replace(@css_id)
 
         saml_doc.at_xpath(
           "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/stationId']/saml2:AttributeValue",
-          "xmlns:saml2" => 'urn:oasis:names:tc:SAML:2.0:assertion'
+          "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
         ).child.replace(@station_id)
       end
     end

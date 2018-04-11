@@ -23,14 +23,14 @@ describe VBMS::Client do
     let(:injected_css_id) do
       doc.at_xpath(
         "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/subjectId']/saml2:AttributeValue",
-        "xmlns:saml2" => 'urn:oasis:names:tc:SAML:2.0:assertion'
+        "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
       ).child.text
     end
 
     let(:injected_station_id) do
       doc.at_xpath(
         "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/stationId']/saml2:AttributeValue",
-        "xmlns:saml2" => 'urn:oasis:names:tc:SAML:2.0:assertion'
+        "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
       ).child.text
     end
 
