@@ -5,9 +5,8 @@ describe VBMS::Client do
     @client = new_test_client
   end
 
-  describe "remove_must_understand" do
-    it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
-      doc = Nokogiri::XML(<<-EOF)
+  let(:doc) do
+    Nokogiri::XML(<<-EOF)
       <?xml version="1.0" encoding="UTF-8"?>
       <soapenv:Envelope
            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -17,8 +16,49 @@ describe VBMS::Client do
           </wsse:Security>
         </soapenv:Header>
       </soapenv:Envelope>
-      EOF
+    EOF
+  end
 
+  describe "inject_saml" do
+    let(:injected_css_id) do
+      doc.at_xpath(
+        "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/subjectId']/saml2:AttributeValue",
+        "xmlns:saml2" => 'urn:oasis:names:tc:SAML:2.0:assertion'
+      ).child.text
+    end
+
+    let(:injected_station_id) do
+      doc.at_xpath(
+        "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/stationId']/saml2:AttributeValue",
+        "xmlns:saml2" => 'urn:oasis:names:tc:SAML:2.0:assertion'
+      ).child.text
+    end
+
+    context "with css data passed" do
+      before do
+        @client = new_test_client(css_id: "KLAYTHOMPSON", station_id: "415")
+      end
+
+      it "adds saml token to the request with the user data" do
+        @client.inject_saml(doc)
+
+        expect(injected_css_id).to eq("KLAYTHOMPSON")
+        expect(injected_station_id).to eq("415")
+      end
+    end
+
+    context "with no css data passed" do
+      it "adds saml token to the request with the default user data" do
+        @client.inject_saml(doc)
+
+        expect(injected_css_id).to eq("0")
+        expect(injected_station_id).to eq("0")
+      end
+    end
+  end
+
+  describe "remove_must_understand" do
+    it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
       @client.remove_must_understand(doc)
 
       expect(doc.to_s).not_to include("mustUnderstand")
