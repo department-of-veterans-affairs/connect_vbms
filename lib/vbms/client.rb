@@ -81,9 +81,12 @@ module VBMS
 
       # If we have a sidecar proxy enabled, send the request to the
       # proxy URL instead of directly to VBMS.
-      url = @use_forward_proxy ? request.endpoint_url(@proxy_base_url) : request.endpoint_url(@base_url)
+      # the proxy uses 'envoy-prefix-requestName' to gather metrics
+      # https://www.envoyproxy.io/docs/envoy/latest/api-v1/route_config/vcluster.html
+      url = @use_forward_proxy ? request.endpoint_url("#{@proxy_base_url}/envoy-prefix-#{request.name}") : request.endpoint_url(@base_url)
+      headers = { "Content-Type" => content_type(request) }
       http_request = build_request(url,
-                                   body, "Content-Type" => content_type(request))
+                                   body, headers)
 
       HTTPI.log = false
       response = HTTPI.post(http_request)
@@ -180,8 +183,8 @@ module VBMS
 
       request = HTTPI::Request.new(endpoint_url)
 
-      request.open_timeout               = 300 # seconds
-      request.read_timeout               = 300 # seconds
+      request.open_timeout               = 600 # seconds
+      request.read_timeout               = 600 # seconds
       request.auth.ssl.cert_key          = SoapScum::WSSecurity.client_key
       request.auth.ssl.cert_key_password = @keypass
       request.auth.ssl.cert              = SoapScum::WSSecurity.client_cert

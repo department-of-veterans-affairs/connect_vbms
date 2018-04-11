@@ -30,6 +30,8 @@ describe VBMS::Requests::FindDocumentVersionReference do
     it "should load contents correctly" do
       doc1 = subject.first
       expect(doc1[:document_id]).to eq "{CB958142-F063-489D-80DC-6C8A7A5B4319}"
+      expect(doc1[:series_id]).to eq "{623D6B8A-D599-4E2D-947E-A2CA2955C4DD}"
+      expect(doc1[:version]).to eq "2"
       expect(doc1[:type_description]).to eq "C&#38;P Exam"
       expect(doc1[:type_id]).to eq "356"
       expect(doc1[:source]).to eq "VHA_CUI"

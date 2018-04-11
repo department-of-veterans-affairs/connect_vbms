@@ -29,8 +29,10 @@ describe VBMS::Requests::FindDocumentSeriesReference do
 
     it "should load contents correctly" do
       # document with multiple versions
-      doc1 = subject.first
+      doc1 = subject.first.first
       expect(doc1[:document_id]).to eq "{68A9F5E8-8937-4106-96AE-7066E1FC0E15}"
+      expect(doc1[:series_id]).to eq "{95FD13DE-5ADD-488F-BF45-50C0993AEE34}"
+      expect(doc1[:version]).to eq "2"
       expect(doc1[:type_description]).to eq "C&#38;P Exam"
       expect(doc1[:type_id]).to eq "356"
       expect(doc1[:source]).to eq "VHA_CUI"
@@ -39,7 +41,7 @@ describe VBMS::Requests::FindDocumentSeriesReference do
       expect(doc1[:received_at]).to eq Date.parse("2014-11-16-04:00")
 
       # document with alt doc types and one version
-      doc2 = subject.third
+      doc2 = subject.third.first
       expect(doc2[:alt_doc_types].size).to eq 4
       expect(doc2[:document_id]).to eq "{9909502E-E797-421C-BE2F-7650E2F2E7F1}"
       expect(doc2[:type_description]).to eq "Substantive Appeal (In Lieu of VA Form 9)"
@@ -48,8 +50,8 @@ describe VBMS::Requests::FindDocumentSeriesReference do
       expect(doc2[:restricted]).to eq true
       expect(doc2[:received_at]).to eq Date.parse("2014-04-30-04:00")
 
-      doc3 = subject.fourth
-      expect(doc3[:document_id]).to eq "{00E04F55-0000-C182-A5AC-FD645B3C9315}"
+      doc3 = subject.fourth.first
+      expect(doc3[:document_id]).to eq "{C7A6DA43-A368-4831-A68B-D32F0C164C22}"
       expect(doc3[:restricted]).to eq false
     end
   end
