@@ -42,7 +42,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "httpclient", "~> 2.8.0"
   spec.add_runtime_dependency "httpi", "~> 2.4"
-  spec.add_runtime_dependency "nokogiri", ">= 1.8.1"
+  spec.add_runtime_dependency "nokogiri", ">= 1.8.2"
   spec.add_runtime_dependency "xmlenc"
   spec.add_runtime_dependency "mail"
   spec.add_runtime_dependency "xmldsig", "~> 0.3.1"

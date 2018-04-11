@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+      <xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="EK-E75068198F8BAEFF36151136272550266316">
+        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <wsse:SecurityTokenReference>
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=Scanning CA,OU=Scanning CA,O=Scanning CA,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>49</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+        <xenc:CipherData>
+          <xenc:CipherValue>JZE8rpkA/ZOAMm1iecgFMMLgEoCxm+Nq3xfof87eeR8GNsd7U0VpHtmUGBo5esJYRhzq1tDzvMG0u2sDQcP/cl+5bHgYO7GNjS70LO1JP/itVhnlpxPbw4HALVrH4aOtJRY0GeoT7LijApE3AAxKfuyF0ZHSNBmPhIh4gN2DozPGxJdv00alSSPScOEGQJzA6qWmUBYHNlIsHLdi9C3DoQ5e9+koZ2c08wImVSYKm7J9s8A4ZPHD5iClIUcE/bwGhCJ+AcV9HhkYpmFvOI+3/r4UQZRSkuM14iixkeXQFC/Mp6+3jjucminZy5GQtY6TtVyU2c0vMcWNR205SMRI3g==</xenc:CipherValue>
+        </xenc:CipherData>
+        <xenc:ReferenceList>
+          <xenc:DataReference URI="#ED-66316"/>
+        </xenc:ReferenceList>
+      </xenc:EncryptedKey>
+      <wsu:Timestamp wsu:Id="TS-66313">
+        <wsu:Created>2017-11-22T14:58:45.487Z</wsu:Created>
+        <wsu:Expires>2017-11-22T15:03:45.487Z</wsu:Expires>
+      </wsu:Timestamp>
+      <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-66315">
+        <ds:SignedInfo>
+          <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+            <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="env"/>
+          </ds:CanonicalizationMethod>
+          <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <ds:Reference URI="#TS-66313">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="wsse env"/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>I0cWd+Bq0c86YgBMWZXKfd5GQA4=</ds:DigestValue>
+          </ds:Reference>
+          <ds:Reference URI="#id-66314">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList=""/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>bUNINDx3NL7WSkKJ+z8GwtU565Y=</ds:DigestValue>
+          </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue>h/RXJrNFxtqEUgbIARAI3okKE4N1WGedMv3WxYL6Cosnshu5Pe6pHFLCM/E4bWkUBesgDuV2LJi2
+4+2Ee/7hS2JDvjT9n2pCZ8PAqHgonTCK/hmzRU3y+UQTWNn9w0EnXbsc15XqoTSwZcf45lk6EQJ0
+ky16OXK2FD2yyXMm6qR/wfk+wvEVWmNUOwRJF2xZM+AdTGVGj/zEIWvr72Fa/cUG0EMnO14U3kxC
+qgWN9ykIaXtSok/GFX/Ubk1+tgAl/TSVDNmRnwgS2SFmbYYmLZomEW9w3BCv9d/Af4SIVu8cjQNv
+Fs6ag2l8wZaSQCqX7tpi4SJ5bfsJojF+HVoclQ==</ds:SignatureValue>
+        <ds:KeyInfo Id="KI-E75068198F8BAEFF36151136272548766314">
+          <wsse:SecurityTokenReference wsu:Id="STR-E75068198F8BAEFF36151136272548766315">
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=AIDE CA2,OU=CA2,O=AIDE,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>4</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+      </ds:Signature>
+    </wsse:Security>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-66314">
+    <createContentionsResponse xmlns="http://vbms.vba.va.gov/external/ClaimService/v4" xmlns:ns0="http://vbms.vba.va.gov/cdm/claim/v4" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns3="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:ns4="http://vbms.vba.va.gov/external/ClaimService/v4"><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290355" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Contention DS example" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290356" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Contention DS example" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290357" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Contention DS example" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290358" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Billy Two" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290359" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Contention DS example" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290360" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Billy Two" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290361" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Contention DS example" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290362" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Billy Two" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290363" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Billy One" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290364" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Billy Two" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290365" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Billy Three" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-20-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions><ns4:createdContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290382" medical="false" partcipantContention="unknown" secondaryToContentionID="1498" title="Billy One" typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2017-11-22-05:00</ns0:submitDate><ns0:startDate>2017-11-22-05:00</ns0:startDate></ns4:createdContentions></createContentionsResponse>
+  </env:Body>
+</env:Envelope>
