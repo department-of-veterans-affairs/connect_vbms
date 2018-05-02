@@ -12,7 +12,9 @@ module VBMS
                    css_id: nil,
                    station_id: nil,
                    proxy_base_url: nil,
-                   use_forward_proxy: false)
+                   use_forward_proxy: false,
+                   digest_algorithm: SoapScum::CryptoAlgorithms::SHA1,
+                   signature_algorithm: SoapScum::CryptoAlgorithms::RSA_SHA1)
 
       @base_url = base_url
       @keyfile = client_keyfile
@@ -29,13 +31,19 @@ module VBMS
       SoapScum::WSSecurity.configure(
         client_keyfile: client_keyfile,
         server_cert: server_cert,
-        keypass: keypass
+        keypass: keypass,
+        digest_algorithm: digest_algorithm,
+        signature_algorithm: signature_algorithm
       )
     end
 
     def self.from_env_vars(logger: nil, css_id: nil, station_id: nil, env_name: "test", use_forward_proxy: false)
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
+      is_sha256 = get_env("CONNECT_VBMS_SHA256", allow_empty: true) == true
+      digest_algorithm: SoapScum::CryptoAlgorithms::SHA256 if is_sha256 else SoapScum::CryptoAlgorithms::SHA1
+      signature_algorithm: SoapScum::CryptoAlgorithms::RSA_SHA256 if is_sha256 else else SoapScum::CryptoAlgorithms::RSA_SHA1
+      
       VBMS::Client.new(
         base_url: get_env("CONNECT_VBMS_BASE_URL"),
         keypass: get_env("CONNECT_VBMS_KEYPASS"),
@@ -47,7 +55,9 @@ module VBMS
         station_id: station_id,
         use_forward_proxy: use_forward_proxy,
         proxy_base_url: get_env("CONNECT_VBMS_PROXY_BASE_URL", allow_empty: true),
-        logger: logger
+        logger: logger, 
+        digest_algorithm: digest_algorithm,
+        signature_algorithm: signature_algorithm
       )
     end
 
