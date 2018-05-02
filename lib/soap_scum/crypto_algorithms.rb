@@ -12,7 +12,7 @@ module SoapScum
 
     # new SHA256
     SHA256 = 'http://www.w3.org/2001/04/xmlenc#sha256'.freeze
-    RSA_SHA256 = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256'.free
+    RSA_SHA256 = 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256'.freeze
 
     # TODO(awong): Add triple-des support for xmlenc 1.0 compliance.
   end
