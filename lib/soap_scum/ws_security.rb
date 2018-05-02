@@ -26,8 +26,8 @@ module SoapScum
                     keypass:,
                     keytransport_algorithm: SoapScum::CryptoAlgorithms::RSA_PKCS1_15,
                     cipher_algorithm: SoapScum::CryptoAlgorithms::AES128,
-                    digest_algorithm: SoapScum::CryptoAlgorithms::SHA1,
-                    signature_algorithm: SoapScum::CryptoAlgorithms::RSA_SHA1,
+                    digest_algorithm: SoapScum::CryptoAlgorithms::SHA256,
+                    signature_algorithm: SoapScum::CryptoAlgorithms::RSA_SHA256,
                     expires_in: 300)
 
         client_keyfile = OpenSSL::PKCS12.new(File.read(client_keyfile), keypass)
