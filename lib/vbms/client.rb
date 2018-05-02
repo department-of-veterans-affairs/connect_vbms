@@ -41,8 +41,8 @@ module VBMS
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
       is_sha256 = get_env("CONNECT_VBMS_SHA256", allow_empty: true) == true
-      digest_algorithm: SoapScum::CryptoAlgorithms::SHA256 if is_sha256 else SoapScum::CryptoAlgorithms::SHA1
-      signature_algorithm: SoapScum::CryptoAlgorithms::RSA_SHA256 if is_sha256 else else SoapScum::CryptoAlgorithms::RSA_SHA1
+      digest_algorithm = SoapScum::CryptoAlgorithms::SHA256 if is_sha256 else SoapScum::CryptoAlgorithms::SHA1
+      signature_algorithm = SoapScum::CryptoAlgorithms::RSA_SHA256 if is_sha256 else SoapScum::CryptoAlgorithms::RSA_SHA1
       
       VBMS::Client.new(
         base_url: get_env("CONNECT_VBMS_BASE_URL"),
