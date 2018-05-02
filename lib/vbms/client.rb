@@ -42,7 +42,7 @@ module VBMS
 
       is_sha256 = get_env("CONNECT_VBMS_SHA256", allow_empty: true) == true
       digest_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::SHA256 : SoapScum::CryptoAlgorithms::SHA1
-      signature_algorithm = is_sha256? SoapScum::CryptoAlgorithms::RSA_SHA256 : SoapScum::CryptoAlgorithms::RSA_SHA1
+      signature_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::RSA_SHA256 : SoapScum::CryptoAlgorithms::RSA_SHA1
       
       VBMS::Client.new(
         base_url: get_env("CONNECT_VBMS_BASE_URL"),
