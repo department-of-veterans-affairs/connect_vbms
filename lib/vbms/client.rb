@@ -13,8 +13,8 @@ module VBMS
                    station_id: nil,
                    proxy_base_url: nil,
                    use_forward_proxy: false,
-                   digest_algorithm: SoapScum::CryptoAlgorithms::SHA1,
-                   signature_algorithm: SoapScum::CryptoAlgorithms::RSA_SHA1)
+                   digest_algorithm: nil,
+                   signature_algorithm: nil)
 
       @base_url = base_url
       @keyfile = client_keyfile
@@ -28,21 +28,21 @@ module VBMS
       @proxy_base_url = proxy_base_url
       @use_forward_proxy = use_forward_proxy
 
+      is_sha256 = get_env("CONNECT_VBMS_SHA256", allow_empty: true) == "True"
+      digest_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::SHA256 : SoapScum::CryptoAlgorithms::SHA1
+      signature_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::RSA_SHA256 : SoapScum::CryptoAlgorithms::RSA_SHA1
+
       SoapScum::WSSecurity.configure(
         client_keyfile: client_keyfile,
         server_cert: server_cert,
-        keypass: keypass,
-        digest_algorithm: digest_algorithm,
-        signature_algorithm: signature_algorithm
+        keypass: keypass
       )
     end
 
     def self.from_env_vars(logger: nil, css_id: nil, station_id: nil, env_name: "test", use_forward_proxy: false)
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
-      is_sha256 = get_env("CONNECT_VBMS_SHA256", allow_empty: true) == "True"
-      digest_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::SHA256 : SoapScum::CryptoAlgorithms::SHA1
-      signature_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::RSA_SHA256 : SoapScum::CryptoAlgorithms::RSA_SHA1
+      
       
       VBMS::Client.new(
         base_url: get_env("CONNECT_VBMS_BASE_URL"),
@@ -55,9 +55,7 @@ module VBMS
         station_id: station_id,
         use_forward_proxy: use_forward_proxy,
         proxy_base_url: get_env("CONNECT_VBMS_PROXY_BASE_URL", allow_empty: true),
-        logger: logger, 
-        digest_algorithm: digest_algorithm,
-        signature_algorithm: signature_algorithm
+        logger: logger
       )
     end
 

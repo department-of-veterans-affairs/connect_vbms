@@ -26,8 +26,8 @@ module SoapScum
                     keypass:,
                     keytransport_algorithm: SoapScum::CryptoAlgorithms::RSA_PKCS1_15,
                     cipher_algorithm: SoapScum::CryptoAlgorithms::AES128,
-                    digest_algorithm: SoapScum::CryptoAlgorithms::SHA1,
-                    signature_algorithm: SoapScum::CryptoAlgorithms::RSA_SHA1,
+                    digest_algorithm:,
+                    signature_algorithm:,
                     expires_in: 300)
 
         client_keyfile = OpenSSL::PKCS12.new(File.read(client_keyfile), keypass)
@@ -36,10 +36,12 @@ module SoapScum
 
         @server_cert = OpenSSL::X509::Certificate.new(File.read(server_cert))
 
+        is_sha256 = get_env("CONNECT_VBMS_SHA256", allow_empty: true) == "True"
+      
         @keytransport_algorithm = keytransport_algorithm
         @cipher_algorithm = cipher_algorithm
-        @digest_algorithm = digest_algorithm
-        @signature_algorithm = signature_algorithm
+        @digest_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::SHA256 : SoapScum::CryptoAlgorithms::SHA1
+        @signature_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::RSA_SHA256 : SoapScum::CryptoAlgorithms::RSA_SHA1
         @expires_in = expires_in
       end
 
