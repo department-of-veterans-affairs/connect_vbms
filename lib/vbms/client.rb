@@ -40,7 +40,7 @@ module VBMS
     def self.from_env_vars(logger: nil, css_id: nil, station_id: nil, env_name: "test", use_forward_proxy: false)
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
-      is_sha256 = get_env("CONNECT_VBMS_SHA256", allow_empty: true) == true
+      is_sha256 = get_env("CONNECT_VBMS_SHA256", allow_empty: true) == "True"
       digest_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::SHA256 : SoapScum::CryptoAlgorithms::SHA1
       signature_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::RSA_SHA256 : SoapScum::CryptoAlgorithms::RSA_SHA1
       
