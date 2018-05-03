@@ -36,7 +36,7 @@ module SoapScum
 
         @server_cert = OpenSSL::X509::Certificate.new(File.read(server_cert))
 
-        if ENV['CONNECT_VBMS_SHA256'] == "True" || ENV['CONNECT_VBMS_SHA256'] == "true"
+        if ENV["CONNECT_VBMS_SHA256"] == "True" || ENV["CONNECT_VBMS_SHA256"] == "true"
           is_sha256 = true
         else
           is_sha256 = false
