@@ -12,9 +12,7 @@ module VBMS
                    css_id: nil,
                    station_id: nil,
                    proxy_base_url: nil,
-                   use_forward_proxy: false,
-                   digest_algorithm: nil,
-                   signature_algorithm: nil)
+                   use_forward_proxy: false)
 
       @base_url = base_url
       @keyfile = client_keyfile
@@ -27,10 +25,6 @@ module VBMS
       @station_id = station_id
       @proxy_base_url = proxy_base_url
       @use_forward_proxy = use_forward_proxy
-
-      is_sha256 = get_env("CONNECT_VBMS_SHA256", allow_empty: true) == "True"
-      digest_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::SHA256 : SoapScum::CryptoAlgorithms::SHA1
-      signature_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::RSA_SHA256 : SoapScum::CryptoAlgorithms::RSA_SHA1
 
       SoapScum::WSSecurity.configure(
         client_keyfile: client_keyfile,
