@@ -32,7 +32,7 @@ describe VBMS::Requests::GetDocumentContent do
       request.mtom_attachment = "text"
       xml = fixture("responses/get_document_content_fault_response.xml")
       doc = parse_strict(xml)
-      expect{request.handle_response(doc)}.to raise_error(VBMS::SOAPError)
+      expect { request.handle_response(doc) }.to raise_error(VBMS::SOAPError)
     end
   end
 end
