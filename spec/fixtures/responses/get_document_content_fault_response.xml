@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+      <xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="EK-DFCE53F4C586CA233914900385349151239">
+        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <wsse:SecurityTokenReference>
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=Scanning CA,OU=Scanning CA,O=Scanning CA,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>49</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+        <xenc:CipherData>
+          <xenc:CipherValue>hZx63D4k+RCUz4L284BC30d+lA//EKQDL9ecdCTxHCnBHWAuDkVkRSzGI2U/+kEBT/fSJ6GaW2WvKyszuXg/tudmdcumLlz6gRR1hwn0u+vBCMKf9f7aRWTVHGwFDYzDuCYXe0K8uB2SCg326pOTO7GIAd1S+7ED/xBrPGheQe+mxMw1ALDC18rSFo1M5KaCh6Z7RtPx1+n9Hhx+jc8uBMCvTL7XxAInDIsTniKXpM8EWwcdLLIVe6/K/Y9HA4MkMO/sgJIWfvKMJEtHD/wMq0VqC2G4spX1K9RRfWRYHbxQsc48YBMBai5Ch6B6OjWqe01SezcPCtEzttl65lC8MQ==</xenc:CipherValue>
+        </xenc:CipherData>
+        <xenc:ReferenceList>
+          <xenc:DataReference URI="#ED-1239"/>
+        </xenc:ReferenceList>
+      </xenc:EncryptedKey>
+      <wsu:Timestamp wsu:Id="TS-1236">
+        <wsu:Created>2017-03-20T19:35:34.907Z</wsu:Created>
+        <wsu:Expires>2017-03-20T19:40:34.907Z</wsu:Expires>
+      </wsu:Timestamp>
+      <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-1238">
+        <ds:SignedInfo>
+          <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+            <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="env"/>
+          </ds:CanonicalizationMethod>
+          <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <ds:Reference URI="#TS-1236">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="wsse env"/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>UP4byn1tL8PGUTvXiIzyWsSgego=</ds:DigestValue>
+          </ds:Reference>
+          <ds:Reference URI="#id-1237">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList=""/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>rT0B7HVREENN0yCLi034WJb6zyc=</ds:DigestValue>
+          </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue>CuFSn6RVSGgt6S5I+9ApWNW3xPeTa+UuPohLFg7pTrfX8FG66kygabrT6PQVN1o4l5TRW0vy+LO7
+qZIs6LbfRcAPqNNo7lErjmG893s2+wnFGzhcNmA9RD65vTOqPRzye1r1LtJQ1Y7PAfQqiOheAlHV
+fjjL/y6EytIrJzwCxGDbKtU0DmaYmkfvY7q2G5Pou9LW9kacTGoT3chPJMRt3erY064cFZYMt2w2
+knyB7L+6PbO3TUTvNgw4JvS86usQfS+5AagjxWHwDO74sB2JSJyPRy65fTbhvFofMMvQoZ8Qiln1
+ePnolkvbZ4I417Jhrz4M679OoN0g38BYstaN8A==</ds:SignatureValue>
+        <ds:KeyInfo Id="KI-DFCE53F4C586CA233914900385349071237">
+          <wsse:SecurityTokenReference wsu:Id="STR-DFCE53F4C586CA233914900385349071238">
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=AIDE CA2,OU=CA2,O=AIDE,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>4</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+      </ds:Signature>
+    </wsse:Security>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-1237">
+    <getDocumentContentResponse xmlns="http://service.efolder.vbms.vba.va.gov/eFolderReadService" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns2="http://vbms.vba.va.gov/cdm/document/v5" xmlns:ns3="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:ns5="http://service.efolder.vbms.vba.va.gov/eFolderReadService"></getDocumentContentResponse>
+  </env:Body>
+</env:Envelope>

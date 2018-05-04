@@ -33,10 +33,14 @@ module VBMS
       end
 
       def handle_response(doc)
-        el = doc.at_xpath(
-          "//read:getDocumentContentResponse/read:result", VBMS::XML_NAMESPACES
-        )
-        construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
+        begin 
+          el = doc.at_xpath(
+            "//read:getDocumentContentResponse/read:result", VBMS::XML_NAMESPACES
+          )
+          construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
+        rescue NoMethodError
+          raise SOAPError.new("No SOAP body results found in response")
+        end
       end
 
       def mtom_attachment?
