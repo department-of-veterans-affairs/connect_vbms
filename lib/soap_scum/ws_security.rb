@@ -34,11 +34,7 @@ module SoapScum
 
         @server_cert = OpenSSL::X509::Certificate.new(File.read(server_cert))
 
-        if ENV["CONNECT_VBMS_SHA256"]
-          is_sha256 = "true".casecmp(ENV["CONNECT_VBMS_SHA256"])
-        else
-          is_sha256 = false
-        end
+        is_sha256 = "true".casecmp(ENV["CONNECT_VBMS_SHA256"] || "")
       
         @keytransport_algorithm = keytransport_algorithm
         @cipher_algorithm = cipher_algorithm
