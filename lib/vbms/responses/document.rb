@@ -27,8 +27,6 @@ module VBMS
             mime_type: el["mimeType"],
             type_id: el["docType"],
             received_at: received_date.nil? ? nil : Time.parse(received_date.content).to_date)
-      rescue NoMethodError
-        raise SOAPError.new("No receivedDt found in SOAP response")
       end
 
       def self.extract_alt_doc_types(el)

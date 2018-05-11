@@ -14,8 +14,6 @@ module VBMS
         content = Base64.decode64(content) if content
 
         new(document: document, content: content)
-      rescue NoMethodError
-        raise SOAPError.new("No data found in SOAP response")
       end
 
       def to_h
