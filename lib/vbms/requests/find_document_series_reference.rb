@@ -44,8 +44,6 @@ module VBMS
             construct_response(version)
           end
         end
-      rescue NoMethodError
-        raise SOAPError.new("No result found in SOAP response")
       end
 
       private
@@ -67,6 +65,8 @@ module VBMS
           alt_doc_types: alt_doc_types.present? ? JSON.parse(alt_doc_types[:value]) : nil,
           restricted: restricted.present? ? restricted[:value] : nil
         )
+      rescue NoMethodError
+        raise SOAPError.new("No result found in SOAP response")
       end
 
       def type_description(version)

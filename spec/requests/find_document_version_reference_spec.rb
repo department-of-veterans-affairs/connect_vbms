@@ -42,7 +42,7 @@ describe VBMS::Requests::FindDocumentVersionReference do
 
     it "handles XML errors gracefully" do
       request = VBMS::Requests::FindDocumentVersionReference.new("784449089")
-      xml = fixture("responses/get_document_content_fault_response.xml")
+      xml = fixture("responses/find_document_version_reference_fault_response.xml")
       doc = parse_strict(xml)
       expect { request.handle_response(doc) }.to raise_error(VBMS::SOAPError)
     end
