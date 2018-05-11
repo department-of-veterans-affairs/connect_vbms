@@ -36,7 +36,7 @@ module Xmldsig
         []
       end
     rescue NoMethodError
-        raise SOAPError.new("No InclusiveNamespaces found in SOAP response")
+      raise SOAPError.new("No InclusiveNamespaces found in SOAP response")
     end
 
     def canonicalized_signed_info
