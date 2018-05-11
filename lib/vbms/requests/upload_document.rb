@@ -51,6 +51,8 @@ module VBMS
       def handle_response(doc)
         el = doc.xpath("//upload:uploadDocumentResponse", VBMS::XML_NAMESPACES).to_xml
         OpenStruct.new(XMLHelper.convert_to_hash(el))
+      rescue NoMethodError
+        raise SOAPError.new("No uploadDocumentResponse found in SOAP response")
       end
     end
   end

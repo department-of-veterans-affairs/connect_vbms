@@ -95,6 +95,8 @@ module VBMS
         )
 
         VBMS::Responses::Claim.create_from_xml(el)
+      rescue NoMethodError
+        raise SOAPError.new("No establishedClaim found in SOAP response")
       end
     end
   end

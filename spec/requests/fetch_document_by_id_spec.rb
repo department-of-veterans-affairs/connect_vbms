@@ -40,5 +40,12 @@ describe VBMS::Requests::FetchDocumentById do
     it "has some associated content" do
       expect(subject.content).to_not be_nil
     end
+
+    it "handles XML errors gracefully" do
+      request = VBMS::Requests::FetchDocumentById.new("")
+      xml = fixture("responses/get_document_content_fault_response.xml")
+      doc = parse_strict(xml)
+      expect { request.handle_response(doc) }.to raise_error(VBMS::SOAPError)
+    end
   end
 end

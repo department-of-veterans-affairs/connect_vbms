@@ -61,6 +61,8 @@ module VBMS
       def handle_response(doc)
         el = doc.at_xpath("//upload:initializeUploadResponse", VBMS::XML_NAMESPACES).to_xml
         OpenStruct.new(upload_token: XMLHelper.convert_to_hash(el)[:initialize_upload_response][:upload_token])
+      rescue NoMethodError
+        raise SOAPError.new("No initializeUploadResponse found in SOAP response")
       end
     end
   end
