@@ -54,5 +54,12 @@ describe VBMS::Requests::FindDocumentSeriesReference do
       expect(doc3[:document_id]).to eq "{C7A6DA43-A368-4831-A68B-D32F0C164C22}"
       expect(doc3[:restricted]).to eq false
     end
+
+    it "handles XML errors gracefully" do
+      request = VBMS::Requests::FindDocumentSeriesReference.new("784449089")
+      xml = fixture("responses/find_document_series_reference_fault_response.xml")
+      doc = parse_strict(xml)
+      expect { request.handle_response(doc) }.to raise_error(VBMS::SOAPError)
+    end
   end
 end

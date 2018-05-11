@@ -44,6 +44,8 @@ module VBMS
             construct_response(version)
           end
         end
+      rescue NoMethodError
+        raise SOAPError.new("No result found in SOAP response")
       end
 
       private
