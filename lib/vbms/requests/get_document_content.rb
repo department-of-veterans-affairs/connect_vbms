@@ -38,7 +38,7 @@ module VBMS
         )
         construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
       rescue NoMethodError
-        raise SOAPError.new("No result found in SOAP response")
+        raise SOAPError.new("No SOAP body results found in response")
       end
 
       def mtom_attachment?

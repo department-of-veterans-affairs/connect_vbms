@@ -71,8 +71,6 @@ module VBMS
         ).map do |xml|
           VBMS::Responses::Contention.create_from_xml(xml, key: :created_contentions)
         end
-      rescue NoMethodError
-        raise SOAPError.new("No createdContentions found in SOAP response")
       end
     end
   end
