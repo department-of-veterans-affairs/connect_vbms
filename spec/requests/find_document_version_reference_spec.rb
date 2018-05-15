@@ -39,12 +39,5 @@ describe VBMS::Requests::FindDocumentVersionReference do
       expect(doc1[:restricted]).to eq false
       expect(doc1[:received_at]).to eq Date.parse("2017-03-29-04:00")
     end
-
-    it "handles XML errors gracefully" do
-      request = VBMS::Requests::FindDocumentVersionReference.new("784449089")
-      xml = fixture("responses/find_document_version_reference_fault_response.xml")
-      doc = parse_strict(xml)
-      expect { request.handle_response(doc) }.to raise_error(VBMS::SOAPError)
-    end
   end
 end
