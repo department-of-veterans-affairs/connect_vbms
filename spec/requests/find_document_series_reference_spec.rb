@@ -59,7 +59,7 @@ describe VBMS::Requests::FindDocumentSeriesReference do
       request = VBMS::Requests::FindDocumentSeriesReference.new("784449089")
       xml = fixture("responses/find_document_series_reference_fault_response.xml")
       doc = parse_strict(xml)
-      expect { request.handle_response(doc) }.to raise_error(VBMS::SOAPError)
+      expect { request.handle_response(doc) }.to_not raise_error
     end
   end
 end

@@ -31,8 +31,6 @@ module VBMS
         ).map do |el|
           VBMS::Responses::DocumentType.create_from_xml(el)
         end
-      rescue NoMethodError
-        raise SOAPError.new("No result found in SOAP response")
       end
     end
   end

@@ -29,8 +29,6 @@ module VBMS
         ).map do |el|
           construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
         end
-      rescue NoMethodError
-        raise SOAPError.new("No result found in SOAP response")
       end
 
       private

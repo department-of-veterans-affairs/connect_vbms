@@ -70,8 +70,6 @@ YXTTU5Qj4itwph3AWjLS5TNMuXzh2d1QWyhBBg==</ds:SignatureValue>
   </env:Header>
   <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-326">
     <findDocumentSeriesReferenceResponse xmlns="http://service.efolder.vbms.vba.va.gov/eFolderReadService" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns2="http://vbms.vba.va.gov/cdm/document/v5" xmlns:ns3="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:ns5="http://service.efolder.vbms.vba.va.gov/eFolderReadService">
-      <ns5:result id="{40DBF559-0000-CE12-9052-4085752E9C4B}" seriesName="784449089/tmp20170131-15729-6orpf5">
-      </ns5:result>
     </findDocumentSeriesReferenceResponse>
   </env:Body>
 </env:Envelope>

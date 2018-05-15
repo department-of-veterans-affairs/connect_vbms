@@ -48,8 +48,6 @@ module VBMS
         ).map do |xml|
           VBMS::Responses::Contention.create_from_xml(xml)
         end
-      rescue NoMethodError
-        raise SOAPError.new("No listOfContentions found in SOAP response")
       end
     end
   end
