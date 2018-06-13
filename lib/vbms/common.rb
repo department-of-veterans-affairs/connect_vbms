@@ -39,6 +39,7 @@ module VBMS
 
   ENDPOINTS = {
     claims: "/vbmsp2-cs/ClaimServiceV4",
+    claimsv5: "/vbmsp2-cs/ClaimServiceV5",
     efolder: "/vbmsp2-cms/streaming/eDocumentService-v4",
     efolder_svc_v1: {
       read: "/vbms-efolder-svc/read-v1/eFolderReadService",

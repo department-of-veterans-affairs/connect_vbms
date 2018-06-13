@@ -9,8 +9,8 @@ module VBMS
 
       # This all assumes that rated_issues is a hash in the form of:
       # { issue_id: contention_id, issue_id2: contention_id2 }
-      def initialize(claim_id, rated_issues)
-        @claim_id = claim_id,
+      def initialize(claim_id:, rated_issues:)
+        @claim_id = claim_id
         @rated_issues = rated_issues
       end
 
@@ -19,18 +19,16 @@ module VBMS
       end
 
       def endpoint_url(base_url)
-        "#{base_url}#{VBMS::ENDPOINTS[:claims]}"
+        "#{base_url}#{VBMS::ENDPOINTS[:claimsv5]}"
       end
 
       def soap_doc
         VBMS::Requests.soap(more_namespaces: NAMESPACES) do |xml|
-          xml["cla"].associateRatedIssues do
-            @rated_issues.each do |rated_issue_id, contention_id|
-              xml["cla"].ratedIssueToAssociate(
-                rated_issue_id: rated_issue_id,
-                contention_id: contention_id,
-                claim_id: @claim_id
-              )
+          @rated_issues.each do |rated_issue_id, contention_id|
+            xml["cla"].associateRatedIssues do
+              xml["cla"].ratedIssueId rated_issue_id
+              xml["cla"].contentionId contention_id
+              xml["cla"].claimId @claim_id
             end
           end
         end
