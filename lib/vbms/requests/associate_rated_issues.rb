@@ -9,9 +9,9 @@ module VBMS
 
       # This all assumes that rated_issues is a hash in the form of:
       # { issue_id: contention_id, issue_id2: contention_id2 }
-      def initialize(claim_id:, rated_issues:)
+      def initialize(claim_id:, rated_issue_contention_map:)
         @claim_id = claim_id
-        @rated_issues = rated_issues
+        @rated_issue_contention_map = rated_issue_contention_map
       end
 
       def name
@@ -24,7 +24,7 @@ module VBMS
 
       def soap_doc
         VBMS::Requests.soap(more_namespaces: NAMESPACES) do |xml|
-          @rated_issues.each do |rated_issue_id, contention_id|
+          @rated_issue_contention_map.each do |rated_issue_id, contention_id|
             xml["cla"].associateRatedIssues do
               xml["cla"].ratedIssueId rated_issue_id
               xml["cla"].contentionId contention_id
@@ -40,7 +40,7 @@ module VBMS
           "Content"]]
       end
 
-      def handle_response(doc)
+      def handle_response(_doc)
         # At the moment, the response body only returns true. If we get here, no other errors will have been raised.
         # We just need a success status. :)
         true

@@ -3,7 +3,7 @@ describe VBMS::Requests::AssociateRatedIssues do
   let(:request) do
     VBMS::Requests::AssociateRatedIssues.new(
       claim_id: "1323123",
-      rated_issues: {"RATEDISSUEID": "CONTENTIONID"}
+      rated_issues: { "RATEDISSUEID": "CONTENTIONID" }
     )
   end
 
