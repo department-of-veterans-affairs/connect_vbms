@@ -2,12 +2,10 @@ module VBMS
   module Requests
     class AssociateRatedIssues < BaseRequest
       NAMESPACES = {
-        "xmlns:cla" => "http://vbms.vba.va.gov/external/ClaimService/v5",
-        "xmlns:cdm" => "http://vbms.vba.va.gov/cdm/claim/v5",
-        "xmlns:part" => "http://vbms.vba.va.gov/cdm/participant/v5"
+        "xmlns:cla" => "http://vbms.vba.va.gov/external/ClaimService/v5"
       }.freeze
 
-      # This all assumes that rated_issues is a hash in the form of:
+      # This all assumes that rated_issue_contention_map is a hash in the form of:
       # { issue_id: contention_id, issue_id2: contention_id2 }
       def initialize(claim_id:, rated_issue_contention_map:)
         @claim_id = claim_id
