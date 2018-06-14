@@ -41,9 +41,9 @@ module VBMS
       end
 
       def handle_response(doc)
-        # res = doc.at_xpath(
-        #   "//associateRatedIssuesResponse:ns2:wasRatedIssueAssociated")
-        puts doc
+        # At the moment, the response body only returns true. If we get here, no other errors will have been raised.
+        # We just need a success status. :)
+        true
       end
     end
   end
