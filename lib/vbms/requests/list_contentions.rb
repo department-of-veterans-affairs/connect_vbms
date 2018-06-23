@@ -11,7 +11,7 @@ module VBMS
         "xmlns:cla" => "http://vbms.vba.va.gov/external/ClaimService/v5",
         "xmlns:cdm" => "http://vbms.vba.va.gov/cdm/claim/v5",
         "xmlns:participant" => "http://vbms.vba.va.gov/cdm/participant/v5"
-      }
+      }.freeze
 
       def initialize(claim_id, v5: false)
         @claim_id = claim_id
@@ -57,19 +57,21 @@ module VBMS
       end
 
       def handle_response(doc)
-        @v5 ?
+        if @v5 
           doc.xpath(
             "//claimV5:listContentionsResponse/claimV5:listOfContentions",
             VBMS::XML_NAMESPACES
           ).map do |xml|
             VBMS::Responses::Contention.create_from_xml(xml)
-          end :
+          end
+        else
           doc.xpath(
             "//claimV4:listContentionsResponse/claimV4:listOfContentions",
             VBMS::XML_NAMESPACES
           ).map do |xml|
             VBMS::Responses::Contention.create_from_xml(xml)
           end
+        end
       end
     end
   end
