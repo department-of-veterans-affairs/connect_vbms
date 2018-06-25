@@ -14,10 +14,13 @@ module VBMS
       }.freeze
 
       # Contentions should be an array of strings representing the contentions
-      def initialize(veteran_file_number:, claim_id:, contentions:, v5: false)
+      # Special issues should be an array of hashes with the form:
+      #   { code: "SSR", narrative: "Same Station Review" }
+      def initialize(veteran_file_number:, claim_id:, contentions:, special_issues: [], v5: false)
         @veteran_file_number = veteran_file_number
         @claim_id = claim_id
         @contentions = contentions
+        @special_issues = special_issues
         @v5 = v5
       end
 
@@ -63,6 +66,14 @@ module VBMS
                 partcipantContention: "unused, but required."
               ) do
                 xml["cdm"].submitDate Date.today.iso8601
+
+                @special_issues.each do |special_issue|
+                  xml["cdm"].issue(
+                    typeCd: special_issue[:code],
+                    narrative: special_issue[:narrative],
+                    inferred: "false"
+                  )
+                end
               end
             end
           end
