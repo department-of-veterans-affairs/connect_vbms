@@ -7,17 +7,28 @@ module VBMS
         "xmlns:participant" => "http://vbms.vba.va.gov/cdm/participant/v4"
       }.freeze
 
-      def initialize(veteran_record, claim)
+      NAMESPACES_V5 = {
+        "xmlns:cla" => "http://vbms.vba.va.gov/external/ClaimService/v5",
+        "xmlns:cdm" => "http://vbms.vba.va.gov/cdm/claim/v5",
+        "xmlns:participant" => "http://vbms.vba.va.gov/cdm/participant/v5"
+      }.freeze
+
+      def initialize(veteran_record, claim, v5: false)
         @veteran_record = veteran_record
         @claim = claim
+        @v5 = v5
       end
 
       def name
         "establishClaim"
       end
 
+      def specify_endpoint
+        @v5 ? :claimsv5 : :claims
+      end
+
       def endpoint_url(base_url)
-        "#{base_url}#{VBMS::ENDPOINTS[:claims]}"
+        "#{base_url}#{VBMS::ENDPOINTS[specify_endpoint]}"
       end
 
       def inject_header_content(header_xml)
@@ -29,7 +40,7 @@ module VBMS
       # More information on what the fields mean, see:
       # https://github.com/department-of-veterans-affairs/dsva-vbms/issues/66#issuecomment-266098034
       def soap_doc
-        VBMS::Requests.soap(more_namespaces: NAMESPACES) do |xml|
+        VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].establishClaim do
             xml["cla"].veteranInput(
               "fileNumber" => @veteran_record[:file_number],
@@ -89,10 +100,17 @@ module VBMS
       end
 
       def handle_response(doc)
-        el = doc.at_xpath(
-          "//claimV4:establishClaimResponse/claimV4:establishedClaim",
-          VBMS::XML_NAMESPACES
-        )
+        el = if @v5
+               doc.at_xpath(
+                 "//claimV5:establishClaimResponse/claimV5:establishedClaim",
+                 VBMS::XML_NAMESPACES
+               )
+             else
+               doc.at_xpath(
+                 "//claimV4:establishClaimResponse/claimV4:establishedClaim",
+                 VBMS::XML_NAMESPACES
+               )
+             end
 
         VBMS::Responses::Claim.create_from_xml(el)
       end
