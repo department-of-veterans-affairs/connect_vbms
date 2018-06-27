@@ -16,7 +16,7 @@ module VBMS
       # Contentions should be an array of strings representing the contentions
       # Special issues should be an array of hashes with the form:
       #   { code: "SSR", narrative: "Same Station Review" }
-      def initialize(veteran_file_number:, claim_id:, contentions:, special_issues: [], v5: false)
+      def initialize(veteran_file_number:, claim_id:, contentions:, special_issues: [], v5: FeatureToggle.enabled?(:claims_service_v5))
         @veteran_file_number = veteran_file_number
         @claim_id = claim_id
         @contentions = contentions
@@ -87,7 +87,7 @@ module VBMS
       end
 
       def handle_response(doc)
-        if @v5 
+        if @v5
           doc.xpath(
             "//claimV5:createContentionsResponse/claimV5:createdContentions",
             VBMS::XML_NAMESPACES
