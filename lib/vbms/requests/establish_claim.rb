@@ -13,7 +13,7 @@ module VBMS
         "xmlns:participant" => "http://vbms.vba.va.gov/cdm/participant/v5"
       }.freeze
 
-      def initialize(veteran_record, claim, v5: false)
+      def initialize(veteran_record, claim, v5: FeatureToggle.enabled?(:claims_service_v5))
         @veteran_record = veteran_record
         @claim = claim
         @v5 = v5

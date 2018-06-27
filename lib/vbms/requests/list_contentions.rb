@@ -13,7 +13,7 @@ module VBMS
         "xmlns:participant" => "http://vbms.vba.va.gov/cdm/participant/v5"
       }.freeze
 
-      def initialize(claim_id, v5: false)
+      def initialize(claim_id, v5: FeatureToggle.enabled?(:claims_service_v5))
         @claim_id = claim_id
         @v5 = v5
       end
@@ -57,7 +57,7 @@ module VBMS
       end
 
       def handle_response(doc)
-        if @v5 
+        if @v5
           doc.xpath(
             "//claimV5:listContentionsResponse/claimV5:listOfContentions",
             VBMS::XML_NAMESPACES
