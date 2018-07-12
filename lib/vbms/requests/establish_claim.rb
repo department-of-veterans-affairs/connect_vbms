@@ -69,6 +69,7 @@ module VBMS
             xml["cla"].claimToEstablish(
               "benefitTypeCd" => @claim[:benefit_type_code], # C&P Live = '1', C&P Death = '2'
               "claimLevelStatusCd" => "PEND",
+              "participantPersonId" => @claim[:claimant_participant_id],
               "payeeCd" => @claim[:payee_code],
               "label" => @claim[:end_product_label],
               "modifiedEndProductCd" => @claim[:end_product_modifier],
