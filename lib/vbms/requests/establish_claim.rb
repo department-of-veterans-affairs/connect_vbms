@@ -40,6 +40,7 @@ module VBMS
       # More information on what the fields mean, see:
       # https://github.com/department-of-veterans-affairs/dsva-vbms/issues/66#issuecomment-266098034
       def soap_doc
+        participant_id_if_passed = @claim[:claimant_participant_id] ? {"participantPersonId" => @claim[:claimant_participant_id]} : {}
         VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].establishClaim do
             xml["cla"].veteranInput(
@@ -66,10 +67,9 @@ module VBMS
               end
             end
 
-            xml["cla"].claimToEstablish(
+            xml["cla"].claimToEstablish({
               "benefitTypeCd" => @claim[:benefit_type_code], # C&P Live = '1', C&P Death = '2'
               "claimLevelStatusCd" => "PEND",
-              "participantPersonId" => @claim[:claimant_participant_id],
               "payeeCd" => @claim[:payee_code],
               "label" => @claim[:end_product_label],
               "modifiedEndProductCd" => @claim[:end_product_modifier],
@@ -81,7 +81,7 @@ module VBMS
               "priority" => "1",
               "preDischarge" => @claim[:predischarge] ? "true" : "false",
               "gulfWarRegistry" => @claim[:gulf_war_registry] ? "true" : "false"
-            ) do
+            }.merge(participant_id_if_passed)) do
               xml["cdm"].endProductClaimType(
                 "code" => @claim[:end_product_code],
                 "name" => @claim[:end_product_label]
