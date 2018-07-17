@@ -64,7 +64,7 @@ module VBMS
           mime_type: result[:@mime_type],
           alt_doc_types: alt_doc_types.present? ? JSON.parse(alt_doc_types[:value]) : nil,
           restricted: restricted.present? ? restricted[:value] : nil,
-          vbms_upload_date: result[:vbms_upload_date]
+          upload_date: result[:vbms_upload_date]
         )
       end
 
