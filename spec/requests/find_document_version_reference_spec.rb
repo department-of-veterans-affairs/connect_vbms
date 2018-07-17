@@ -38,6 +38,7 @@ describe VBMS::Requests::FindDocumentVersionReference do
       expect(doc1[:subject]).to eq "knee"
       expect(doc1[:restricted]).to eq false
       expect(doc1[:received_at]).to eq Date.parse("2017-03-29-04:00")
+      expect(doc1[:upload_date]).to eq Date.parse("2017-03-29-04:00")
     end
   end
 end
