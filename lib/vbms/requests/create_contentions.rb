@@ -61,8 +61,9 @@ module VBMS
                 medical: "false",
                 typeCode: "NEW",
                 workingContention: "YES",
+                originSource: "CASEFLOW",
 
-                awaitingResponse: "unused. but requrired.",
+                awaitingResponse: "unused. but required.",
                 partcipantContention: "unused, but required."
               ) do
                 xml["cdm"].submitDate Date.today.iso8601
@@ -87,7 +88,7 @@ module VBMS
       end
 
       def handle_response(doc)
-        if @v5 
+        if @v5
           doc.xpath(
             "//claimV5:createContentionsResponse/claimV5:createdContentions",
             VBMS::XML_NAMESPACES
