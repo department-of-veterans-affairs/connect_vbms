@@ -72,7 +72,8 @@ module VBMS
 
     def send_request(request)
       encrypted_doc = SoapScum::WSSecurity.encrypt(request.soap_doc, request.signed_elements)
-
+puts "request"
+puts request.soap_doc
       inject_header_content(encrypted_doc, request)
       inject_saml(encrypted_doc)
       remove_must_understand(encrypted_doc)

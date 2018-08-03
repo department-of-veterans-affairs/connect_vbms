@@ -1,6 +1,6 @@
 module VBMS
   module Requests
-    class RemoveContentions < BaseRequest
+    class RemoveContention < BaseRequest
       NAMESPACES = {
         "xmlns:cla" => "http://vbms.vba.va.gov/external/ClaimService/v4",
         "xmlns:cdm" => "http://vbms.vba.va.gov/cdm/claim/v4",
@@ -13,13 +13,13 @@ module VBMS
         "xmlns:participant" => "http://vbms.vba.va.gov/cdm/participant/v5"
       }.freeze
 
-      def initialize(contention_id, v5: false)
+      def initialize(contention_id:, v5: false)
         @contention_id = contention_id
         @v5 = v5
       end
 
       def name
-        "removeContentions"
+        "removeContention"
       end
 
       def specify_endpoint
@@ -40,9 +40,8 @@ module VBMS
         @v5 ? NAMESPACES_V5 : NAMESPACES
       end
 
-      # More information on what the fields mean, see:
-      # https://github.com/department-of-veterans-affairs/dsva-vbms/issues/66#issuecomment-266098034
       def soap_doc
+        puts
         VBMS::Requests.soap(more_namespaces: namespaces) do |xml|
           xml["cla"].removeContention do
             xml["cla"].contentionToRemove @contention_id
@@ -56,22 +55,10 @@ module VBMS
           "Content"]]
       end
 
-      def handle_response(doc)
-        if @v5
-          doc.xpath(
-            "//claimV5:removeContentionsResponse/claimV5:wasContentionRemoved",
-            VBMS::XML_NAMESPACES
-          ).map do |xml|
-            VBMS::Responses::Contention.create_from_xml(xml)
-          end
-        else
-          doc.xpath(
-            "//claimV4:removeContentionsResponse/claimV4:wasContentionRemoved",
-            VBMS::XML_NAMESPACES
-          ).map do |xml|
-            VBMS::Responses::Contention.create_from_xml(xml)
-          end
-        end
+      def handle_response(_doc)
+        # At the moment, the response body only returns true. If we get here, no other errors will have been raised.
+        # We just need a success status. :)
+        true
       end
     end
   end

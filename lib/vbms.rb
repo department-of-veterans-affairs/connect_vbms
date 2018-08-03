@@ -34,6 +34,7 @@ require "vbms/requests/establish_claim"
 require "vbms/requests/create_contentions"
 require "vbms/requests/list_contentions"
 require "vbms/requests/associate_rated_issues"
+require "vbms/requests/remove_contention"
 
 # eFolder Service 1.0
 require "vbms/requests/find_document_series_reference"
