@@ -61,7 +61,7 @@ module VBMS
                 medical: "false",
                 typeCode: "NEW",
                 workingContention: "YES",
-                originSource: "Caseflow AMA",
+                origSrc: "Caseflow AMA",
 
                 awaitingResponse: "unused. but required.",
                 partcipantContention: "unused, but required."
