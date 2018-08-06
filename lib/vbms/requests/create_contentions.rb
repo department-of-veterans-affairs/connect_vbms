@@ -61,12 +61,12 @@ module VBMS
                 medical: "false",
                 typeCode: "NEW",
                 workingContention: "YES",
-                origSrc: "Caseflow AMA",
 
                 awaitingResponse: "unused. but required.",
                 partcipantContention: "unused, but required."
               ) do
                 xml["cdm"].submitDate Date.today.iso8601
+                xml["cdm"].origSrc "APP"
 
                 @special_issues.each do |special_issue|
                   xml["cdm"].issue(
