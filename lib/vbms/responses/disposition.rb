@@ -3,17 +3,17 @@ module VBMS
     class Disposition
       attr_accessor :claim_id, :contention_id, :disposition
 
-      def initialize(claim_id: nil, contentionId: nil)
+      def initialize(claim_id: nil, contention_id: nil, disposition: nil)
         self.claim_id = claim_id
         self.contention_id = contention_id
         self.disposition = disposition
       end
 
       def self.create_from_xml(el)
-        new(self.claim_id = el["claimId"],
-            self.contention_id = el["contentionId"],
-            self.disposition = el["disposition"]
-        )
+        new(claim_id: el["claimId"].value,
+            contention_id: el["contentionId"].value,
+            disposition: el["disposition"].value
+           )
       end
 
       def to_h

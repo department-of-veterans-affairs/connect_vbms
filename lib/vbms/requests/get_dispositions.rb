@@ -31,12 +31,12 @@ module VBMS
           "Content"]]
       end
 
-      def handle_response(_doc)
+      def handle_response(doc)
         doc.at_xpath(
-          "//claimV5:getDispositionsResponse/claimV5:dispositionAssociations",
+          "//claimV5:getDispositionsResponse",
           VBMS::XML_NAMESPACES
-        ).map do |el|
-          VBMS::Responses::Disposition.create_from_xml(el)
+        ).elements.map do |el|
+          VBMS::Responses::Disposition.create_from_xml(el.attributes)
         end
       end
     end

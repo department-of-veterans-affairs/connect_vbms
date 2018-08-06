@@ -23,6 +23,7 @@ require "vbms/responses/document_type"
 require "vbms/responses/document_with_content"
 require "vbms/responses/claim"
 require "vbms/responses/contention"
+require "vbms/responses/disposition"
 
 require "vbms/requests/base_request"
 # eDocument Service v4

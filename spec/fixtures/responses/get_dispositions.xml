@@ -1,0 +1,8 @@
+<env:Body wsu:Id="id-6" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+    <getDispositionsResponse xmlns="http://vbms.vba.va.gov/external/ClaimService/v5" xmlns:aw="http://vbms.vba.va.gov/cdm/award/v4" xmlns:claim="http://vbms.vba.va.gov/cdm/claim/v5" xmlns:com="http://vbms.vba.va.gov/cdm/common/v5" xmlns:doc="http://vbms.vba.va.gov/cdm/document/v5" xmlns:ns2="http://vbms.vba.va.gov/external/ClaimService/v5" xmlns:part="http://vbms.vba.va.gov/cdm/participant/v5">
+       <ns2:dispositionAssociations claimId="600097563" contentionId="175506" disposition="Granted"/>
+       <ns2:dispositionAssociations claimId="600097563" contentionId="167016" disposition="Granted"/>
+       <ns2:dispositionAssociations claimId="600097563" contentionId="175513" disposition="DTA - Fed Recs"/>
+       <ns2:dispositionAssociations claimId="600097563" contentionId="167015" disposition="DTA - PMRs"/>
+    </getDispositionsResponse>
+ </env:Body>
