@@ -73,7 +73,6 @@ describe VBMS::Requests::RemoveContention do
       subject { request.handle_response(doc) }
 
       it "should return true" do
-        puts subject
         expect(subject).to eq("true")
       end
     end
