@@ -72,7 +72,7 @@ module VBMS
       end
 
       def handle_response(doc)
-        # returns true if successful at removing contention
+        # returns "true" if successful at removing contention
         el = if @v5
                doc.at_xpath(
                  "//claimV5:removeContentionResponse/claimV5:wasContentionRemoved",

@@ -20,7 +20,7 @@ module VBMS
           participant_contention: data[:@partcipant_contention],
           secondary_to_contention_id: data[:@secondary_to_contention_id],
           type_code: data[:@type_code],
-          working_contention: data[:@working_contention],
+          working_contention: data[:@working_contention]
         )
       end
     end
