@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe VBMS::Responses::Contentio do
+describe VBMS::Responses::Contention do
   describe "create_from_xml" do
     let(:xml_string) { File.open(fixture_path("responses/list_contentions.xml")).read }
     let(:xml) { Nokogiri::XML(xml_string) }
