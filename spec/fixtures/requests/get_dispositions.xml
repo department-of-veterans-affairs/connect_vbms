@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v5="http://vbms.vba.va.gov/external/ClaimService/v5">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v5:getDispositions>
+         <v5:claimId>600097563</v5:claimId>
+      </v5:getDispositions>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+      <xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="EK-3F860E8BB0EFFBC56C1533600537234348">
+        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <wsse:SecurityTokenReference>
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=VBMS Client Signing CA</ds:X509IssuerName>
+                <ds:X509SerialNumber>18520338221153558207117693896452819173</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+        <xenc:CipherData>
+          <xenc:CipherValue>Kn8HeZ8uOdm76q5MQvBM6STAcW07dcNgNOFkKwQoncfDz5vy90FOwWm4Zhb908CqRn1P7uZBhe1oGW0fuUldVkVl0prno7k6awhLRC/1Qeo9u7euUf0O82ieqUt/JTI68Uj0x1IFBIBjNJjXHXmciW1C3Jz94hgGc3SZgUjuBUMcTuTq0QV0ZXAjT2LG2YYMACuf09Sw/3k1Q7UGVcVqv5csNZyOrKHj5BILlEhUH3oPs+mrsaUoB9fxedceE8UazTM1nItNSauNn7g6boKP8glnnXlgx0LCWJklun1HQgyVq9Vp766OetgLvU32TZvJ1VsZE4ZR2GlbA1ehG26rGQ==</xenc:CipherValue>
+        </xenc:CipherData>
+        <xenc:ReferenceList>
+          <xenc:DataReference URI="#ED-348"/>
+        </xenc:ReferenceList>
+      </xenc:EncryptedKey>
+      <wsu:Timestamp wsu:Id="TS-345">
+        <wsu:Created>2018-08-07T00:08:57.230Z</wsu:Created>
+        <wsu:Expires>2018-08-07T00:13:57.230Z</wsu:Expires>
+      </wsu:Timestamp>
+      <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-347">
+        <ds:SignedInfo>
+          <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+            <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="env"/>
+          </ds:CanonicalizationMethod>
+          <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+          <ds:Reference URI="#TS-345">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="wsse env"/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+            <ds:DigestValue>XZD/715E/DVxkVtrLI8fHLJAEYyznl4YcqnVlMXzEPc=</ds:DigestValue>
+          </ds:Reference>
+          <ds:Reference URI="#id-346">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList=""/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+            <ds:DigestValue>m4M9HY+9w7jLqN9Ic6EF0kkBkgQISbwxM/K8Nx8lIJY=</ds:DigestValue>
+          </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue>go+Txe03zO1yIYp6JrmxIkoSi1n2gkP4WgMoWtHDoA4MCDeZ8ed3hgHEPGM8Sbu8zrx6sUrJbfdY
+2OHXCteW7FhFMfzCmQ2MroYYJBJSyHy6bcH1x2PAI0dIlw4K/bDefB16pmfvO2kA26jbJzWvO/g3
+dcSARlKDMY4edLfRMfJR9CRyOllgqSSC9Hxb+Sd5VTDPyBYjBt7w+J1YnqEGS9Q8ckPp9x+Nan+o
+Vlve7kP6ENLkZ7xTxCsj2NjD4u7FrPlPreIVyDL87rlSeQCSsxNrfiyuTa17DJXCB8YG37P9/NG4
+4RzH+HQ9WtTxN5yU4t2Nd8cSJHP7iURc6klOmw==</ds:SignatureValue>
+        <ds:KeyInfo Id="KI-3F860E8BB0EFFBC56C1533600537231346">
+          <wsse:SecurityTokenReference wsu:Id="STR-3F860E8BB0EFFBC56C1533600537231347">
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=VA-Internal-S2-ICA1-v1,DC=va,DC=gov</ds:X509IssuerName>
+                <ds:X509SerialNumber>17169973581176212</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+      </ds:Signature>
+    </wsse:Security>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-346">
+    <removeContentionResponse xmlns="http://vbms.vba.va.gov/external/ClaimService/v5" xmlns:aw="http://vbms.vba.va.gov/cdm/award/v4" xmlns:claim="http://vbms.vba.va.gov/cdm/claim/v5" xmlns:com="http://vbms.vba.va.gov/cdm/common/v5" xmlns:doc="http://vbms.vba.va.gov/cdm/document/v5" xmlns:ns2="http://vbms.vba.va.gov/external/ClaimService/v5" xmlns:part="http://vbms.vba.va.gov/cdm/participant/v5"><ns2:wasContentionRemoved>true</ns2:wasContentionRemoved></removeContentionResponse>
+  </env:Body>
+</env:Envelope>

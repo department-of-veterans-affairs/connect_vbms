@@ -57,7 +57,7 @@ module VBMS
       end
 
       def handle_response(doc)
-        if @v5 
+        if @v5
           doc.xpath(
             "//claimV5:listContentionsResponse/claimV5:listOfContentions",
             VBMS::XML_NAMESPACES

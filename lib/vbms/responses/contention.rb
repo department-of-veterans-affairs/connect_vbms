@@ -8,7 +8,19 @@ module VBMS
           id: data[:@id],
           text: data[:@title],
           start_date: data[:start_date],
-          submit_date: data[:submit_date]
+          submit_date: data[:submit_date],
+          actionable_item: data[:@actionable_item],
+          awaiting_response: data[:@awaiting_response],
+          claim_id: data[:@claim_id],
+          classification_cd: data[:@classification_cd],
+          contention_category: data[:@contention_category],
+          file_number: data[:@file_number],
+          level_status_code: data[:@level_status_code],
+          medical: data[:@medical],
+          participant_contention: data[:@partcipant_contention],
+          secondary_to_contention_id: data[:@secondary_to_contention_id],
+          type_code: data[:@type_code],
+          working_contention: data[:@working_contention]
         )
       end
     end
