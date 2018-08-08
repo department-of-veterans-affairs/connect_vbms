@@ -38,7 +38,7 @@ module VBMS
 
       VBMS::Client.new(
         base_url: get_env("CONNECT_VBMS_BASE_URL"),
-        keypass: get_env("CONNECT_VBMS_KEYPASS"),
+        keypass: get_env("CONNECT_VBMS_KEYPASS", allow_empty: true),
         client_keyfile: env_path(env_dir, "CONNECT_VBMS_CLIENT_KEYFILE"),
         server_cert: env_path(env_dir, "CONNECT_VBMS_SERVER_CERT", allow_empty: true),
         ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
