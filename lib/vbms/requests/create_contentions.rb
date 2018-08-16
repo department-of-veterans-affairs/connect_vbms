@@ -66,7 +66,9 @@ module VBMS
                 partcipantContention: "unused, but required."
               ) do
                 xml["cdm"].submitDate Date.today.iso8601
-                xml["cdm"].origSrc "APP" if @v5
+                if @v5
+                  xml["cdm"].origSrc "APP"
+                end
 
                 @special_issues.each do |special_issue|
                   xml["cdm"].issue(
