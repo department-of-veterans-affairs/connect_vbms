@@ -62,10 +62,11 @@ module VBMS
                 typeCode: "NEW",
                 workingContention: "YES",
 
-                awaitingResponse: "unused. but requrired.",
+                awaitingResponse: "unused. but required.",
                 partcipantContention: "unused, but required."
               ) do
                 xml["cdm"].submitDate Date.today.iso8601
+                xml["cdm"].origSrc "APP" if @v5
 
                 @special_issues.each do |special_issue|
                   xml["cdm"].issue(
@@ -87,7 +88,7 @@ module VBMS
       end
 
       def handle_response(doc)
-        if @v5 
+        if @v5
           doc.xpath(
             "//claimV5:createContentionsResponse/claimV5:createdContentions",
             VBMS::XML_NAMESPACES
