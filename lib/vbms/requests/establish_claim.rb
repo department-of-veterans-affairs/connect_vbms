@@ -42,7 +42,7 @@ module VBMS
       def soap_doc
         # claimant_participant_id is optionally passed as part of claim,
         # so only merge it into claimToEstablish below if it is passed
-        participant_id_if_passed = @claim[:claimant_participant_id] ? {"participantPersonId" => @claim[:claimant_participant_id]} : {}
+        participant_id_if_passed = @claim[:claimant_participant_id] ? { "participantPersonId" => @claim[:claimant_participant_id] } : {}
 
         VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].establishClaim do
