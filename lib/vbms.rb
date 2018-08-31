@@ -41,6 +41,7 @@ require "vbms/requests/get_dispositions"
 # eFolder Service 1.0
 require "vbms/requests/find_document_series_reference"
 require "vbms/requests/find_document_version_reference"
+require "vbms/requests/find_veterans_with_folder_modifications"
 require "vbms/requests/get_document_content"
 require "vbms/requests/initialize_upload"
 require "vbms/requests/upload_document"
