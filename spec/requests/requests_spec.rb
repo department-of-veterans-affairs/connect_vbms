@@ -258,7 +258,7 @@ describe VBMS::Requests do
 
       result = @client.send_request(request)
 
-      expect(result).not_to be_empty
+      expect(result.claim_id).to be_a_kind_of(String)
       # this is a weak test
     end
   end
