@@ -244,5 +244,22 @@ describe VBMS::Requests do
 
       expect(result.claim_id).to be_a_kind_of(String)
     end
+
+    it "executes successfully including POA fields for v5" do
+      v5_claim = claim.merge(
+        limited_poa_code: "007",
+        limited_poa_access: true
+      )
+      request = VBMS::Requests::EstablishClaim.new(veteran_record, v5_claim, v5: true)
+
+      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:claimsv5]}",
+                            "establish_claim_v5",
+                            "establishedClaim")
+
+      result = @client.send_request(request)
+
+      expect(result).not_to be_empty
+      # this is a weak test
+    end
   end
 end
