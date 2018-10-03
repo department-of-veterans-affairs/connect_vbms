@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::EstablishClaim do
   let(:veteran_record) do
     {
@@ -17,9 +18,6 @@ describe VBMS::Requests::EstablishClaim do
     }
   end
 
-  # NOTE: In order for this to pass when connected to VBMS
-  # the information here cannot be a duplicate of an existing
-  # claim. The easiest way to do this is to increment the `end_product_modifier`
   let(:claim) do
     {
       benefit_type_code: "1",
@@ -31,36 +29,23 @@ describe VBMS::Requests::EstablishClaim do
       predischarge: false,
       gulf_war_registry: false,
       date: 20.days.ago.to_date,
-      suppress_acknowledgment_letter: false
+      suppress_acknowledgment_letter: false,
+      limited_poa_code: "007",
+      limited_poa_access: true
     }
   end
 
-  it "executes succesfully when pointed at VBMS" do
-    request = VBMS::Requests::EstablishClaim.new(veteran_record, claim)
+  context "#soap_doc" do
+    it "includes conditional fields for v5" do
+      v4_request = VBMS::Requests::EstablishClaim.new(veteran_record, claim, v5: false)
+      v4_soap_doc = v4_request.soap_doc.to_s
+      expect(v4_soap_doc).not_to match('limitedPoaCode="007"')
+      expect(v4_soap_doc).not_to match('limitedPoaAccess="true"')
 
-    webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:claims]}",
-                          "establish_claim",
-                          "establishedClaim")
-
-    result = @client.send_request(request)
-
-    expect(result.claim_id).to be_a_kind_of(String)
-  end
-
-  it "executes successfully including POA fields for v5" do
-    v5_claim = claim.merge(
-      limited_poa_code: "007",
-      limited_poa_access: true
-    )
-    request = VBMS::Requests::EstablishClaim.new(veteran_record, v5_claim, v5: true)
-
-    webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:claimsv5]}",
-                          "establish_claim_v5",
-                          "establishedClaim")
-
-    result = @client.send_request(request)
-
-    expect(result.claim_id).to be_a_kind_of(String)
-    # this is a weak test
+      v5_request = VBMS::Requests::EstablishClaim.new(veteran_record, claim, v5: true)
+      v5_soap_doc = v5_request.soap_doc.to_s
+      expect(v5_soap_doc).to match('limitedPoaCode="007"')
+      expect(v5_soap_doc).to match('limitedPoaAccess="true"')
+    end
   end
 end
