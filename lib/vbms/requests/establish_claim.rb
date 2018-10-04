@@ -40,10 +40,6 @@ module VBMS
       # More information on what the fields mean, see:
       # https://github.com/department-of-veterans-affairs/dsva-vbms/issues/66#issuecomment-266098034
       def soap_doc
-        # claimant_participant_id is optionally passed as part of claim,
-        # so only merge it into claimToEstablish below if it is passed
-        participant_id_if_passed = @claim[:claimant_participant_id] ? { "participantPersonId" => @claim[:claimant_participant_id] } : {}
-
         VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].establishClaim do
             xml["cla"].veteranInput(
@@ -84,7 +80,7 @@ module VBMS
               "priority" => "1",
               "preDischarge" => @claim[:predischarge] ? "true" : "false",
               "gulfWarRegistry" => @claim[:gulf_war_registry] ? "true" : "false"
-            }.merge(participant_id_if_passed)) do
+            }.merge(conditional_claim_fields)) do
               xml["cdm"].endProductClaimType(
                 "code" => @claim[:end_product_code],
                 "name" => @claim[:end_product_label]
@@ -117,6 +113,20 @@ module VBMS
              end
 
         VBMS::Responses::Claim.create_from_xml(el)
+      end
+
+      private
+
+      def conditional_claim_fields
+        {}.tap do |fields|
+          # claimant_participant_id is optionally passed as part of claim
+          fields["participantPersonId"] = @claim[:claimant_participant_id] if @claim[:claimant_participant_id]
+
+          if @v5
+            fields["limitedPoaCode"] = @claim[:limited_poa_code] if @claim[:limited_poa_code]
+            fields["limitedPoaAccess"] = @claim[:limited_poa_access] ? "true" : "false"
+          end
+        end
       end
     end
   end
