@@ -151,6 +151,14 @@ module VBMS
 
     def inject_header_content(doc, request)
       request.inject_header_content(doc.at_xpath("/soapenv:Envelope/soapenv:Header"))
+
+      # replace user headers if needed
+      user_element = doc.at_xpath("//etc:cssUserName", "etc" => "http://vbms.vba.va.gov/external")
+      station_element = doc.at_xpath("//etc:cssStationId", "etc" => "http://vbms.vba.va.gov/external")
+      @css_id && user_element && user_element.content = @css_id
+      @station_id && station_element && station_element.content = @station_id
+
+      doc
     end
 
     def remove_must_understand(doc)
