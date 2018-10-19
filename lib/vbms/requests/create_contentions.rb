@@ -44,7 +44,7 @@ module VBMS
             xml["ext"].Security("xmlns:ext" => "http://vbms.vba.va.gov/external") do
               xml["ext"].cssUserName # do not insert css id in here, this will be injected by the client
               xml["ext"].cssStationId
-              xml["ext"].SecurityLevel 9
+              xml["ext"].SecurityLevel security_level
             end
           end
         end

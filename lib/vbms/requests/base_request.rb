@@ -13,6 +13,11 @@ module VBMS
       def inject_header_content(xml)
         xml
       end
+
+      def security_level
+        # magic number for vbms
+        9
+      end
     end
   end
 end
