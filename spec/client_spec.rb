@@ -5,8 +5,9 @@ describe VBMS::Client do
     @client = new_test_client
   end
 
-  let(:doc) do
-    Nokogiri::XML(<<-EOF)
+  describe "remove_must_understand" do
+    it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
+      doc = Nokogiri::XML(<<-EOF)
       <?xml version="1.0" encoding="UTF-8"?>
       <soapenv:Envelope
            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -16,49 +17,8 @@ describe VBMS::Client do
           </wsse:Security>
         </soapenv:Header>
       </soapenv:Envelope>
-    EOF
-  end
+      EOF
 
-  describe "inject_saml" do
-    let(:injected_css_id) do
-      doc.at_xpath(
-        "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/subjectId']/saml2:AttributeValue",
-        "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
-      ).child.text
-    end
-
-    let(:injected_station_id) do
-      doc.at_xpath(
-        "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/stationId']/saml2:AttributeValue",
-        "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
-      ).child.text
-    end
-
-    context "with css data passed" do
-      before do
-        @client = new_test_client(css_id: "KLAYTHOMPSON", station_id: "415")
-      end
-
-      it "adds saml token to the request with the user data" do
-        @client.inject_saml(doc)
-
-        expect(injected_css_id).to eq("KLAYTHOMPSON")
-        expect(injected_station_id).to eq("415")
-      end
-    end
-
-    context "with no css data passed" do
-      it "adds saml token to the request with the default user data" do
-        @client.inject_saml(doc)
-
-        expect(injected_css_id).to eq("0")
-        expect(injected_station_id).to eq("0")
-      end
-    end
-  end
-
-  describe "remove_must_understand" do
-    it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
       @client.remove_must_understand(doc)
 
       expect(doc.to_s).not_to include("mustUnderstand")
@@ -112,6 +72,48 @@ describe VBMS::Client do
                                                       request: @request)
 
       @client.send_request(@request)
+    end
+  end
+
+  describe "inject_header_content" do
+    it "injects username and station id" do
+      veteran_record = {
+        file_number: "561349920",
+        sex: "M",
+        first_name: "Stan",
+        last_name: "Stanman",
+        ssn: "796164121",
+        address_line1: "Shrek's Swamp",
+        address_line2: "",
+        address_line3: "",
+        city: "Charleston",
+        state: "SC",
+        country: "USA",
+        zip_code: "29401"
+      }
+
+      claim = {
+        benefit_type_code: "1",
+        payee_code: "00",
+        station_of_jurisdiction: "317",
+        end_product_code: "070CERT2AMC",
+        end_product_modifier: "071",
+        end_product_label: "AMC-Cert to BVA",
+        predischarge: false,
+        gulf_war_registry: false,
+        date: 20.days.ago.to_date,
+        suppress_acknowledgment_letter: false,
+        limited_poa_code: "007",
+        limited_poa_access: true
+      }
+
+      request = VBMS::Requests::EstablishClaim.new(veteran_record, claim, v5: true, send_userid: true)
+      @client = new_test_client(css_id: "KLAYTHOMPSON", station_id: "415")
+
+      doc = @client.inject_header_content(SoapScum::WSSecurity.encrypt(request.soap_doc, request.signed_elements), request)
+      expect(doc.at_xpath("//ext:cssUserName", "ext" => "http://vbms.vba.va.gov/external").content).to eq("KLAYTHOMPSON")
+      expect(doc.at_xpath("//ext:cssStationId", "ext" => "http://vbms.vba.va.gov/external").content).to eq("415")
+      expect(doc.at_xpath("//ext:SecurityLevel", "ext" => "http://vbms.vba.va.gov/external").content).to eq("9")
     end
   end
 

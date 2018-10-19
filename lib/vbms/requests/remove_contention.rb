@@ -1,6 +1,8 @@
 module VBMS
   module Requests
     class RemoveContention < BaseRequest
+      include AddExtSecurityHeader
+
       NAMESPACES = {
         "xmlns:cla" => "http://vbms.vba.va.gov/external/ClaimService/v4",
         "xmlns:cdm" => "http://vbms.vba.va.gov/cdm/claim/v4",
@@ -13,9 +15,10 @@ module VBMS
         "xmlns:comon" => "http://vbms.vba.va.gov/cdm/comon/v5"
       }.freeze
 
-      def initialize(contention:, v5: false)
+      def initialize(contention:, v5: false, send_userid: false)
         @contention = contention
         @v5 = v5
+        @send_userid = send_userid
       end
 
       def name
@@ -28,12 +31,6 @@ module VBMS
 
       def endpoint_url(base_url)
         "#{base_url}#{VBMS::ENDPOINTS[specify_endpoint]}"
-      end
-
-      def inject_header_content(header_xml)
-        Nokogiri::XML::Builder.with(header_xml) do |xml|
-          xml["vbmsext"].userId("dslogon.1011239249", "xmlns:vbmsext" => "http://vbms.vba.va.gov/external")
-        end
       end
 
       def namespaces

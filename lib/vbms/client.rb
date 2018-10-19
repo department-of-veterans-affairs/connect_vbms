@@ -126,31 +126,22 @@ module VBMS
 
     def inject_saml(doc)
       saml_doc = Nokogiri::XML(File.read(@saml)).root
-
-      inject_user_into_saml(saml_doc)
-
       doc.at_xpath(
         "//wsse:Security",
         wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       ) << saml_doc
     end
 
-    def inject_user_into_saml(saml_doc)
-      if @css_id && @station_id
-        saml_doc.at_xpath(
-          "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/subjectId']/saml2:AttributeValue",
-          "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
-        ).child.replace(@css_id)
-
-        saml_doc.at_xpath(
-          "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/stationId']/saml2:AttributeValue",
-          "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
-        ).child.replace(@station_id)
-      end
-    end
-
     def inject_header_content(doc, request)
       request.inject_header_content(doc.at_xpath("/soapenv:Envelope/soapenv:Header"))
+
+      # replace user headers if needed
+      user_element = doc.at_xpath("//etc:cssUserName", "etc" => "http://vbms.vba.va.gov/external")
+      station_element = doc.at_xpath("//etc:cssStationId", "etc" => "http://vbms.vba.va.gov/external")
+      user_element.content = @css_id if @css_id && user_element
+      station_element.content = @station_id if @station_id && station_element
+
+      doc
     end
 
     def remove_must_understand(doc)
