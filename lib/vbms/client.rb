@@ -9,6 +9,8 @@ module VBMS
                    ca_cert: nil,
                    saml:,
                    logger: nil,
+                   css_id: nil,
+                   station_id: nil,
                    proxy_base_url: nil,
                    use_forward_proxy: false)
 
@@ -19,6 +21,8 @@ module VBMS
       @cacert = ca_cert
       @server_key = server_cert
       @logger = logger
+      @css_id = css_id
+      @station_id = station_id
       @proxy_base_url = proxy_base_url
       @use_forward_proxy = use_forward_proxy
 
@@ -29,7 +33,7 @@ module VBMS
       )
     end
 
-    def self.from_env_vars(logger: nil, env_name: "test", use_forward_proxy: false)
+    def self.from_env_vars(logger: nil, css_id: nil, station_id: nil, env_name: "test", use_forward_proxy: false)
       env_dir = File.join(get_env("CONNECT_VBMS_ENV_DIR"), env_name)
 
       VBMS::Client.new(
@@ -39,6 +43,8 @@ module VBMS
         server_cert: env_path(env_dir, "CONNECT_VBMS_SERVER_CERT", allow_empty: true),
         ca_cert: env_path(env_dir, "CONNECT_VBMS_CACERT", allow_empty: true),
         saml: env_path(env_dir, "CONNECT_VBMS_SAML"),
+        css_id: css_id,
+        station_id: station_id,
         use_forward_proxy: use_forward_proxy,
         proxy_base_url: get_env("CONNECT_VBMS_PROXY_BASE_URL", allow_empty: true),
         logger: logger
