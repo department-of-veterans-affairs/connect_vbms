@@ -138,8 +138,8 @@ module VBMS
       # replace user headers if needed
       user_element = doc.at_xpath("//etc:cssUserName", "etc" => "http://vbms.vba.va.gov/external")
       station_element = doc.at_xpath("//etc:cssStationId", "etc" => "http://vbms.vba.va.gov/external")
-      @css_id && user_element && user_element.content = @css_id
-      @station_id && station_element && station_element.content = @station_id
+      user_element.content = @css_id if @css_id && user_element
+      station_element.content = @station_id if @station_id && station_element
 
       doc
     end
