@@ -33,7 +33,7 @@ describe VBMS::Requests::CreateContentions do
     it "should load contents correctly" do
       contention = subject.first
       expect(contention.id).to eq "290355"
-      expect(contention.text).to eq "Contention DS example"
+      expect(contention.text).to eq "Contention DS example & more"
     end
   end
 
