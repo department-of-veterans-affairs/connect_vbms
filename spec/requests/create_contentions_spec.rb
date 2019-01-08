@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 describe VBMS::Requests::CreateContentions do
-  let(:request) do 
+  let(:request) do
     VBMS::Requests::CreateContentions.new(
       veteran_file_number: "1232",
       claim_id: "1323123",
@@ -38,11 +38,11 @@ describe VBMS::Requests::CreateContentions do
   end
 
   context "v5" do
-    let(:request) do 
+    let(:request) do
       VBMS::Requests::CreateContentions.new(
         veteran_file_number: "1232",
         claim_id: "1323123",
-        contentions: ["Billy One", "Billy Two", "Billy Three"],
+        contentions: [{ description: "Billy One" }, { description: "Billy Two" }, { description: "Billy Three" }],
         v5: true
       )
     end
@@ -50,7 +50,7 @@ describe VBMS::Requests::CreateContentions do
     context "soap_doc" do
       subject { request.soap_doc }
 
-      it "generates valid SOAP" do
+      fit "generates valid SOAP" do
         xml = subject.to_xml
         xsd = Nokogiri::XML::Schema(fixture("soap.xsd"))
         expect(xsd.errors).to eq []
