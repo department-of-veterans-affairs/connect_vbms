@@ -15,14 +15,12 @@ module VBMS
         "xmlns:participant" => "http://vbms.vba.va.gov/cdm/participant/v5"
       }.freeze
 
-      # Contentions should be an array of strings representing the contentions
-      # Special issues should be an array of hashes with the form:
-      #   { code: "SSR", narrative: "Same Station Review" }
-      def initialize(veteran_file_number:, claim_id:, contentions:, special_issues: [], v5: false, send_userid: false)
+      # Contentions should be an array of objects representing the contention descriptions and special issues
+      # [{description: "contention description", special_issues: [{ code: "SSR", narrative: "Same Station Review" }]}]
+      def initialize(veteran_file_number:, claim_id:, contentions:, v5: false, send_userid: false)
         @veteran_file_number = veteran_file_number
         @claim_id = claim_id
         @contentions = contentions
-        @special_issues = special_issues
         @v5 = v5
         @send_userid = send_userid
       end
@@ -42,7 +40,7 @@ module VBMS
       def soap_doc
         VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].createContentions do
-            @contentions.each do |contention_text|
+            @contentions.each do |contention|
               xml["cla"].contentionsToCreate(
                 # 0 means the id will be auto generated
                 id: "0",
@@ -52,7 +50,7 @@ module VBMS
 
                 fileNumber: @veteran_file_number,
                 claimId: @claim_id,
-                title: contention_text,
+                title: contention[:description],
 
                 actionableItem: "true",
                 medical: "false",
@@ -64,14 +62,14 @@ module VBMS
               ) do
                 xml["cdm"].submitDate Date.today.iso8601
 
-                @special_issues.each do |special_issue|
+                contention[:special_issues] && contention[:special_issues].each do |special_issue|
                   xml["cdm"].issue(
                     typeCd: special_issue[:code],
                     narrative: special_issue[:narrative],
                     inferred: "false"
                   )
                 end
-                
+
                 xml["cdm"].origSrc "APP" if @v5
               end
             end
