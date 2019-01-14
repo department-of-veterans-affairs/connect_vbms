@@ -50,7 +50,7 @@ module VBMS
 
                 fileNumber: @veteran_file_number,
                 claimId: @claim_id,
-                title: contention[:description],
+                title: contention[:description].slice(0, 255),
 
                 actionableItem: "true",
                 medical: "false",
