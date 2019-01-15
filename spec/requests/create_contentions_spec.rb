@@ -4,7 +4,11 @@ describe VBMS::Requests::CreateContentions do
     VBMS::Requests::CreateContentions.new(
       veteran_file_number: "1232",
       claim_id: "1323123",
-      contentions: ["Billy One", "Billy Two", "Billy Three"]
+      contentions: [
+        { description: "Billy One" },
+        { description: "Billy Two" },
+        { description: "Billy Three" }
+      ]
     )
   end
 
@@ -50,7 +54,7 @@ describe VBMS::Requests::CreateContentions do
     context "soap_doc" do
       subject { request.soap_doc }
 
-      fit "generates valid SOAP" do
+      it "generates valid SOAP" do
         xml = subject.to_xml
         xsd = Nokogiri::XML::Schema(fixture("soap.xsd"))
         expect(xsd.errors).to eq []
