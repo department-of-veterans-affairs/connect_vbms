@@ -53,8 +53,8 @@ module VBMS
                 title: contention[:description],
 
                 actionableItem: "true",
-                medical: "false",
-                typeCode: "NEW",
+                medical: "true",
+                typeCode: "REP",
                 workingContention: "YES",
 
                 awaitingResponse: "unused. but required.",
