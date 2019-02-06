@@ -108,8 +108,8 @@ module VBMS
                  VBMS::XML_NAMESPACES
                )
              end
-
-        VBMS::Responses::Claim.create_from_xml(el)
+        return el
+        # VBMS::Responses::Claim.create_from_xml(el)
       end
 
       private
