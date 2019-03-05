@@ -42,10 +42,10 @@ module VBMS
 
         VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].establishClaim do
-            xml["cla"].veteranInput(
+            xml["cla"].veteranInput({
               "fileNumber" => @veteran_record[:file_number],
               "marriageStatus" => "Unknown"
-            ).merge(differentiated_gender) do
+            }.merge(differentiated_gender)) do
               xml["participant"].preferredName(
                 "firstName" => @veteran_record[:first_name],
                 "lastName" => @veteran_record[:last_name])
