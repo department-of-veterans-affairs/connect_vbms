@@ -69,11 +69,11 @@ describe VBMS::Requests::EstablishClaim do
       it "it does not include gender field in request" do
         v4_request = VBMS::Requests::EstablishClaim.new(veteran_record, claim, v5: false)
         v4_soap_doc = v4_request.soap_doc.to_s
-        expect(v4_soap_doc).not_to match('gender')
+        expect(v4_soap_doc).not_to match("gender")
 
         v5_request = VBMS::Requests::EstablishClaim.new(veteran_record, claim, v5: true)
         v5_soap_doc = v5_request.soap_doc.to_s
-        expect(v5_soap_doc).not_to match('gender')
+        expect(v5_soap_doc).not_to match("gender")
       end
     end
   end
