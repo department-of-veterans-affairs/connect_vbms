@@ -37,13 +37,15 @@ module VBMS
       # More information on what the fields mean, see:
       # https://github.com/department-of-veterans-affairs/dsva-vbms/issues/66#issuecomment-266098034
       def soap_doc
+        # Gender should only be included if it is differentiated
+        differentiated_gender = @veteran_record[:sex] ? { "gender" => @veteran_record[:sex] } : {}
+
         VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].establishClaim do
             xml["cla"].veteranInput(
               "fileNumber" => @veteran_record[:file_number],
-              "gender" => @veteran_record[:sex],
               "marriageStatus" => "Unknown"
-            ) do
+            ).merge(differentiated_gender) do
               xml["participant"].preferredName(
                 "firstName" => @veteran_record[:first_name],
                 "lastName" => @veteran_record[:last_name])
