@@ -47,5 +47,34 @@ describe VBMS::Requests::EstablishClaim do
       expect(v5_soap_doc).to match('limitedPoaCode="007"')
       expect(v5_soap_doc).to match('limitedPoaAccess="true"')
     end
+
+    context "when the gender is undifferentiated" do
+      let(:veteran_record) do
+        {
+          file_number: "561349920",
+          sex: nil,
+          first_name: "Stan",
+          last_name: "Stanman",
+          ssn: "796164121",
+          address_line1: "Shrek's Swamp",
+          address_line2: "",
+          address_line3: "",
+          city: "Charleston",
+          state: "SC",
+          country: "USA",
+          zip_code: "29401"
+        }
+      end
+
+      it "it does not include gender field in request" do
+        v4_request = VBMS::Requests::EstablishClaim.new(veteran_record, claim, v5: false)
+        v4_soap_doc = v4_request.soap_doc.to_s
+        expect(v4_soap_doc).not_to match("gender")
+
+        v5_request = VBMS::Requests::EstablishClaim.new(veteran_record, claim, v5: true)
+        v5_soap_doc = v5_request.soap_doc.to_s
+        expect(v5_soap_doc).not_to match("gender")
+      end
+    end
   end
 end
