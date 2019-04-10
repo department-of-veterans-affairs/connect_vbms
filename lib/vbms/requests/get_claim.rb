@@ -40,8 +40,6 @@ module VBMS
         @v5 ? NAMESPACES_V5 : NAMESPACES
       end
 
-      # More information on what the fields mean, see:
-      # https://github.com/department-of-veterans-affairs/dsva-vbms/issues/66#issuecomment-266098034
       def soap_doc
         VBMS::Requests.soap(more_namespaces: namespaces) do |xml|
           xml["cla"].getClaim do
