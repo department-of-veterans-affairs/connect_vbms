@@ -2,7 +2,6 @@
 module VBMS
   module Requests
     # This call gets the binary document content for a specific Document Version
-    # This service replaces FetchDocumentById in eDocument Service v4, which is deprecated as of March 2017
     class GetDocumentContent < BaseRequest
       attr_accessor :mtom_attachment
 

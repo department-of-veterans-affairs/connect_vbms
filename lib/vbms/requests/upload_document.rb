@@ -3,7 +3,6 @@ module VBMS
   module Requests
     # This call operates in a two-phase approach. To upload a document,
     # call initializeUpload with metadata to receive a token used in the second call, uploadDocument
-    # This service replaces UploadDocumentWithAssociation in eDocument Service v4, which is deprecated as of March 2017
     class UploadDocument < BaseRequest
       def initialize(upload_token:, filepath:)
         @upload_token = upload_token

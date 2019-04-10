@@ -2,8 +2,6 @@ module VBMS
   module Requests
     NAMESPACES = {
       "xmlns:soapenv" => "http://schemas.xmlsoap.org/soap/envelope/",
-      "xmlns:v4" => "http://vbms.vba.va.gov/external/eDocumentService/v4",
-      "xmlns:doc" => "http://vbms.vba.va.gov/cdm/document/v4",
       "xmlns:upload" => "http://service.efolder.vbms.vba.va.gov/eFolderUploadService",
       "xmlns:read" => "http://service.efolder.vbms.vba.va.gov/eFolderReadService",
       "xmlns:v5" => "http://vbms.vba.va.gov/cdm/document/v5",
