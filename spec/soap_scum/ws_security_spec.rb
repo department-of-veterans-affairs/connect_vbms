@@ -16,9 +16,9 @@ describe SoapScum::WSSecurity do
 
   let(:content_xml) do
     <<-XML
-      <v4:listDocuments>
-        <v4:fileNumber>784449089</v4:fileNumber>
-      </v4:listDocuments>
+      <v5:listDocuments>
+        <v5:fileNumber>784449089</v5:fileNumber>
+      </v5:listDocuments>
     XML
   end
   let(:content_document) { Nokogiri::XML(content_xml) }
@@ -48,7 +48,7 @@ describe SoapScum::WSSecurity do
       decrypted_doc = java_decrypt_xml(result, fixture_path("test_server.jks"), keypass, true)
       decrypted_doc = Nokogiri::XML(decrypted_doc)
 
-      expect(decrypted_doc.xpath("//v4:fileNumber").text).to eq("784449089")
+      expect(decrypted_doc.xpath("//v5:fileNumber").text).to eq("784449089")
     end
 
     it "is decryptable by Ruby WSSecurity library" do
@@ -62,7 +62,7 @@ describe SoapScum::WSSecurity do
       decrypted_doc = SoapScum::WSSecurity.decrypt(result.to_xml)
       decrypted_doc = Nokogiri::XML(decrypted_doc)
 
-      expect(decrypted_doc.xpath("//v4:fileNumber").text).to eq("784449089")
+      expect(decrypted_doc.xpath("//v5:fileNumber").text).to eq("784449089")
     end
   end
 
@@ -73,7 +73,7 @@ describe SoapScum::WSSecurity do
       decrypted_doc = SoapScum::WSSecurity.decrypt(java_encrypted_xml)
       decrypted_doc = Nokogiri::XML(decrypted_doc)
 
-      expect(decrypted_doc.xpath("//v4:fileNumber").text).to eq("784449089")
+      expect(decrypted_doc.xpath("//v5:fileNumber").text).to eq("784449089")
     end
   end
 end

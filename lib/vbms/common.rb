@@ -23,8 +23,6 @@ module VBMS
   end
 
   XML_NAMESPACES = {
-    v4: "http://vbms.vba.va.gov/external/eDocumentService/v4",
-    ns2: "http://vbms.vba.va.gov/cdm/document/v4",
     ns0: "http://vbms.vba.va.gov/cdm/claim/v4",
     upload: "http://service.efolder.vbms.vba.va.gov/eFolderUploadService",
     read: "http://service.efolder.vbms.vba.va.gov/eFolderReadService",
@@ -41,7 +39,6 @@ module VBMS
   ENDPOINTS = {
     claims: "/vbmsp2-cs/ClaimServiceV4",
     claimsv5: "/vbmsp2-cs/ClaimServiceV5",
-    efolder: "/vbmsp2-cms/streaming/eDocumentService-v4",
     efolder_svc_v1: {
       read: "/vbms-efolder-svc/read-v1/eFolderReadService",
       read_inline: "/vbms-efolder-svc/read-v1/eFolderReadServiceInline",
