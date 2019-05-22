@@ -12,7 +12,7 @@ describe VBMS::Requests::UpdateContention do
       contention_category: nil,
       file_number: "984562385",
       level_status_code: nil,
-      id: "303090",
+      id: "303089",
       medical: "false",
       participant_contention: "unknown",
       secondary_to_contention_id: "1938",
