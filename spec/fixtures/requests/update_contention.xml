@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v4="http://vbms.vba.va.gov/external/eDocumentService/v4" xmlns:doc="http://vbms.vba.va.gov/cdm/document/v4" xmlns:upload="http://service.efolder.vbms.vba.va.gov/eFolderUploadService" xmlns:read="http://service.efolder.vbms.vba.va.gov/eFolderReadService" xmlns:v5="http://vbms.vba.va.gov/cdm/document/v5" xmlns:cdm="http://vbms.vba.va.gov/cdm/claim/v4" xmlns:xop="http://www.w3.org/2004/08/xop/include" xmlns:cla="http://vbms.vba.va.gov/external/ClaimService/v4" xmlns:common="http://vbms.vba.va.gov/cdm/common/v4">
+  <soapenv:Body>
+    <cla:updateContention>
+      <cla:contentionToUpdate id="303090" actionableItem="false" awaitingResponse="unknown" claimId="600132141" classificationCd="" fileNumber="984562385" levelStatusCode="" medical="false" partcipantContention="unknown" secondaryToContentionID="1938" title="Service connection for Back, derangement is granted with an evaluation of 30 percent effective June 1, 2018." typeCode="NEW" workingContention="unknown">
+        <cdm:submitDate>2018-08-06</cdm:submitDate>
+        <cdm:startDate>2018-08-06</cdm:startDate>
+      </cla:contentionToUpdate>
+    </cla:updateContention>
+  </soapenv:Body>
+</soapenv:Envelope>
