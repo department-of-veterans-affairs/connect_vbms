@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VBMS::Requests::RemoveContention do
+describe VBMS::Requests::UpdateContention do
   let(:contention_hash) do
     {
       submit_date: Date.new(2018, 8, 6),
@@ -12,7 +12,7 @@ describe VBMS::Requests::RemoveContention do
       contention_category: nil,
       file_number: "984562385",
       level_status_code: nil,
-      id: "303089",
+      id: "303090",
       medical: "false",
       participant_contention: "unknown",
       secondary_to_contention_id: "1938",
