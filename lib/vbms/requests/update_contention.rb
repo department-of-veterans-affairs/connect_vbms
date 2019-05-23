@@ -72,16 +72,16 @@ module VBMS
 
       def handle_response(doc)
         xml = if @v5
-          doc.xpath(
-            "//claimV5:updateContentionResponse/claimV5:updatedContention",
-            VBMS::XML_NAMESPACES
-          )
-        else
-          doc.xpath(
-            "//claimV4:updateContentionResponse/claimV4:updatedContention",
-            VBMS::XML_NAMESPACES
-          )
-        end
+                doc.xpath(
+                  "//claimV5:updateContentionResponse/claimV5:updatedContention",
+                  VBMS::XML_NAMESPACES
+                )
+              else
+                doc.xpath(
+                  "//claimV4:updateContentionResponse/claimV4:updatedContention",
+                  VBMS::XML_NAMESPACES
+                )
+              end
         
         VBMS::Responses::Contention.create_from_xml(xml, key: :updated_contention)
       end
