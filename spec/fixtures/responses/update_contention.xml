@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+      <xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="EK-F97A22B3F62D26F30B1558569708950153644">
+        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <wsse:SecurityTokenReference>
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=VBMS Client Signing CA</ds:X509IssuerName>
+                <ds:X509SerialNumber>18520338221153558207117693896452819173</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+        <xenc:CipherData>
+          <xenc:CipherValue>EDDT3KlNmEeQQZEz/rIIB9AN12ndG/uETRLk+OsD8p6s541n8hZsmDqeFAPz/6MiNVb8JDtDLFYhwdmEX2k38X68Gdi9+1hy2WjJpzoxXa8YP86dU0lR3KW2XPPy0f3CKcnRKzvc/B76SfQxmWeXnymYFuxewtEudjEcwSupM5adKBcZA/KUsgjMmi6ToDXhaz0+8H2SAmRBloqFa/770R1sLrfkqpQ0oN3l4DVQgr+senB38ZUjw05rNRLWTVo1N3L/JMsRRy5Dgwl5FEdTaeMqnxiaa7yGZxXZEk/SnI2O21r9mhm052RkAofIg7CTlFGAUeLCLnCOVzS8bXj+iA==</xenc:CipherValue>
+        </xenc:CipherData>
+        <xenc:ReferenceList>
+          <xenc:DataReference URI="#ED-153644"/>
+        </xenc:ReferenceList>
+      </xenc:EncryptedKey>
+      <wsu:Timestamp wsu:Id="TS-153641">
+        <wsu:Created>2019-05-23T00:01:48.947Z</wsu:Created>
+        <wsu:Expires>2019-05-23T00:06:48.947Z</wsu:Expires>
+      </wsu:Timestamp>
+      <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-153643">
+        <ds:SignedInfo>
+          <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+            <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="env"/>
+          </ds:CanonicalizationMethod>
+          <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+          <ds:Reference URI="#TS-153641">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="wsse env"/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+            <ds:DigestValue>8aXeQOBpjxtMuUz7riK/ITEba+/xixn3ESVAH5mZ5ys=</ds:DigestValue>
+          </ds:Reference>
+          <ds:Reference URI="#id-153642">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList=""/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+            <ds:DigestValue>mloSMdUPX5A/o3LYE0281FNEai0nhJjYQv6Hpa9MDCk=</ds:DigestValue>
+          </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue>Bx5NXz7GWR1Xgb9IyNuMKUH6+In0zwq4T//L0vb+E1/BUYDBIgV7BCIFGgdYQkdYoj0ljleeWbIM
+pX4N8uAD9hu+93Ty8H80kBmxXlMnpMSPYi464zwG/MUuVAMflgyncDXXb9PiPOiHZjEm4RIW6LoP
+M23gAM5cW6jr5ffhz7S7laLxfavCpr9vqA2v32xXuoy+TuHwIXLop7ZH5kJAJS8qtGN1Uws9ZRu/
+0plrE3Xq2KPHiZ5KvEp+XyGgafFjWSAErxaBvqmmZ12jGGZpG75RVu4dm84k1c2rTsC6oHyY+raY
+oCjUMGMQdtdPSPyL00nkbEZAJO/d9ttAd+/hoA==</ds:SignatureValue>
+        <ds:KeyInfo Id="KI-F97A22B3F62D26F30B1558569708947153642">
+          <wsse:SecurityTokenReference wsu:Id="STR-F97A22B3F62D26F30B1558569708947153643">
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=VA-Internal-S2-ICA1-v1,DC=va,DC=gov</ds:X509IssuerName>
+                <ds:X509SerialNumber>17169973581176212</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+      </ds:Signature>
+    </wsse:Security>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-153642">
+    <updateContentionResponse xmlns="http://vbms.vba.va.gov/external/ClaimService/v4" xmlns:ns0="http://vbms.vba.va.gov/cdm/claim/v4" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns3="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:ns4="http://vbms.vba.va.gov/external/ClaimService/v4"><ns4:updatedContention id="303090" actionableItem="false" awaitingResponse="unknown" claimId="600132141" classificationCd="" fileNumber="984562385" levelStatusCode="" medical="false" partcipantContention="unknown" secondaryToContentionID="1938" title="Service connection for Back, derangement is granted with an evaluation of 30 percent effective June 1, 2018." typeCode="NEW" workingContention="unknown"><ns0:source sourceName="VBMS_CMS"/><ns0:submitDate>2019-05-17-04:00</ns0:submitDate><ns0:startDate>2019-05-22-04:00</ns0:startDate></ns4:updatedContention></updateContentionResponse>
+  </env:Body>
+</env:Envelope>

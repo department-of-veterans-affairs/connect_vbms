@@ -30,6 +30,7 @@ require "vbms/requests/create_contentions"
 require "vbms/requests/list_contentions"
 require "vbms/requests/associate_rated_issues"
 require "vbms/requests/remove_contention"
+require "vbms/requests/update_contention"
 require "vbms/requests/get_dispositions"
 
 # eFolder Service 1.0
