@@ -44,8 +44,9 @@ describe VBMS::Requests::UpdateContention do
     let(:doc) { parse_strict(fixture("responses/update_contention.xml")) }
     subject { request.handle_response(doc) }
 
-    it "should return true" do
-      expect(subject).to eq("true")
+    it "should load contents correctly" do
+      expect(subject.id).to eq "303090"
+      expect(subject.text).to eq "Service connection for Back, derangement is granted with an evaluation of 30 percent effective June 1, 2018."
     end
   end
 
@@ -73,8 +74,9 @@ describe VBMS::Requests::UpdateContention do
       let(:doc) { parse_strict(fixture("responses/update_contention_v5.xml")) }
       subject { request.handle_response(doc) }
 
-      it "should return true" do
-        expect(subject).to eq("true")
+      it "should load contents correctly" do
+        expect(subject.id).to eq "303090"
+        expect(subject.text).to eq "Service connection for Back, derangement is granted with an evaluation of 30 percent effective June 1, 2018."
       end
     end
   end
