@@ -41,9 +41,6 @@ module VBMS
         VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].createContentions do
             @contentions.each do |contention|
-
-              original_contention_ids =
-
               xml["cla"].contentionsToCreate({
                 # 0 means the id will be auto generated
                 id: "0",
@@ -80,11 +77,6 @@ module VBMS
         end
       end
 
-      def original_contention_ids(contention)
-        return {} unless contention[:original_contention_ids]
-        { "origContentionIds" => contention[:original_contention_ids].join(" ") }
-      end
-
       def signed_elements
         [["/soapenv:Envelope/soapenv:Body",
           { soapenv: SoapScum::XMLNamespaces::SOAPENV },
@@ -107,6 +99,13 @@ module VBMS
             VBMS::Responses::Contention.create_from_xml(xml, key: :created_contentions)
           end
         end
+      end
+
+      private
+
+      def original_contention_ids(contention)
+        return {} unless contention[:original_contention_ids]
+        { "origContentionIds" => contention[:original_contention_ids].join(" ") }
       end
     end
   end
