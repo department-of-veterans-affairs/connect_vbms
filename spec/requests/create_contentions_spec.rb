@@ -7,7 +7,7 @@ describe VBMS::Requests::CreateContentions do
       contentions: [
         { description: "Billy One" },
         { description: "Billy Two" },
-        { description: "Billy Three" }
+        { description: "Billy Three", original_contention_ids: [1, 2] }
       ]
     )
   end
@@ -46,7 +46,11 @@ describe VBMS::Requests::CreateContentions do
       VBMS::Requests::CreateContentions.new(
         veteran_file_number: "1232",
         claim_id: "1323123",
-        contentions: [{ description: "Billy One" }, { description: "Billy Two" }, { description: "Billy Three" }],
+        contentions: [
+          { description: "Billy One" },
+          { description: "Billy Two" },
+          { description: "Billy Three", original_contention_ids: [1, 2] }
+        ],
         v5: true
       )
     end
