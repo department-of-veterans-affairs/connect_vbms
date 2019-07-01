@@ -41,7 +41,7 @@ module VBMS
         VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].createContentions do
             @contentions.each do |contention|
-              xml["cla"].contentionsToCreate(
+              xml["cla"].contentionsToCreate({
                 # 0 means the id will be auto generated
                 id: "0",
 
@@ -59,7 +59,7 @@ module VBMS
 
                 awaitingResponse: "unused. but required.",
                 partcipantContention: "unused, but required."
-              ) do
+              }.merge(original_contention_ids(contention))) do
                 xml["cdm"].submitDate Date.today.iso8601
 
                 contention[:special_issues] && contention[:special_issues].each do |special_issue|
@@ -99,6 +99,14 @@ module VBMS
             VBMS::Responses::Contention.create_from_xml(xml, key: :created_contentions)
           end
         end
+      end
+
+      private
+
+      def original_contention_ids(contention)
+        return {} unless contention[:original_contention_ids]
+        
+        { "origContentionIds" => contention[:original_contention_ids].join(" ") }
       end
     end
   end
