@@ -105,6 +105,7 @@ module VBMS
 
       def original_contention_ids(contention)
         return {} unless contention[:original_contention_ids]
+        
         { "origContentionIds" => contention[:original_contention_ids].join(" ") }
       end
     end
