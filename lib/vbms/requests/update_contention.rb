@@ -59,6 +59,7 @@ module VBMS
             ) do
               xml["cdm"].submitDate @contention[:submit_date]
               xml["cdm"].startDate @contention[:start_date]
+              xml["cdm"].origSrc "APP" if @v5
             end
           end
         end
@@ -82,7 +83,7 @@ module VBMS
                   VBMS::XML_NAMESPACES
                 )
               end
-        
+
         VBMS::Responses::Contention.create_from_xml(xml, key: :updated_contention)
       end
     end
