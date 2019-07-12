@@ -15,6 +15,14 @@ describe MultipartParser do
         it { is_expected.to eq "<tag>This is the contents</tag>\r\n" }
       end
 
+      context "with a single XML file with leading carriage return" do
+        let(:body) do
+          "\r\n--uuid:61b\r\nContent-Type: application/xop+xml\r\n\r\n"\
+          "<tag>This is the contents</tag>\r\n--uuid:61b--"
+        end
+        it { is_expected.to eq "<tag>This is the contents</tag>\r\n" }
+      end
+
       context "with a XML file and file attachment" do
         let(:body) do
           "--uuid:61b" \
