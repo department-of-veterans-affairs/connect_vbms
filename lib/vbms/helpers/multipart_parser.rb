@@ -33,7 +33,7 @@ class MultipartParser
   def find_boundary
     # if it is a multipart, the boundary is at location zero
     lines = @response.body.split("\r\n")
-    lines.shift if lines[0] == ""
+    lines.shift while lines[0] == ""
     lines[0].strip
   end
 
