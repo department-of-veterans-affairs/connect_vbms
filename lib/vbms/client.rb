@@ -173,7 +173,7 @@ module VBMS
 
       request = HTTPI::Request.new(endpoint_url)
 
-      request.open_timeout               = 600 # seconds
+      request.open_timeout               = 10 # seconds
       request.read_timeout               = 600 # seconds
       request.auth.ssl.cert_key          = SoapScum::WSSecurity.client_key
       request.auth.ssl.cert_key_password = @keypass
