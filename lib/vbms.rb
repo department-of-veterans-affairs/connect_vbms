@@ -17,6 +17,7 @@ require "soap_scum/ws_security"
 
 require "vbms/common"
 require "vbms/client"
+require "vbms/errors"
 require "vbms/version"
 require "vbms/requests"
 

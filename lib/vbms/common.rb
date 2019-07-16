@@ -49,42 +49,6 @@ module VBMS
     }
   }.freeze
 
-  class ClientError < StandardError
-  end
-
-  class HTTPError < ClientError
-    attr_reader :code, :body, :request
-
-    def initialize(code, body, request = nil)
-      super("status_code=#{code}, body=#{body}, request=#{request.inspect}")
-      @code = code
-      @body = body
-      @request = request
-    end
-  end
-
-  class SOAPError < ClientError
-    attr_reader :body
-
-    def initialize(msg, soap_response = nil)
-      super(msg)
-      @body = soap_response
-    end
-  end
-
-  class EnvironmentError < ClientError
-  end
-
-  class ExecutionError < ClientError
-    attr_reader :cmd, :output
-
-    def initialize(cmd, output)
-      super("Error running cmd: #{cmd}\nOutput: #{output}")
-      @cmd = cmd
-      @output = output
-    end
-  end
-
   def self.load_erb(path)
     location = File.join(FILEDIR, "../templates", path)
     ERB.new(File.read(location))
