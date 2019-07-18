@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VBMS
   module Responses
     class Disposition
@@ -12,8 +14,7 @@ module VBMS
       def self.create_from_xml(el)
         new(claim_id: el["claimId"].value,
             contention_id: el["contentionId"].value,
-            disposition: el["disposition"].value
-           )
+            disposition: el["disposition"].value)
       end
 
       def to_h

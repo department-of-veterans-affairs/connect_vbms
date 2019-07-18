@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe VBMS::Client do
@@ -7,7 +9,7 @@ describe VBMS::Client do
 
   describe "remove_must_understand" do
     it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
-      doc = Nokogiri::XML(<<-EOF)
+      doc = Nokogiri::XML(<<-XML)
       <?xml version="1.0" encoding="UTF-8"?>
       <soapenv:Envelope
            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -17,7 +19,7 @@ describe VBMS::Client do
           </wsse:Security>
         </soapenv:Header>
       </soapenv:Envelope>
-      EOF
+      XML
 
       @client.remove_must_understand(doc)
 
@@ -25,13 +27,13 @@ describe VBMS::Client do
     end
   end
 
-  describe '#send' do
+  describe "#send" do
     before do
       @client = new_test_client
 
       @request = double("request",
                         file_number: "123456788",
-                        received_at: DateTime.new(2010, 01, 01),
+                        received_at: DateTime.new(2010, 0o1, 0o1),
                         first_name: "Joe",
                         middle_name: "Eagle",
                         last_name: "Citizen",
@@ -42,11 +44,10 @@ describe VBMS::Client do
                         name: "uploadDocumentWithAssociations",
                         new_mail: "",
                         multipart?: false,
-                        soap_doc:  VBMS::Requests.soap { "body" },
+                        soap_doc: VBMS::Requests.soap { "body" },
                         signed_elements: [["/soapenv:Envelope/soapenv:Body",
                                            { soapenv: SoapScum::XMLNamespaces::SOAPENV },
-                                           "Content"]]
-                       )
+                                           "Content"]])
 
       @request.should_receive(:inject_header_content)
       @request.should_receive(:endpoint_url)
@@ -130,7 +131,8 @@ describe VBMS::Client do
         encrypted_xml_file(
           fixture_path("requests/fetch_document.xml"),
           fixture_path("test_server.jks"),
-          "fetchDocumentResponse")
+          "fetchDocumentResponse"
+        )
       end
 
       it "should return a decrypted XML document" do
@@ -176,7 +178,7 @@ describe VBMS::Client do
 
     context "when it is given a document that contains a SOAP fault" do
       let(:response_body) do
-        <<-EOF
+        <<-XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
           <soap:Header/>
           <soap:Body>
@@ -188,7 +190,7 @@ describe VBMS::Client do
             </soap:Fault>
           </soap:Body>
         </soap:Envelope>
-        EOF
+        XML
       end
 
       it "should raise a SOAPError" do
@@ -202,11 +204,11 @@ describe VBMS::Client do
 
     context "when it is given a document that does not have body" do
       let(:response_body) do
-        <<-EOF
+        <<-XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
           <soap:Header/>
         </soap:Envelope>
-        EOF
+        XML
       end
 
       it "should raise a SOAPError" do
@@ -220,11 +222,11 @@ describe VBMS::Client do
 
     context "when the server sends an HTML response error page" do
       let(:response_body) do
-        <<-EOF
+        <<-XML
           <html><head><title>An error has occurred</title></head>
           <body><p>I know you were expecting HTML, but sometimes sites do this</p></body>
           </html>
-        EOF
+        XML
       end
 
       it "should raise a SOAPError" do
@@ -236,7 +238,7 @@ describe VBMS::Client do
       end
     end
   end
-  describe '#build_request' do
+  describe "#build_request" do
     before do
       @client = new_test_client(use_forward_proxy: true)
     end

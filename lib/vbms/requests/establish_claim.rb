@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VBMS
   module Requests
     class EstablishClaim < BaseRequest
@@ -48,7 +50,8 @@ module VBMS
             }.merge(differentiated_gender)) do
               xml["participant"].preferredName(
                 "firstName" => @veteran_record[:first_name],
-                "lastName" => @veteran_record[:last_name])
+                "lastName" => @veteran_record[:last_name]
+              )
 
               xml["participant"].personalInfo("ssn" => @veteran_record[:ssn]) do
                 xml["participant"].address(

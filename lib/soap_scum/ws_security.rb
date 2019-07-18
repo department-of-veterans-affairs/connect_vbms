@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "xmldsig"
 require "securerandom"
 require "xmlenc"
@@ -35,7 +37,7 @@ module SoapScum
         @server_cert = OpenSSL::X509::Certificate.new(File.read(server_cert))
 
         is_sha256 = "true".casecmp(ENV["CONNECT_VBMS_SHA256"] || "")
-      
+
         @keytransport_algorithm = keytransport_algorithm
         @cipher_algorithm = cipher_algorithm
         @digest_algorithm = is_sha256 ? SoapScum::CryptoAlgorithms::SHA256 : SoapScum::CryptoAlgorithms::SHA1
@@ -107,7 +109,7 @@ module SoapScum
         when CryptoAlgorithms::AES256
           OpenSSL::Cipher::AES256.new(:CBC)
         else
-          fail "Unknown Cipher: #{@cipher_algorithm}"
+          raise "Unknown Cipher: #{@cipher_algorithm}"
         end
       end
 
@@ -164,7 +166,8 @@ module SoapScum
           "/soapenv:Envelope/soapenv:Header/wsse:Security/wsu:Timestamp",
           soapenv: XMLNamespaces::SOAPENV,
           "xmlns:wsse" => XMLNamespaces::WSSE,
-          "xmlns:wsu" => XMLNamespaces::WSU)
+          "xmlns:wsu" => XMLNamespaces::WSU
+        )
       end
 
       def sign_soap_doc(soap_doc)
@@ -195,7 +198,8 @@ module SoapScum
       def generate_encrypted_data(node, modifier)
         raw_xml = node.to_xml(
           save_with: (Nokogiri::XML::Node::SaveOptions::AS_XML |
-                      Nokogiri::XML::Node::SaveOptions::NO_DECLARATION))
+                      Nokogiri::XML::Node::SaveOptions::NO_DECLARATION)
+        )
 
         block_cipher.encrypt
         block_cipher.padding = 0
@@ -205,7 +209,7 @@ module SoapScum
 
         builder = Nokogiri::XML::Builder.new do |xml|
           xml["xenc"].EncryptedData(
-            "xmlns:xenc" => 'http://www.w3.org/2001/04/xmlenc#',
+            "xmlns:xenc" => "http://www.w3.org/2001/04/xmlenc#",
             Id: encrypted_data_id, Type:
             "http://www.w3.org/2001/04/xmlenc##{modifier}"
           ) do
@@ -214,7 +218,7 @@ module SoapScum
               xml["wsse"].SecurityTokenReference(
                 "xmlns:wsse" => XMLNamespaces::WSSE,
                 "xmlns:wsse11" => XMLNamespaces::WSSE11,
-                "wsse11:TokenType" => 'http://docs.oasis-open.org/wss/oasis-wss-soap-message-security-1.1#EncryptedKey'
+                "wsse11:TokenType" => "http://docs.oasis-open.org/wss/oasis-wss-soap-message-security-1.1#EncryptedKey"
               ) do
                 xml["wsse"].Reference(URI: "##{encrypted_key_id}")
               end
@@ -235,13 +239,13 @@ module SoapScum
         # Ensure there is a header node.
         header = envelope.at_xpath("/soapenv:Header", soapenv: XMLNamespaces::SOAPENV)
 
-        if header.nil?
-          header_builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
-            xml["soapenv"].Header("xmlns:soapenv" => XMLNamespaces::SOAPENV)
-          end
-          envelope.children.first.add_previous_sibling(header_builder.doc.root)
-          envelope.children.first
+        return unless header.nil?
+
+        header_builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
+          xml["soapenv"].Header("xmlns:soapenv" => XMLNamespaces::SOAPENV)
         end
+        envelope.children.first.add_previous_sibling(header_builder.doc.root)
+        envelope.children.first
       end
 
       def add_timestamp_node(soap_doc)
@@ -250,8 +254,7 @@ module SoapScum
                                "xmlns:wsu" => XMLNamespaces::WSU) do
             xml["wsu"].Timestamp("wsu:Id" => timestamp_id,
                                  "xmlns:wsse" => XMLNamespaces::WSSE,
-                                 "xmlns:wsu" => XMLNamespaces::WSU
-                                ) do
+                                 "xmlns:wsu" => XMLNamespaces::WSU) do
               now = Time.now.utc
               xml["wsu"].Created now.xmlschema(3)
               xml["wsu"].Expires((now + @expires_in).xmlschema(3))
@@ -283,12 +286,12 @@ module SoapScum
       end
 
       def add_xmldsig_template(xml, nodes_to_sign)
-        xml["ds"].Signature("xmlns:ds" => 'http://www.w3.org/2000/09/xmldsig#', Id: signature_id) do
-          xml["ds"].SignedInfo("xmlns:ds" => 'http://www.w3.org/2000/09/xmldsig#',
+        xml["ds"].Signature("xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#", Id: signature_id) do
+          xml["ds"].SignedInfo("xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",
                                "xmlns:soapenv" => XMLNamespaces::SOAPENV) do
             # TODO(awong): Allow modification of CanonicalizationMethod.
-            xml["ds"].CanonicalizationMethod(Algorithm: 'http://www.w3.org/2001/10/xml-exc-c14n#') do
-              xml["ec"].InclusiveNamespaces("xmlns:ec" => 'http://www.w3.org/2001/10/xml-exc-c14n#',
+            xml["ds"].CanonicalizationMethod(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
+              xml["ec"].InclusiveNamespaces("xmlns:ec" => "http://www.w3.org/2001/10/xml-exc-c14n#",
                                             "PrefixList" => "cdm doc soapenv v4 xop")
             end
 
@@ -297,10 +300,10 @@ module SoapScum
             nodes_to_sign.each do |node|
               xml["ds"].Reference(URI: "##{node.attr('wsu:Id')}") do
                 xml["ds"].Transforms do
-                  xml["ds"].Transform(Algorithm: 'http://www.w3.org/2001/10/xml-exc-c14n#') do
+                  xml["ds"].Transform(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#") do
                     prefix_list = (node.name == "Body" ? "cdm doc v4 xop" : "wsse cdm doc soapenv v4 xop")
                     xml["ec"].InclusiveNamespaces(
-                      "xmlns:ec" => 'http://www.w3.org/2001/10/xml-exc-c14n#',
+                      "xmlns:ec" => "http://www.w3.org/2001/10/xml-exc-c14n#",
                       PrefixList: prefix_list
                     )
                   end
@@ -330,7 +333,8 @@ module SoapScum
       # http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/Overview.html#sec-Alg-Block
       def add_xmlenc_padding(block_size, unpadded_string)
         data = unpadded_string.dup
-        fail "block size #{block_size} must be > 0." if block_size <= 0
+        raise "block size #{block_size} must be > 0." if block_size <= 0
+
         padding_length = (block_size - data.length % block_size)
         num_rand_bytes = padding_length - 1
         data << SecureRandom.random_bytes(num_rand_bytes) if num_rand_bytes > 0

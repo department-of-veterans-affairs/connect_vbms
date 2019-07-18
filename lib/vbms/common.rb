@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require 'xmlenc'
 require "open3"
 
@@ -30,8 +32,8 @@ module VBMS
     soapenv: "http://schemas.xmlsoap.org/soap/envelope/",
     wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
     wsu: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd",
-    ds: 'http://www.w3.org/2000/09/xmldsig#',
-    xenc: 'http://www.w3.org/2001/04/xmlenc#',
+    ds: "http://www.w3.org/2000/09/xmldsig#",
+    xenc: "http://www.w3.org/2001/04/xmlenc#",
     claimV4: "http://vbms.vba.va.gov/external/ClaimService/v4",
     claimV5: "http://vbms.vba.va.gov/external/ClaimService/v5"
   }.freeze
@@ -106,7 +108,7 @@ module VBMS
       raise ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
     end
 
-    fail ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
+    raise ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
 
     output
   end
@@ -154,9 +156,7 @@ module VBMS
             "-n", request_name]
     output, errors, status = Open3.capture3(*args)
 
-    if status != 0
-      fail ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors)
-    end
+    raise ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors) if status != 0
 
     output
   end
@@ -172,3 +172,4 @@ module VBMS
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::CreateContentions do
   let(:request) do
     VBMS::Requests::CreateContentions.new(

@@ -1,5 +1,5 @@
-# encoding: utf-8
 # frozen_string_literal: true
+
 require "simplecov"
 SimpleCov.start do
 end
@@ -35,7 +35,7 @@ def env_path(env_dir, env_var_name)
 end
 
 def fixture_path(filename)
-  File.join(File.expand_path("../fixtures", __FILE__), filename)
+  File.join(File.expand_path("fixtures", __dir__), filename)
 end
 
 def fixture(path)
@@ -61,9 +61,7 @@ def encrypted_xml_file(response_path, keyfile, request_name)
           "-n", request_name]
   output, errors, status = Open3.capture3(*args)
 
-  if status != 0
-    fail VBMS::ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors)
-  end
+  raise VBMS::ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors) if status != 0
 
   output
 end
@@ -97,7 +95,7 @@ def java_decrypt_file(infile,
     raise VBMS::ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
   end
 
-  fail VBMS::ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
+  raise VBMS::ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
 
   output
 end
@@ -117,6 +115,7 @@ end
 
 def webmock_soap_response(endpoint_url, response_file, request_name)
   return if ENV.key?("CONNECT_VBMS_RUN_EXTERNAL_TESTS")
+
   encrypted = get_encrypted_file(response_file, request_name)
   stub_request(:post, endpoint_url).to_return(body: encrypted)
 end

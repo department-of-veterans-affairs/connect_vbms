@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::ListContentions do
   let(:request) do
     VBMS::Requests::ListContentions.new(claim_id: "1323123")

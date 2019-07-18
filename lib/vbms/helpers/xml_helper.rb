@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "nori"
 
 module XMLHelper
@@ -42,6 +43,6 @@ module XMLHelper
   end
 
   def self.sort_versions(versions)
-    versions.sort_by { |v| v[:version].try(:[], :@major).to_i }.last
+    versions.max_by { |v| v[:version].try(:[], :@major).to_i }
   end
 end

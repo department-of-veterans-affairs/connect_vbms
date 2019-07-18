@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def wrap_in_soap(doc)
   Nokogiri::XML::Builder.new do |xml|
     xml["soapenv"].Envelope(VBMS::Requests::NAMESPACES) do
@@ -32,7 +34,7 @@ describe SoapScum::WSSecurity do
     )
   end
 
-  describe '#encrypt' do
+  describe "#encrypt" do
     let(:signed_elements) do
       [["/soapenv:Envelope/soapenv:Body", { soapenv: SoapScum::XMLNamespaces::SOAPENV }, "Content"]]
     end
@@ -66,7 +68,7 @@ describe SoapScum::WSSecurity do
     end
   end
 
-  describe '#decrypt' do
+  describe "#decrypt" do
     let(:java_encrypted_xml) { encrypted_xml_buffer(soap_document, fixture_path("test_server.jks"), "listDocuments") }
 
     it "it decrypts soap message encrypted by Java WSSecurity library" do

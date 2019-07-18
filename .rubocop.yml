@@ -1,6 +1,3 @@
-AllCops:
-  TargetRubyVersion: 2.3
-
 Lint/ParenthesesAsGroupedExpression:
   Description: Checks for method calls with a space before the opening parenthesis.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#parens-no-spaces
@@ -9,6 +6,9 @@ Lint/ParenthesesAsGroupedExpression:
 Metrics/AbcSize:
   Description: "Complain about \"complexity\" without knowing what that means"
   Max: 50
+
+Metrics/BlockLength:
+  Enabled: false
 
 Metrics/ClassLength:
   Description: Avoid classes longer than some arbitrary lines of code.
@@ -57,7 +57,7 @@ Style/Documentation:
   Description: Document classes and non-namespace modules.
   Enabled: false
 
-Style/DotPosition:
+Layout/DotPosition:
   Description: Checks the position of the dot in multi-line method calls.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#consistent-multi-line-chains
   Enabled: true
@@ -66,13 +66,16 @@ Style/DotPosition:
   - leading
   - trailing
 
-Style/ExtraSpacing:
+Layout/ExtraSpacing:
   Description: Do not use unnecessary spacing.
   Enabled: false
 
-Style/TrailingWhitespace:
+Layout/TrailingWhitespace:
   Description: 'Avoid trailing whitespace.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#no-trailing-whitespace'
+  Enabled: true
+
+Naming/UncommunicativeMethodParamName:
   Enabled: false
 
 Style/GuardClause:
@@ -80,6 +83,9 @@ Style/GuardClause:
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#no-nested-conditionals
   Enabled: true
   MinBodyLength: 1
+
+Style/NumericPredicate:
+  Enabled: false
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

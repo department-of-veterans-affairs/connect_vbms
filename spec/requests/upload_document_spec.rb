@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::UploadDocument do
   before(:all) do
     @file = Tempfile.new("foo")
@@ -6,9 +7,9 @@ describe VBMS::Requests::UploadDocument do
   end
 
   describe "soap_doc" do
-    subject do 
+    subject do
       VBMS::Requests::UploadDocument.new(upload_token: "{1587FC2D-63FA-40EA-8E59-D99FF790395B}",
-                                         filepath: @file.path) 
+                                         filepath: @file.path)
     end
 
     it "generates valid SOAP" do

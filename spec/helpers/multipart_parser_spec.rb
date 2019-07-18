@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe MultipartParser do
   context "#xml_content" do
     let(:response) { HTTPI::Response.new 200, { "Content-Type" => content_type }, body }

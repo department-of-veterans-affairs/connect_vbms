@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AddExtSecurityHeader
   def inject_header_content(header_xml)
     Nokogiri::XML::Builder.with(header_xml) do |xml|
