@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VBMS
   module Requests
     # This call returns a list of document types in VBMS

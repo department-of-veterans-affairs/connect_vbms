@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module VBMS
   module Requests
     # This call operates in a two-phase approach. To upload a document,

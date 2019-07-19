@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module VBMS
   module Requests
     # This call gets the binary document content for a specific Document Version

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::InitializeUpload do
   describe "soap_doc" do
     subject do

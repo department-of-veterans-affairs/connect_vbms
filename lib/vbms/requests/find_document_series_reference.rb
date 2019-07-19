@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module VBMS
   module Requests
     # This call returns a list of DocumentSeries objects containing the metadata

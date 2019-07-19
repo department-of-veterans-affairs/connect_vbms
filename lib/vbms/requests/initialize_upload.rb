@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module VBMS
   module Requests
     # Call this service with metadata to receive a token used in the second call, uploadDocument

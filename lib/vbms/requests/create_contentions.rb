@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VBMS
   module Requests
     class CreateContentions < BaseRequest
@@ -62,7 +64,7 @@ module VBMS
               }.merge(original_contention_ids(contention))) do
                 xml["cdm"].submitDate Date.today.iso8601
 
-                contention[:special_issues] && contention[:special_issues].each do |special_issue|
+                contention[:special_issues]&.each do |special_issue|
                   xml["cdm"].issue(
                     typeCd: special_issue[:code],
                     narrative: special_issue[:narrative],
@@ -105,7 +107,7 @@ module VBMS
 
       def original_contention_ids(contention)
         return {} unless contention[:original_contention_ids]
-        
+
         { "origContentionIds" => contention[:original_contention_ids].join(" ") }
       end
     end

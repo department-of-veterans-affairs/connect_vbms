@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def create_self_signed_cert(directory:, name:)
   `openssl req -x509 \
     -newkey rsa:4096 \
