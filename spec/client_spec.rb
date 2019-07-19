@@ -27,7 +27,7 @@ describe VBMS::Client do
     end
   end
 
-  describe "#send" do
+  describe "#send_request" do
     before do
       @client = new_test_client
 
@@ -49,15 +49,14 @@ describe VBMS::Client do
                                            { soapenv: SoapScum::XMLNamespaces::SOAPENV },
                                            "Content"]])
 
-      @request.should_receive(:inject_header_content)
-      @request.should_receive(:endpoint_url)
+      allow(@request).to receive(:inject_header_content)
+      allow(@request).to receive(:endpoint_url)
 
       @response = double("response", code: 200, body: "response")
     end
 
     it "creates log message" do
       body = VBMS::Requests.soap { "body" }
-      puts body
       allow(HTTPI).to receive(:post).and_return(@response)
 
       allow(@client).to receive(:process_response).and_return(nil)
@@ -73,6 +72,48 @@ describe VBMS::Client do
                                                       request: @request)
 
       @client.send_request(@request)
+    end
+
+    context "response is not successful" do
+      context "error is a known specific error" do
+        it "raises a custom error based on the error body" do
+          code = 500
+
+          VBMS::HTTPError::KNOWN_ERRORS.each do |err_str, err_class|
+            err_str = err_str.sub("\\w+", "FOOBAR")
+
+            expect(VBMS::HTTPError.from_http_error(code, err_str)).to be_a("VBMS::#{err_class}".constantize)
+          end
+        end
+      end
+
+      context "error is not a known specific error" do
+        it "raises VBMS::HTTPError" do
+          error_response = double("response", code: 400, body: "generic")
+          allow(HTTPI).to receive(:post).and_return(error_response)
+
+          expect { @client.send_request(@request) }.to raise_error do |error|
+            expect(error.class).to eq VBMS::HTTPError
+            expect(error.code).to eq 400
+            expect(error.body).to eq "generic"
+            expect(error).to_not be_transient
+          end
+        end
+      end
+
+      context "error is not a known transient error" do
+        it "raises a transient VBMS::HTTPError" do
+          error_response = double("response", code: 400, body: "FAILED FOR UNKNOWN REASONS")
+          allow(HTTPI).to receive(:post).and_return(error_response)
+
+          expect { @client.send_request(@request) }.to raise_error do |error|
+            expect(error.class).to eq VBMS::HTTPError
+            expect(error.code).to eq 400
+            expect(error.body).to eq "FAILED FOR UNKNOWN REASONS"
+            expect(error).to be_transient
+          end
+        end
+      end
     end
   end
 
@@ -238,6 +279,7 @@ describe VBMS::Client do
       end
     end
   end
+
   describe "#build_request" do
     before do
       @client = new_test_client(use_forward_proxy: true)

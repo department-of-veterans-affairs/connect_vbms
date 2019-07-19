@@ -9,7 +9,7 @@ rvm:
 jdk:
   - oraclejdk14
 
-cache: bundler
+cache: bundler --without development
 
 before_script:
   - bundle exec rake tests:prepare
