@@ -96,7 +96,7 @@ describe VBMS::Client do
             expect(error.class).to eq VBMS::HTTPError
             expect(error.code).to eq 400
             expect(error.body).to eq "generic"
-            expect(error).to_not be_transient
+            expect(error).to_not be_ignorable
           end
         end
       end
@@ -110,7 +110,7 @@ describe VBMS::Client do
             expect(error.class).to eq VBMS::HTTPError
             expect(error.code).to eq 400
             expect(error.body).to eq "FAILED FOR UNKNOWN REASONS"
-            expect(error).to be_transient
+            expect(error).to be_ignorable
           end
         end
       end
