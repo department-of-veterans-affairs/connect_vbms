@@ -15,7 +15,7 @@ module VBMS
       "Could not access remote service at"
     ].freeze
 
-    def transient?
+    def ignorable?
       TRANSIENT_ERRORS.any? { |transient_error| message.include?(transient_error) }
     end
   end
