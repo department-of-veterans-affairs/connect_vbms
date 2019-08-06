@@ -66,7 +66,7 @@ module VBMS
                   inferred: "false"
                 )
               end
-              
+
               xml["cdm"].startDate @contention[:start_date]
               xml["cdm"].origSrc "APP" if @v5
             end
