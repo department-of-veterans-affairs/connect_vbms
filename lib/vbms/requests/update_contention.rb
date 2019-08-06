@@ -58,6 +58,15 @@ module VBMS
               "workingContention" => @contention[:working_contention] # required
             ) do
               xml["cdm"].submitDate @contention[:submit_date]
+
+              @contention[:special_issues]&.each do |special_issue|
+                xml["cdm"].issue(
+                  typeCd: special_issue[:code],
+                  narrative: special_issue[:narrative],
+                  inferred: "false"
+                )
+              end
+              
               xml["cdm"].startDate @contention[:start_date]
               xml["cdm"].origSrc "APP" if @v5
             end
