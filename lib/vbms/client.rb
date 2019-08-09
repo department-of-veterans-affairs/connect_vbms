@@ -99,7 +99,7 @@ module VBMS
         request: request
       )
 
-      raise VBMS::HTTPError.new(response.code, response.body, request) if response.code != 200
+      raise VBMS::HTTPError.from_http_error(response.code, response.body, request) if response.code != 200
 
       process_response(request, response)
     end
