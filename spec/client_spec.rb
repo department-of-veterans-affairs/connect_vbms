@@ -77,12 +77,16 @@ describe VBMS::Client do
     context "response is not successful" do
       context "error is a known specific error" do
         it "raises a custom error based on the error body" do
-          code = 500
-
           VBMS::HTTPError::KNOWN_ERRORS.each do |err_str, err_class|
-            err_str = err_str.sub("\\w+", "FOOBAR")
+            error_response = double("response", code: 400, body: err_str)
+            allow(HTTPI).to receive(:post).and_return(error_response)
 
-            expect(VBMS::HTTPError.from_http_error(code, err_str)).to be_a("VBMS::#{err_class}".constantize)
+            expect { @client.send_request(@request) }.to raise_error do |error|
+              expect(error.class).to eq "VBMS::#{err_class}".constantize
+              expect(error.code).to eq 400
+              expect(error.body).to eq err_str
+              expect(error).to_not be_ignorable
+            end
           end
         end
       end
@@ -101,8 +105,8 @@ describe VBMS::Client do
         end
       end
 
-      context "error is not a known transient error" do
-        it "raises a transient VBMS::HTTPError" do
+      context "error is a known transient error" do
+        it "raises an ignorable VBMS::HTTPError" do
           error_response = double("response", code: 400, body: "FAILED FOR UNKNOWN REASONS")
           allow(HTTPI).to receive(:post).and_return(error_response)
 

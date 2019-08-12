@@ -6,13 +6,27 @@ module VBMS
 
     TRANSIENT_ERRORS = [
       # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/331930/
-      "upstream connect error or disconnect/reset before headers",
+      "upstream connect error or disconnect",
 
       # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4403/events/293678/
       "FAILED FOR UNKNOWN REASONS",
 
       # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/267335/
-      "Could not access remote service at"
+      "Could not access remote service at",
+
+      # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/2161/
+      # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/2322/
+      # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/2847/
+      "execution expired",
+
+      # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/4708/
+      "HTTPClient::KeepAliveDisconnected:",
+
+      # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/3170/
+      "Unable to find SOAP operation",
+
+      # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/2557/
+      "Connection reset by peer"
     ].freeze
 
     def ignorable?
@@ -67,7 +81,7 @@ module VBMS
       "User is not authorized." => "UserNotAuthorized",
 
       # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4999/events/332996/
-      "Logon ID \\w+ Not Found" => "UnknownUser",
+      "Logon ID" => "UnknownUser",
 
       # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/294187/
       "Veteran is employed by this station." => "VeteranEmployedByStation",
@@ -103,7 +117,10 @@ module VBMS
       "Unable to parse SOAP message" => "BadSOAPMessage",
 
       # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
-      "missing required data" => "MissingData"
+      "missing required data" => "MissingData",
+
+      # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/4811/events/321736/
+      "No SOAP body results found in response" => "NoSOAPBody"
     }.freeze
 
     def self.from_http_error(code, body, request = nil)
@@ -159,6 +176,7 @@ module VBMS
   class MissingData < HTTPError; end
   class MissingVeteranIdentifier < HTTPError; end
   class MultiplePoas < HTTPError; end
+  class NoSOAPBody < HTTPError; end
   class PIFExistsForEPCode < HTTPError; end
   class RatedIssueMissing < HTTPError; end
   class Security < HTTPError; end
