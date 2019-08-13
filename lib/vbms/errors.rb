@@ -120,7 +120,10 @@ module VBMS
       "missing required data" => "MissingData",
 
       # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/4811/events/321736/
-      "No SOAP body results found in response" => "NoSOAPBody"
+      "No SOAP body results found in response" => "NoSOAPBody",
+
+      # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/5436/events/430832/
+      "Unable to establish claim: Duplicate Veteran Records" => "DuplicateVeteranRecords"
     }.freeze
 
     def self.from_http_error(code, body, request = nil)
@@ -170,6 +173,7 @@ module VBMS
   class DocumentNotFound < HTTPError; end
   class DownForMaintenance < HTTPError; end
   class DuplicateEP < HTTPError; end
+  class DuplicateVeteranRecords < HTTPError; end
   class FilenumberDoesNotExist < HTTPError; end
   class FileNumberNotFoundForClaimId < HTTPError; end
   class IncidentFlash < HTTPError; end
