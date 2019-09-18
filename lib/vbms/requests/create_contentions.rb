@@ -19,17 +19,19 @@ module VBMS
 
       # Contentions should be an array of objects representing the contention descriptions and special issues
       # [{description: "contention description", special_issues: [{ code: "SSR", narrative: "Same Station Review" }]}]
-      def initialize(veteran_file_number:, claim_id:, contentions:, v5: false, send_userid: false)
+      def initialize(veteran_file_number:, claim_id:, contentions:, claim_date:, v5: false, send_userid: false)
         @veteran_file_number = veteran_file_number
         @claim_id = claim_id
         @contentions = contentions
         @v5 = v5
         @send_userid = send_userid
+        @claim_date = claim_date
       end
 
       def name
         "createContentions"
       end
+
 
       def specify_endpoint
         @v5 ? :claimsv5 : :claims
@@ -62,7 +64,7 @@ module VBMS
                 awaitingResponse: "unused. but required.",
                 partcipantContention: "unused, but required."
               }.merge(original_contention_ids(contention))) do
-                xml["cdm"].submitDate Date.today.iso8601
+                xml["cdm"].submitDate @claim_date
 
                 contention[:special_issues]&.each do |special_issue|
                   xml["cdm"].issue(
