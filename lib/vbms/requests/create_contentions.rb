@@ -64,7 +64,7 @@ module VBMS
                 awaitingResponse: "unused. but required.",
                 partcipantContention: "unused, but required."
               }.merge(original_contention_ids(contention))) do
-                xml["cdm"].submitDate @claim_date
+                xml["cdm"].submitDate @claim_date.iso8601
 
                 contention[:special_issues]&.each do |special_issue|
                   xml["cdm"].issue(
