@@ -32,7 +32,6 @@ module VBMS
         "createContentions"
       end
 
-
       def specify_endpoint
         @v5 ? :claimsv5 : :claims
       end
