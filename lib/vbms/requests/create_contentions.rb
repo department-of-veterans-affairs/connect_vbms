@@ -57,7 +57,7 @@ module VBMS
 
                 actionableItem: "true",
                 medical: "true",
-                typeCode: "REP",
+                typeCode: contention[:contention_type].present? ? contention[:contention_type] : "REP",
                 workingContention: "YES",
 
                 awaitingResponse: "unused. but required.",
