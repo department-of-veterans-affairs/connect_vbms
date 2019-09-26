@@ -195,4 +195,6 @@ module VBMS
   class UnknownUser < HTTPError; end
   class UserNotAuthorized < HTTPError; end
   class VeteranEmployedByStation < HTTPError; end
+  class FindFiduciaryFailed < HTTPError; end
+  class VeteranInfoNotRetrieved < HTTPError; end
 end
