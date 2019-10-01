@@ -123,7 +123,13 @@ module VBMS
       "No SOAP body results found in response" => "NoSOAPBody",
 
       # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/5436/events/430832/
-      "Unable to establish claim: Duplicate Veteran Records" => "DuplicateVeteranRecords"
+      "Unable to establish claim: Duplicate Veteran Records" => "DuplicateVeteranRecords",
+
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/12165
+      "findFiduciary" => "FindFiduciaryFailed",
+
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/10164
+      "Unable to retrieve Veteran information" => "VeteranInfoNotRetrieved"
     }.freeze
 
     def self.from_http_error(code, body, request = nil)
@@ -189,4 +195,6 @@ module VBMS
   class UnknownUser < HTTPError; end
   class UserNotAuthorized < HTTPError; end
   class VeteranEmployedByStation < HTTPError; end
+  class FindFiduciaryFailed < HTTPError; end
+  class VeteranInfoNotRetrieved < HTTPError; end
 end
