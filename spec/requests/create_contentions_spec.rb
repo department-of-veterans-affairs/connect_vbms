@@ -8,8 +8,9 @@ describe VBMS::Requests::CreateContentions do
       contentions: [
         { description: "Billy One" },
         { description: "Billy Two" },
-        { description: "Billy Three", original_contention_ids: [1, 2] }
-      ]
+        { description: "Billy Three", original_contention_ids: [1, 2], contention_type: "HLR" }
+      ],
+      claim_date: 20.days.ago.to_date
     )
   end
 
@@ -50,8 +51,9 @@ describe VBMS::Requests::CreateContentions do
         contentions: [
           { description: "Billy One" },
           { description: "Billy Two" },
-          { description: "Billy Three", original_contention_ids: [1, 2] }
+          { description: "Billy Three", original_contention_ids: [1, 2], contention_type: "HLR" }
         ],
+        claim_date: 20.days.ago.to_date,
         v5: true
       )
     end
