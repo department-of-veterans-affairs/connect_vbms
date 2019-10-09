@@ -129,7 +129,10 @@ module VBMS
       "findFiduciary" => "FindFiduciaryFailed",
 
       # https://github.com/department-of-veterans-affairs/caseflow/issues/10164
-      "Unable to retrieve Veteran information" => "VeteranInfoNotRetrieved"
+      "Unable to retrieve Veteran information" => "VeteranInfoNotRetrieved",
+
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/11740
+      "ORACLE ERROR when attempting to store PTCPNT_ADDRS for the vet" => "VeteranAddressError"
     }.freeze
 
     def self.from_http_error(code, body, request = nil)
@@ -197,4 +200,5 @@ module VBMS
   class VeteranEmployedByStation < HTTPError; end
   class FindFiduciaryFailed < HTTPError; end
   class VeteranInfoNotRetrieved < HTTPError; end
+  class VeteranAddressError < HTTPError; end
 end
