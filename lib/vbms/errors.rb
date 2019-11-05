@@ -131,6 +131,15 @@ module VBMS
       # https://github.com/department-of-veterans-affairs/caseflow/issues/10164
       "Unable to retrieve Veteran information" => "VeteranInfoNotRetrieved",
 
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/12590
+      "Invalid data for BNFT_CLAIM_TYPE_CD" => "BenefitClaimTypeError",
+
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/12591
+      "XCPUPMAILADDR Service call failed" => "XcpupError",
+
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/12592
+      "has invalid character" => "InvalidCharacterError",
+
       # https://github.com/department-of-veterans-affairs/caseflow/issues/11740
       "ORACLE ERROR when attempting to store PTCPNT_ADDRS for the vet" => "VeteranAddressError"
     }.freeze
@@ -201,4 +210,7 @@ module VBMS
   class FindFiduciaryFailed < HTTPError; end
   class VeteranInfoNotRetrieved < HTTPError; end
   class VeteranAddressError < HTTPError; end
+  class BenefitClaimTypeError < HTTPError; end
+  class XcpupError < HTTPError; end
+  class InvalidCharacterError < HTTPError; end
 end
