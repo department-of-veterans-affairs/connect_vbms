@@ -46,9 +46,14 @@ module VBMS
           "//read:findPagedDocumentSeriesReferencesResponse/read:result", VBMS::XML_NAMESPACES
         ).map do |el|
           result = XMLHelper.convert_to_hash(el.to_xml)[:result]
-          XMLHelper.versions_as_array(result[:versions]).map do |version|
-            construct_response(version)
+          document_references = result[:document_series_references]
+          paging = result[:paging_reference]
+          documents = XMLHelper.versions_as_array(document_references).map do |doc_ref|
+            XMLHelper.versions_as_array(doc_ref[:versions]).map do |version|
+              construct_response(version)
+            end
           end
+          { paging: paging, documents: documents.flatten }
         end
       end
 

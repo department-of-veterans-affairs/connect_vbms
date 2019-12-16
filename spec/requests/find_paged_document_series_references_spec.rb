@@ -23,14 +23,15 @@ describe VBMS::Requests::FindPagedDocumentSeriesReferences do
 
     subject { @vbms_docs }
 
-    it "should return an array of documents" do
+    it "should return an array of document_series_references sets" do
       expect(subject).to be_an(Array)
-      expect(subject.count).to be 56 # how many are in the sample file
+      expect(subject.count).to eq(3)
+      expect(subject.first[:documents].count).to eq(2)
     end
 
     it "should load contents correctly" do
       # document with multiple versions
-      doc1 = subject.first.first
+      doc1 = subject.first[:documents].first
       expect(doc1[:document_id]).to eq "{68A9F5E8-8937-4106-96AE-7066E1FC0E15}"
       expect(doc1[:series_id]).to eq "{95FD13DE-5ADD-488F-BF45-50C0993AEE34}"
       expect(doc1[:version]).to eq "2"
@@ -42,7 +43,7 @@ describe VBMS::Requests::FindPagedDocumentSeriesReferences do
       expect(doc1[:received_at]).to eq Date.parse("2014-11-16-04:00")
 
       # document with alt doc types and one version
-      doc2 = subject.third.first
+      doc2 = subject.third[:documents].first
       expect(doc2[:alt_doc_types].size).to eq 4
       expect(doc2[:document_id]).to eq "{9909502E-E797-421C-BE2F-7650E2F2E7F1}"
       expect(doc2[:type_description]).to eq "Substantive Appeal (In Lieu of VA Form 9)"
@@ -50,10 +51,6 @@ describe VBMS::Requests::FindPagedDocumentSeriesReferences do
       expect(doc2[:source]).to eq "VACOLS"
       expect(doc2[:restricted]).to eq true
       expect(doc2[:received_at]).to eq Date.parse("2014-04-30-04:00")
-
-      doc3 = subject.fourth.first
-      expect(doc3[:document_id]).to eq "{C7A6DA43-A368-4831-A68B-D32F0C164C22}"
-      expect(doc3[:restricted]).to eq false
     end
 
     it "handles XML errors gracefully" do
