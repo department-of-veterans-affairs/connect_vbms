@@ -1,0 +1,309 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+      <xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="EK-D8C5459A5313328BCF1487880776620328">
+        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <wsse:SecurityTokenReference>
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=Scanning CA,OU=Scanning CA,O=Scanning CA,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>49</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+        <xenc:CipherData>
+          <xenc:CipherValue>Y6wm4An+t91pjSzHY+NLdYAKN3TbSZDBQG5nkv6gxDVUnhGufpU6Tr+MyPCjLDflRn7siAoZpMm91yuKlWtH6WYRWdbsqCx79/fepv9LzT+hTTiFNRiJdR+b+nHPWXunYTzH//D83hAkVAzGTDI3lNa1OeFQwechqqrv7n0fc96vKQwVtK21TmtwXp6t7hhhK22H/Ogsq2cBi6ifBhJSlfs53CYuZ6cxrwURLDywaGiAG4I7Aeuc5EZQ+elLrQ90duFXCQZXw/XdkrAH0vEvdVZmhKGDGfiDmc50EJ6/GnLnY7bUR313ZrfcySnovEZgC3JbG9og5R7zmhIcpmCGnQ==</xenc:CipherValue>
+        </xenc:CipherData>
+        <xenc:ReferenceList>
+          <xenc:DataReference URI="#ED-328"/>
+        </xenc:ReferenceList>
+      </xenc:EncryptedKey>
+      <wsu:Timestamp wsu:Id="TS-325">
+        <wsu:Created>2017-02-23T20:12:56.582Z</wsu:Created>
+        <wsu:Expires>2017-02-23T20:17:56.582Z</wsu:Expires>
+      </wsu:Timestamp>
+      <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-327">
+        <ds:SignedInfo>
+          <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+            <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="env"/>
+          </ds:CanonicalizationMethod>
+          <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <ds:Reference URI="#TS-325">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="wsse env"/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>ysYhOwU8jr+vN226YX/yW+7YRwA=</ds:DigestValue>
+          </ds:Reference>
+          <ds:Reference URI="#id-326">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList=""/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>G3QfWlyFNvBFX0tSl6+ayC7TBLI=</ds:DigestValue>
+          </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue>GmPhit5o8c5Xh0mDwzpXHVkPunne+1poB0v2DR6yclsFa+6I+Be5FrX2luxeoqkgS/+BLHAYFnNH
+WIzGeDLWSHyUm3OBmCV4+HD7MzIpnfqW3z2Rd6/5ZiezzVvLNv6tvxaAAQJMl0Z7T5cWc3bnRoPR
+r0l5pL4NCgJgsiAIxn77vbuTN1P16OWlxsA1PC2PfV2AoYKXlfL6gI5FlhFRwQ20i2ki3e0cVnBh
+hv18Prj3vVR4WcmYTBIqanRVmb3AkSyw0Dk+JsMlSHFlCecHM/RvpHoPvZMLQVgcIAhQZgKFeqSk
+YXTTU5Qj4itwph3AWjLS5TNMuXzh2d1QWyhBBg==</ds:SignatureValue>
+        <ds:KeyInfo Id="KI-D8C5459A5313328BCF1487880776586326">
+          <wsse:SecurityTokenReference wsu:Id="STR-D8C5459A5313328BCF1487880776586327">
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=AIDE CA2,OU=CA2,O=AIDE,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>4</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+      </ds:Signature>
+    </wsse:Security>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-326">
+    <findPagedDocumentSeriesReferencesResponse xmlns="http://service.efolder.vbms.vba.va.gov/eFolderReadService" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns2="http://vbms.vba.va.gov/cdm/document/v5" xmlns:ns3="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:ns5="http://service.efolder.vbms.vba.va.gov/eFolderReadService">
+      <ns5:result id="{95FD13DE-5ADD-488F-BF45-50C0993AEE34}" seriesName="784449089/cuiaf9bf9ed-3f8a-4261-a372-73881729de96.pdf">
+       <ns2:documentSeriesReferences>
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{95FD13DE-5ADD-488F-BF45-50C0993AEE34}" documentVersionRefId="{68A9F5E8-8937-4106-96AE-7066E1FC0E15}" mimeType="application/pdf" previousVersionId="{5B8D57C5-270F-4BFC-9A3B-1235EB5EF62F}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-01</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{95FD13DE-5ADD-488F-BF45-50C0993AEE34}" documentVersionRefId="{5B8D57C5-270F-4BFC-9A3B-1235EB5EF62F}" mimeType="application/pdf" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-01</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+       </ns2:documentSeriesReferences>
+       <ns2:pagingReference filteredResults="-18" nextStartIndex="3000" totalResultCount="13572"/>
+      </ns5:result><ns5:result id="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" seriesName="784449089/test.pdf">
+       <ns2:documentSeriesReferences>
+        <ns2:veteranReference>
+          <ns2:id fileNumber="784449089"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{7989485C-6368-4ED9-AFDF-7B8AFF6D7102}" mimeType="text/plain" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-01</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{CE67177F-F63F-436B-8EC7-376606459FA1}" mimeType="text/plain" previousVersionId="{7989485C-6368-4ED9-AFDF-7B8AFF6D7102}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-01</ns2:vbmsUploadDate>
+          <ns2:version major="2"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{7AF86D13-5E7A-4DE1-9E03-BEB260D85184}" mimeType="application/pdf" previousVersionId="{CE67177F-F63F-436B-8EC7-376606459FA1}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-03</ns2:vbmsUploadDate>
+          <ns2:version major="3"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{39E7CFBB-AF64-478D-AE9D-32FAEEC9A036}" mimeType="application/pdf" previousVersionId="{7AF86D13-5E7A-4DE1-9E03-BEB260D85184}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-03</ns2:vbmsUploadDate>
+          <ns2:version major="4"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{B410D42E-9A9A-40AE-8F8B-17972E81FC1C}" mimeType="application/pdf" previousVersionId="{39E7CFBB-AF64-478D-AE9D-32FAEEC9A036}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="5"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{489C9077-3005-49FE-8B0F-EB0F869EC88A}" mimeType="application/pdf" previousVersionId="{B410D42E-9A9A-40AE-8F8B-17972E81FC1C}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="6"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{3807ABF1-5CD6-4CE3-AC90-09B785DA947D}" mimeType="application/pdf" previousVersionId="{489C9077-3005-49FE-8B0F-EB0F869EC88A}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="7"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{4B5C3E5C-A5BC-45EA-8318-D2BC4ED6E5E8}" mimeType="application/pdf" previousVersionId="{3807ABF1-5CD6-4CE3-AC90-09B785DA947D}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="8"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{9EBD8789-B9B3-4ACD-8FAE-2CB8CF1DF269}" mimeType="application/pdf" previousVersionId="{4B5C3E5C-A5BC-45EA-8318-D2BC4ED6E5E8}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="9"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+        <ns2:versions documentSeriesRefId="{9CB998EA-0040-4142-B057-BD23C9FD50BC}" documentVersionRefId="{AA1EB27B-1EA7-4C28-BE5B-16F4A4A4B032}" mimeType="application/pdf" previousVersionId="{9EBD8789-B9B3-4ACD-8FAE-2CB8CF1DF269}" subject="Knee">
+          <ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>citizen</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>false</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-11-16</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2014-12-10</ns2:vbmsUploadDate>
+          <ns2:version major="10"/>
+          <ns2:source sourceName="VHA_CUI"/>
+        </ns2:versions>
+       </ns2:documentSeriesReferences>
+       <ns2:pagingReference filteredResults="-18" nextStartIndex="3000" totalResultCount="13572"/>
+      </ns5:result>
+      <ns5:result id="{C0E3EA51-0000-C91F-9702-A722CFF8E939}" seriesName="22222222/form9.pdf">
+       <ns2:documentSeriesReferences>
+        <ns2:veteranReference>
+          <ns2:id fileNumber="22222222"/>
+        </ns2:veteranReference>
+        <ns2:versions documentSeriesRefId="{C0E3EA51-0000-C91F-9702-A722CFF8E939}" documentVersionRefId="{9909502E-E797-421C-BE2F-7650E2F2E7F1}" mimeType="application/pdf" subject="Form 9">
+          <ns2:typeCategory categoryDescriptionText="Appeals" categoryId="19" typeDescriptionText="Substantive Appeal (In Lieu of VA Form 9)" typeId="857" typeLabelText="L857"/>
+          <ns2:metadata key="VeteranFirstName">
+            <ns2:value>Joe</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="VeteranLastName">
+            <ns2:value>Snuffy</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="restricted">
+            <ns2:value>true</ns2:value>
+          </ns2:metadata>
+          <ns2:metadata key="altDocType">
+            <ns2:value>["Appeals - Notice of Disagreement (NOD)","Appeals - Statement of the Case (SOC)","Appeals - Substantive Appeal to Board of Veterans' Appeals","Appeals - Supplemental Statement of the Case (SSOC)"]</ns2:value>
+          </ns2:metadata>
+          <ns2:vaReceiveDate>2014-04-30</ns2:vaReceiveDate>
+          <ns2:vbmsUploadDate>2015-12-28</ns2:vbmsUploadDate>
+          <ns2:version major="1"/>
+          <ns2:source sourceName="VACOLS"/>
+        </ns2:versions>
+       </ns2:documentSeriesReferences>
+       <ns2:pagingReference filteredResults="-18" nextStartIndex="3000" totalResultCount="13572"/>
+      </ns5:result>
+    </findPagedDocumentSeriesReferencesResponse>
+  </env:Body>
+</env:Envelope>
