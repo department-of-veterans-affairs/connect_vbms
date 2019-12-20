@@ -28,7 +28,7 @@ describe VBMS::Service::PagedDocuments do
     end
     documents = build_documents(num_docs)
 
-    (1..num_sets).map do |x|
+    (1..num_sets).map do
       {
         paging: { :@next_start_index => @offset, :@total_result_count => total_docs },
         documents: documents
@@ -45,7 +45,7 @@ describe VBMS::Service::PagedDocuments do
       it "returns total documents with pagination metadata" do
         r = subject.call(file_number: file_number)
 
-        expect(r[:pages]).to eq (total_docs / page_size.to_f).ceil(0)
+        expect(r[:pages]).to eq((total_docs / page_size.to_f).ceil(0))
         expect(r[:documents].length).to eq total_docs
         expect(r[:paging][:@total_result_count]).to eq total_docs
       end
@@ -57,10 +57,10 @@ describe VBMS::Service::PagedDocuments do
       it "returns total documents with pagination metadata" do
         r = subject.call(file_number: file_number)
 
-        expect(r[:pages]).to eq (total_docs / page_size.to_f).ceil(0)
+        expect(r[:pages]).to eq((total_docs / page_size.to_f).ceil(0))
         expect(r[:documents].length).to eq total_docs
         expect(r[:paging][:@total_result_count]).to eq total_docs
       end
     end
   end
-end    
+end
