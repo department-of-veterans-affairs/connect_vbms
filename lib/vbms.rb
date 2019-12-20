@@ -48,5 +48,9 @@ require "vbms/requests/list_type_category"
 require "vbms/helpers/xml_helper"
 require "vbms/helpers/multipart_parser"
 
+# our services
+require "vbms/service/base"
+require "vbms/service/paged_documents"
+
 # require 'xmldsig'
 require "xmldsig/signature_override"
