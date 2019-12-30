@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 describe VBMS::Requests do
@@ -10,61 +11,6 @@ describe VBMS::Requests do
               else
                 new_test_client
               end
-  end
-
-  describe "UploadDocumentWithAssociations" do
-    it "executes succesfully when pointed at VBMS" do
-      Tempfile.open("tmp") do |t|
-        request = VBMS::Requests::UploadDocumentWithAssociations.new(
-          "784449089",
-          Time.now,
-          "Jane",
-          "Q",
-          "Citizen",
-          "knee",
-          t.path,
-          "356",
-          "Connect VBMS test",
-          true
-        )
-
-        webmock_multipart_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder]}",
-                                   "upload_document_with_associations",
-                                   "uploadDocumentWithAssociationsResponse")
-        @client.send_request(request)
-      end
-    end
-
-    it "executes succesfully when pointed at a proxy" do
-      @client = if ENV.key?("CONNECT_VBMS_RUN_EXTERNAL_TESTS")
-                  # We're doing it live and connecting to VBMS test server
-                  # otherwise, just use @client from above and webmock
-                  VBMS::Client.from_env_vars(env_name: ENV["CONNECT_VBMS_ENV"], use_forward_proxy: true)
-                else
-                  new_test_client(use_forward_proxy: true)
-                end
-
-      Tempfile.open("tmp") do |t|
-        request = VBMS::Requests::UploadDocumentWithAssociations.new(
-          "784449089",
-          Time.now,
-          "Jane",
-          "Q",
-          "Citizen",
-          "knee",
-          t.path,
-          "356",
-          "Connect VBMS test",
-          true
-        )
-
-        webmock_multipart_response(
-          "http://localhost:3000/envoy-prefix-uploadDocumentWithAssociations/vbmsp2-cms/streaming/eDocumentService-v4",
-          "upload_document_with_associations",
-          "uploadDocumentWithAssociationsResponse")
-        @client.send_request(request)
-      end
-    end
   end
 
   describe "UploadDocument" do
@@ -95,15 +41,6 @@ describe VBMS::Requests do
       @client.send_request(request)
       file.close
       file.unlink
-    end
-  end
-
-  describe "ListDocuments" do
-    it "executes succesfully when pointed at VBMS" do
-      request = VBMS::Requests::ListDocuments.new("784449089")
-
-      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder]}", "list_documents", "listDocumentsResponse")
-      @client.send_request(request)
     end
   end
 
@@ -147,23 +84,6 @@ describe VBMS::Requests do
     end
   end
 
-  describe "FetchDocumentById" do
-    it "executes succesfully when pointed at VBMS" do
-      # Use ListDocuments to find a document to fetch
-
-      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder]}", "list_documents", "listDocumentsResponse")
-
-      request = VBMS::Requests::ListDocuments.new("784449089")
-      result = @client.send_request(request)
-
-      request = VBMS::Requests::FetchDocumentById.new(result[0].document_id)
-      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder]}",
-                            "fetch_document",
-                            "fetchDocumentResponse")
-      @client.send_request(request)
-    end
-  end
-
   describe "GetDocumentContent" do
     it "executes succesfully when pointed at VBMS" do
       # Use FindDocumentSeriesReference to find a document to fetch
@@ -178,22 +98,6 @@ describe VBMS::Requests do
                             "get_document_content",
                             "getDocumentContentResponse")
       @client.send_request(request)
-    end
-  end
-
-  describe "GetDocumentTypes" do
-    it "executes succesfully when pointed at VBMS" do
-      request = VBMS::Requests::GetDocumentTypes.new
-
-      webmock_soap_response("#{@client.base_url}#{VBMS::ENDPOINTS[:efolder]}",
-                            "get_document_types",
-                            "getDocumentTypesResponse")
-      result = @client.send_request(request)
-
-      expect(result).not_to be_empty
-
-      expect(result[0].type_id).to be_a_kind_of(String)
-      expect(result[0].description).to be_a_kind_of(String)
     end
   end
 

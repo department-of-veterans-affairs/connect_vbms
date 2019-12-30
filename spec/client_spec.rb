@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe VBMS::Client do
@@ -5,8 +7,9 @@ describe VBMS::Client do
     @client = new_test_client
   end
 
-  let(:doc) do
-    Nokogiri::XML(<<-EOF)
+  describe "remove_must_understand" do
+    it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
+      doc = Nokogiri::XML(<<-XML)
       <?xml version="1.0" encoding="UTF-8"?>
       <soapenv:Envelope
            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -16,62 +19,21 @@ describe VBMS::Client do
           </wsse:Security>
         </soapenv:Header>
       </soapenv:Envelope>
-    EOF
-  end
+      XML
 
-  describe "inject_saml" do
-    let(:injected_css_id) do
-      doc.at_xpath(
-        "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/subjectId']/saml2:AttributeValue",
-        "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
-      ).child.text
-    end
-
-    let(:injected_station_id) do
-      doc.at_xpath(
-        "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/stationId']/saml2:AttributeValue",
-        "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
-      ).child.text
-    end
-
-    context "with css data passed" do
-      before do
-        @client = new_test_client(css_id: "KLAYTHOMPSON", station_id: "415")
-      end
-
-      it "adds saml token to the request with the user data" do
-        @client.inject_saml(doc)
-
-        expect(injected_css_id).to eq("KLAYTHOMPSON")
-        expect(injected_station_id).to eq("415")
-      end
-    end
-
-    context "with no css data passed" do
-      it "adds saml token to the request with the default user data" do
-        @client.inject_saml(doc)
-
-        expect(injected_css_id).to eq("0")
-        expect(injected_station_id).to eq("0")
-      end
-    end
-  end
-
-  describe "remove_must_understand" do
-    it "takes a Nokogiri document and deletes the mustUnderstand attribute" do
       @client.remove_must_understand(doc)
 
       expect(doc.to_s).not_to include("mustUnderstand")
     end
   end
 
-  describe '#send' do
+  describe "#send_request" do
     before do
       @client = new_test_client
 
       @request = double("request",
                         file_number: "123456788",
-                        received_at: DateTime.new(2010, 01, 01),
+                        received_at: DateTime.new(2010, 0o1, 0o1),
                         first_name: "Joe",
                         middle_name: "Eagle",
                         last_name: "Citizen",
@@ -82,21 +44,19 @@ describe VBMS::Client do
                         name: "uploadDocumentWithAssociations",
                         new_mail: "",
                         multipart?: false,
-                        soap_doc:  VBMS::Requests.soap { "body" },
+                        soap_doc: VBMS::Requests.soap { "body" },
                         signed_elements: [["/soapenv:Envelope/soapenv:Body",
                                            { soapenv: SoapScum::XMLNamespaces::SOAPENV },
-                                           "Content"]]
-                       )
+                                           "Content"]])
 
-      @request.should_receive(:inject_header_content)
-      @request.should_receive(:endpoint_url)
+      allow(@request).to receive(:inject_header_content)
+      allow(@request).to receive(:endpoint_url)
 
       @response = double("response", code: 200, body: "response")
     end
 
     it "creates log message" do
       body = VBMS::Requests.soap { "body" }
-      puts body
       allow(HTTPI).to receive(:post).and_return(@response)
 
       allow(@client).to receive(:process_response).and_return(nil)
@@ -113,6 +73,94 @@ describe VBMS::Client do
 
       @client.send_request(@request)
     end
+
+    context "response is not successful" do
+      context "error is a known specific error" do
+        it "raises a custom error based on the error body" do
+          VBMS::HTTPError::KNOWN_ERRORS.each do |err_str, err_class|
+            error_response = double("response", code: 400, body: err_str)
+            allow(HTTPI).to receive(:post).and_return(error_response)
+
+            expect { @client.send_request(@request) }.to raise_error do |error|
+              expect(error.class).to eq "VBMS::#{err_class}".constantize
+              expect(error.code).to eq 400
+              expect(error.body).to eq err_str
+              expect(error).to_not be_ignorable
+            end
+          end
+        end
+      end
+
+      context "error is not a known specific error" do
+        it "raises VBMS::HTTPError" do
+          error_response = double("response", code: 400, body: "generic")
+          allow(HTTPI).to receive(:post).and_return(error_response)
+
+          expect { @client.send_request(@request) }.to raise_error do |error|
+            expect(error.class).to eq VBMS::HTTPError
+            expect(error.code).to eq 400
+            expect(error.body).to eq "generic"
+            expect(error).to_not be_ignorable
+          end
+        end
+      end
+
+      context "error is a known transient error" do
+        it "raises an ignorable VBMS::HTTPError" do
+          error_response = double("response", code: 400, body: "FAILED FOR UNKNOWN REASONS")
+          allow(HTTPI).to receive(:post).and_return(error_response)
+
+          expect { @client.send_request(@request) }.to raise_error do |error|
+            expect(error.class).to eq VBMS::HTTPError
+            expect(error.code).to eq 400
+            expect(error.body).to eq "FAILED FOR UNKNOWN REASONS"
+            expect(error).to be_ignorable
+          end
+        end
+      end
+    end
+  end
+
+  describe "inject_header_content" do
+    it "injects username and station id" do
+      veteran_record = {
+        file_number: "561349920",
+        sex: "M",
+        first_name: "Stan",
+        last_name: "Stanman",
+        ssn: "796164121",
+        address_line1: "Shrek's Swamp",
+        address_line2: "",
+        address_line3: "",
+        city: "Charleston",
+        state: "SC",
+        country: "USA",
+        zip_code: "29401"
+      }
+
+      claim = {
+        benefit_type_code: "1",
+        payee_code: "00",
+        station_of_jurisdiction: "317",
+        end_product_code: "070CERT2AMC",
+        end_product_modifier: "071",
+        end_product_label: "AMC-Cert to BVA",
+        predischarge: false,
+        gulf_war_registry: false,
+        date: 20.days.ago.to_date,
+        suppress_acknowledgment_letter: false,
+        limited_poa_code: "007",
+        limited_poa_access: true
+      }
+
+      request = VBMS::Requests::EstablishClaim.new(veteran_record, claim, v5: true, send_userid: true)
+      @client = new_test_client(css_id: "KLAYTHOMPSON", station_id: "415")
+
+      doc = @client.inject_header_content(SoapScum::WSSecurity.encrypt(request.soap_doc, request.signed_elements), request)
+      expect(doc.at_xpath("//ext:cssUserName", "ext" => "http://vbms.vba.va.gov/external").content).to eq("KLAYTHOMPSON")
+      expect(doc.at_xpath("//ext:cssStationId", "ext" => "http://vbms.vba.va.gov/external").content).to eq("415")
+      expect(doc.at_xpath("//ext:SecurityLevel", "ext" => "http://vbms.vba.va.gov/external").content).to eq("9")
+    end
   end
 
   describe "process_response" do
@@ -128,7 +176,8 @@ describe VBMS::Client do
         encrypted_xml_file(
           fixture_path("requests/fetch_document.xml"),
           fixture_path("test_server.jks"),
-          "fetchDocumentResponse")
+          "fetchDocumentResponse"
+        )
       end
 
       it "should return a decrypted XML document" do
@@ -174,7 +223,7 @@ describe VBMS::Client do
 
     context "when it is given a document that contains a SOAP fault" do
       let(:response_body) do
-        <<-EOF
+        <<-XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
           <soap:Header/>
           <soap:Body>
@@ -186,7 +235,7 @@ describe VBMS::Client do
             </soap:Fault>
           </soap:Body>
         </soap:Envelope>
-        EOF
+        XML
       end
 
       it "should raise a SOAPError" do
@@ -200,11 +249,11 @@ describe VBMS::Client do
 
     context "when it is given a document that does not have body" do
       let(:response_body) do
-        <<-EOF
+        <<-XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
           <soap:Header/>
         </soap:Envelope>
-        EOF
+        XML
       end
 
       it "should raise a SOAPError" do
@@ -218,11 +267,11 @@ describe VBMS::Client do
 
     context "when the server sends an HTML response error page" do
       let(:response_body) do
-        <<-EOF
+        <<-XML
           <html><head><title>An error has occurred</title></head>
           <body><p>I know you were expecting HTML, but sometimes sites do this</p></body>
           </html>
-        EOF
+        XML
       end
 
       it "should raise a SOAPError" do
@@ -234,7 +283,8 @@ describe VBMS::Client do
       end
     end
   end
-  describe '#build_request' do
+
+  describe "#build_request" do
     before do
       @client = new_test_client(use_forward_proxy: true)
     end

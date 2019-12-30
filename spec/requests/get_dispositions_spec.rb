@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::GetDispositions do
   let(:request) do
     VBMS::Requests::GetDispositions.new(claim_id: "600097563")

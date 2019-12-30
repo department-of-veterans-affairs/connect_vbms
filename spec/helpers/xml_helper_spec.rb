@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe XMLHelper do
   context ".convert_to_hash" do
     let(:xml) { "<tag>This is the contents</tag>" }

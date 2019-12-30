@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe MultipartParser do
   context "#xml_content" do
     let(:response) { HTTPI::Response.new 200, { "Content-Type" => content_type }, body }
@@ -10,6 +11,14 @@ describe MultipartParser do
       context "with a single XML file" do
         let(:body) do
           "--uuid:61b\r\nContent-Type: application/xop+xml\r\n\r\n"\
+          "<tag>This is the contents</tag>\r\n--uuid:61b--"
+        end
+        it { is_expected.to eq "<tag>This is the contents</tag>\r\n" }
+      end
+
+      context "with a single XML file with leading carriage return delimiter" do
+        let(:body) do
+          "\r\n\r\n--uuid:61b\r\nContent-Type: application/xop+xml\r\n\r\n"\
           "<tag>This is the contents</tag>\r\n--uuid:61b--"
         end
         it { is_expected.to eq "<tag>This is the contents</tag>\r\n" }

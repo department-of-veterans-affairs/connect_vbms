@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require 'xmldsig'
 require "base64"
 
@@ -24,13 +26,13 @@ module Xmldsig
       exception_text = "Element '{http://www.w3.org/2001/10/xml-exc-c14n#}InclusiveNamespaces': " \
                        "No matching global element declaration available, but demanded by the " \
                        "strict wildcard."
-      fail Xmldsig::SchemaError.new(errors.first.message) unless errors.include?(exception_text) || !errors.any?
+      raise Xmldsig::SchemaError.new(errors.first.message) unless errors.include?(exception_text) || errors.none?
       # /ugly
     end
 
     def inclusive_namespaces
       inclusive_namespaces = signed_info.at_xpath("descendant::ds:CanonicalizationMethod/ec:InclusiveNamespaces", Xmldsig::NAMESPACES)
-      if inclusive_namespaces && inclusive_namespaces.has_attribute?("PrefixList")
+      if inclusive_namespaces&.has_attribute?("PrefixList")
         inclusive_namespaces.get_attribute("PrefixList").to_s.split(" ")
       else
         []

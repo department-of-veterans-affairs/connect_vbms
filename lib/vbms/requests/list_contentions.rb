@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VBMS
   module Requests
     class ListContentions < BaseRequest

@@ -3,7 +3,6 @@
 module VBMS
   module Requests
     # This call returns a list of document version references matching the search criteria.
-    # This service replaces listDocuments in eDocument Service v4, which is deprecated as of March 2017
     class FindDocumentVersionReference < FindDocumentSeriesReference
       def name
         "findDocumentVersionReference"

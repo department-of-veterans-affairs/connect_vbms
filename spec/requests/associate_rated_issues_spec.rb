@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::AssociateRatedIssues do
   let(:request) do
     VBMS::Requests::AssociateRatedIssues.new(

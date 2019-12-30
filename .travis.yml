@@ -4,12 +4,12 @@ branches:
     only:
         - master
 rvm:
-  - 2.3.0
+  - 2.5.3
 
 jdk:
-  - oraclejdk8
+  - oraclejdk14
 
-cache: bundler
+cache: bundler --without development
 
 before_script:
   - bundle exec rake tests:prepare

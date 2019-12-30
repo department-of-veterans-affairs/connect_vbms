@@ -1,10 +1,16 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::CreateContentions do
-  let(:request) do 
+  let(:request) do
     VBMS::Requests::CreateContentions.new(
       veteran_file_number: "1232",
       claim_id: "1323123",
-      contentions: ["Billy One", "Billy Two", "Billy Three"]
+      contentions: [
+        { description: "Billy One" },
+        { description: "Billy Two" },
+        { description: "Billy Three", original_contention_ids: [1, 2], contention_type: "HLR" }
+      ],
+      claim_date: 20.days.ago.to_date
     )
   end
 
@@ -33,16 +39,21 @@ describe VBMS::Requests::CreateContentions do
     it "should load contents correctly" do
       contention = subject.first
       expect(contention.id).to eq "290355"
-      expect(contention.text).to eq "Contention DS example"
+      expect(contention.text).to eq "Contention DS example & more"
     end
   end
 
   context "v5" do
-    let(:request) do 
+    let(:request) do
       VBMS::Requests::CreateContentions.new(
         veteran_file_number: "1232",
         claim_id: "1323123",
-        contentions: ["Billy One", "Billy Two", "Billy Three"],
+        contentions: [
+          { description: "Billy One" },
+          { description: "Billy Two" },
+          { description: "Billy Three", original_contention_ids: [1, 2], contention_type: "HLR" }
+        ],
+        claim_date: 20.days.ago.to_date,
         v5: true
       )
     end

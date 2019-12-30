@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VBMS
   class Client
     attr_reader :base_url
@@ -53,9 +55,8 @@ module VBMS
 
     def self.get_env(env_var_name, allow_empty: false)
       value = ENV[env_var_name]
-      if !allow_empty && (value.nil? || value.empty?)
-        fail EnvironmentError, "#{env_var_name} must be set"
-      end
+      raise EnvironmentError, "#{env_var_name} must be set" if !allow_empty && (value.nil? || value.empty?)
+
       value
     end
 
@@ -67,7 +68,7 @@ module VBMS
     end
 
     def log(event, data)
-      @logger.log(event, data) if @logger
+      @logger&.log(event, data)
     end
 
     def send_request(request)
@@ -98,9 +99,7 @@ module VBMS
         request: request
       )
 
-      if response.code != 200
-        fail VBMS::HTTPError.new(response.code, response.body, request)
-      end
+      raise VBMS::HTTPError.from_http_error(response.code, response.body, request) if response.code != 200
 
       process_response(request, response)
     end
@@ -126,31 +125,22 @@ module VBMS
 
     def inject_saml(doc)
       saml_doc = Nokogiri::XML(File.read(@saml)).root
-
-      inject_user_into_saml(saml_doc)
-
       doc.at_xpath(
         "//wsse:Security",
         wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       ) << saml_doc
     end
 
-    def inject_user_into_saml(saml_doc)
-      if @css_id && @station_id
-        saml_doc.at_xpath(
-          "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/subjectId']/saml2:AttributeValue",
-          "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
-        ).child.replace(@css_id)
-
-        saml_doc.at_xpath(
-          "//saml2:Attribute[@Name ='http://vba.va.gov/css/common/stationId']/saml2:AttributeValue",
-          "xmlns:saml2" => "urn:oasis:names:tc:SAML:2.0:assertion"
-        ).child.replace(@station_id)
-      end
-    end
-
     def inject_header_content(doc, request)
       request.inject_header_content(doc.at_xpath("/soapenv:Envelope/soapenv:Header"))
+
+      # replace user headers if needed
+      user_element = doc.at_xpath("//etc:cssUserName", "etc" => "http://vbms.vba.va.gov/external")
+      station_element = doc.at_xpath("//etc:cssStationId", "etc" => "http://vbms.vba.va.gov/external")
+      user_element.content = @css_id if @css_id && user_element
+      station_element.content = @station_id if @station_id && station_element
+
+      doc
     end
 
     def remove_must_understand(doc)
@@ -158,18 +148,17 @@ module VBMS
         "//wsse:Security",
         wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
       ).attributes["mustUnderstand"]
-      node.remove if node
+      node&.remove
     end
 
-    # rubocop:disable Style/GuardClause
     def create_body(request, doc)
       if request.multipart?
         filepath = request.multipart_file
         filename = File.basename(filepath)
         content = File.read(filepath)
-        return VBMS.load_erb("mtom_request.erb").result(binding)
+        VBMS.load_erb("mtom_request.erb").result(binding)
       else
-        return VBMS.load_erb("request.erb").result(binding)
+        VBMS.load_erb("request.erb").result(binding)
       end
     end
 
@@ -182,8 +171,8 @@ module VBMS
 
       request = HTTPI::Request.new(endpoint_url)
 
-      request.open_timeout               = 600 # seconds
-      request.read_timeout               = 600 # seconds
+      request.open_timeout               = 10 # seconds
+      request.read_timeout               = 1200 # seconds
       request.auth.ssl.cert_key          = SoapScum::WSSecurity.client_key
       request.auth.ssl.cert_key_password = @keypass
       request.auth.ssl.cert              = SoapScum::WSSecurity.client_cert
@@ -234,15 +223,15 @@ module VBMS
     def check_soap_errors(doc, response)
       # the envelope should be the root node of the document
       soap = doc.at_xpath("/soapenv:Envelope", VBMS::XML_NAMESPACES)
-      fail SOAPError.new("No SOAP envelope found in response", response.body) if
+      raise SOAPError.new("No SOAP envelope found in response", response.body) if
         soap.nil?
 
-      fail SOAPError.new("SOAP Fault returned", response.body) if
+      raise SOAPError.new("SOAP Fault returned", response.body) if
         soap.at_xpath("//soapenv:Fault", VBMS::XML_NAMESPACES)
 
       soap = doc.at_xpath("/soapenv:Envelope/soapenv:Body",
                           soapenv: "http://schemas.xmlsoap.org/soap/envelope/")
-      fail SOAPError.new("No SOAP body found in response", response.body) if
+      raise SOAPError.new("No SOAP body found in response", response.body) if
         soap.nil?
     end
   end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::FindDocumentVersionReference do
   describe "soap_doc" do
     subject {  VBMS::Requests::FindDocumentVersionReference.new("784449089") }

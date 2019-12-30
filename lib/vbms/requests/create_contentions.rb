@@ -1,6 +1,10 @@
+# frozen_string_literal: true
+
 module VBMS
   module Requests
     class CreateContentions < BaseRequest
+      include AddExtSecurityHeader
+
       NAMESPACES = {
         "xmlns:cla" => "http://vbms.vba.va.gov/external/ClaimService/v4",
         "xmlns:cdm" => "http://vbms.vba.va.gov/cdm/claim/v4",
@@ -13,15 +17,15 @@ module VBMS
         "xmlns:participant" => "http://vbms.vba.va.gov/cdm/participant/v5"
       }.freeze
 
-      # Contentions should be an array of strings representing the contentions
-      # Special issues should be an array of hashes with the form:
-      #   { code: "SSR", narrative: "Same Station Review" }
-      def initialize(veteran_file_number:, claim_id:, contentions:, special_issues: [], v5: false)
+      # Contentions should be an array of objects representing the contention descriptions and special issues
+      # [{description: "contention description", special_issues: [{ code: "SSR", narrative: "Same Station Review" }]}]
+      def initialize(veteran_file_number:, claim_id:, contentions:, claim_date:, v5: false, send_userid: false)
         @veteran_file_number = veteran_file_number
         @claim_id = claim_id
         @contentions = contentions
-        @special_issues = special_issues
         @v5 = v5
+        @send_userid = send_userid
+        @claim_date = claim_date
       end
 
       def name
@@ -36,17 +40,11 @@ module VBMS
         "#{base_url}#{VBMS::ENDPOINTS[specify_endpoint]}"
       end
 
-      def inject_header_content(header_xml)
-        Nokogiri::XML::Builder.with(header_xml) do |xml|
-          xml["vbmsext"].userId("dslogon.1011239249", "xmlns:vbmsext" => "http://vbms.vba.va.gov/external")
-        end
-      end
-
       def soap_doc
         VBMS::Requests.soap(more_namespaces: @v5 ? NAMESPACES_V5 : NAMESPACES) do |xml|
           xml["cla"].createContentions do
-            @contentions.each do |contention_text|
-              xml["cla"].contentionsToCreate(
+            @contentions.each do |contention|
+              xml["cla"].contentionsToCreate({
                 # 0 means the id will be auto generated
                 id: "0",
 
@@ -55,26 +53,26 @@ module VBMS
 
                 fileNumber: @veteran_file_number,
                 claimId: @claim_id,
-                title: contention_text,
+                title: contention[:description],
 
                 actionableItem: "true",
-                medical: "false",
-                typeCode: "NEW",
+                medical: "true",
+                typeCode: contention[:contention_type].present? ? contention[:contention_type] : "REP",
                 workingContention: "YES",
 
                 awaitingResponse: "unused. but required.",
                 partcipantContention: "unused, but required."
-              ) do
-                xml["cdm"].submitDate Date.today.iso8601
+              }.merge(original_contention_ids(contention))) do
+                xml["cdm"].submitDate @claim_date.iso8601
 
-                @special_issues.each do |special_issue|
+                contention[:special_issues]&.each do |special_issue|
                   xml["cdm"].issue(
                     typeCd: special_issue[:code],
                     narrative: special_issue[:narrative],
                     inferred: "false"
                   )
                 end
-                
+
                 xml["cdm"].origSrc "APP" if @v5
               end
             end
@@ -104,6 +102,14 @@ module VBMS
             VBMS::Responses::Contention.create_from_xml(xml, key: :created_contentions)
           end
         end
+      end
+
+      private
+
+      def original_contention_ids(contention)
+        return {} unless contention[:original_contention_ids]
+
+        { "origContentionIds" => contention[:original_contention_ids].join(" ") }
       end
     end
   end

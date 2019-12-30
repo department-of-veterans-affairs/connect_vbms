@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class MultipartParser
   def initialize(response)
     @response = response
@@ -6,6 +7,7 @@ class MultipartParser
 
   def xml_content
     return @response.body unless multipart?
+
     parts.select { |part| part.header =~ /xml/ }[0].try(:body)
   end
 
@@ -32,7 +34,9 @@ class MultipartParser
 
   def find_boundary
     # if it is a multipart, the boundary is at location zero
-    @response.body.split("\r\n")[0].strip
+    lines = @response.body.split("\r\n")
+    lines.shift while lines[0] == ""
+    lines[0].strip
   end
 
   def split_based_on_boundary

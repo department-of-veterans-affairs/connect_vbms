@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::RemoveContention do
   let(:contention_hash) do
     {

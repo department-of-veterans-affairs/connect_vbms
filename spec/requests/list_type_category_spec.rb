@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 describe VBMS::Requests::ListTypeCategory do
   describe "soap_doc" do
     subject { VBMS::Requests::ListTypeCategory.new }

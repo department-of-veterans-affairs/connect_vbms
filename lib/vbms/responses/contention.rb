@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VBMS
   module Responses
     class Contention < OpenStruct
@@ -6,7 +8,7 @@ module VBMS
 
         new(
           id: data[:@id],
-          text: data[:@title],
+          text: Nokogiri::HTML.fragment(data[:@title]).text,
           start_date: data[:start_date],
           submit_date: data[:submit_date],
           actionable_item: data[:@actionable_item],

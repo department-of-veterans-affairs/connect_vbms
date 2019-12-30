@@ -1,9 +1,9 @@
 # frozen_string_literal: true
+
 module VBMS
   module Requests
     # This call returns a list of DocumentSeries objects containing the metadata
     # for documents that match search criteria.
-    # This service replaces listDocuments in eDocument Service v4, which is deprecated as of March 2017
     class FindDocumentSeriesReference < BaseRequest
       def initialize(file_number)
         @file_number = file_number

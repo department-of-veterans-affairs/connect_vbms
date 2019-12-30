@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # require 'xmlenc'
 require "open3"
 
@@ -23,8 +25,6 @@ module VBMS
   end
 
   XML_NAMESPACES = {
-    v4: "http://vbms.vba.va.gov/external/eDocumentService/v4",
-    ns2: "http://vbms.vba.va.gov/cdm/document/v4",
     ns0: "http://vbms.vba.va.gov/cdm/claim/v4",
     upload: "http://service.efolder.vbms.vba.va.gov/eFolderUploadService",
     read: "http://service.efolder.vbms.vba.va.gov/eFolderReadService",
@@ -32,8 +32,8 @@ module VBMS
     soapenv: "http://schemas.xmlsoap.org/soap/envelope/",
     wsse: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
     wsu: "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd",
-    ds: 'http://www.w3.org/2000/09/xmldsig#',
-    xenc: 'http://www.w3.org/2001/04/xmlenc#',
+    ds: "http://www.w3.org/2000/09/xmldsig#",
+    xenc: "http://www.w3.org/2001/04/xmlenc#",
     claimV4: "http://vbms.vba.va.gov/external/ClaimService/v4",
     claimV5: "http://vbms.vba.va.gov/external/ClaimService/v5"
   }.freeze
@@ -41,7 +41,6 @@ module VBMS
   ENDPOINTS = {
     claims: "/vbmsp2-cs/ClaimServiceV4",
     claimsv5: "/vbmsp2-cs/ClaimServiceV5",
-    efolder: "/vbmsp2-cms/streaming/eDocumentService-v4",
     efolder_svc_v1: {
       read: "/vbms-efolder-svc/read-v1/eFolderReadService",
       read_inline: "/vbms-efolder-svc/read-v1/eFolderReadServiceInline",
@@ -49,42 +48,6 @@ module VBMS
       association: "/vbms-efolder-svc/association-v1/eFolderAssociationService"
     }
   }.freeze
-
-  class ClientError < StandardError
-  end
-
-  class HTTPError < ClientError
-    attr_reader :code, :body, :request
-
-    def initialize(code, body, request = nil)
-      super("status_code=#{code}, body=#{body}, request=#{request.inspect}")
-      @code = code
-      @body = body
-      @request = request
-    end
-  end
-
-  class SOAPError < ClientError
-    attr_reader :body
-
-    def initialize(msg, soap_response = nil)
-      super(msg)
-      @body = soap_response
-    end
-  end
-
-  class EnvironmentError < ClientError
-  end
-
-  class ExecutionError < ClientError
-    attr_reader :cmd, :output
-
-    def initialize(cmd, output)
-      super("Error running cmd: #{cmd}\nOutput: #{output}")
-      @cmd = cmd
-      @output = output
-    end
-  end
 
   def self.load_erb(path)
     location = File.join(FILEDIR, "../templates", path)
@@ -109,7 +72,7 @@ module VBMS
       raise ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
     end
 
-    fail ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
+    raise ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
 
     output
   end
@@ -121,10 +84,9 @@ module VBMS
                                ignore_timestamp = false)
     if RUBY_PLATFORM == "java" && in_xml.length < 10.megabytes
       begin
-        data = Java::DecryptMessage.decrypt(
+        Java::DecryptMessage.decrypt(
           in_xml, keyfile, keypass, ignore_timestamp
         )
-        return data
       rescue Java::OrgApacheWsSecurity::WSSecurityException => e
         raise ExecutionError.new("DecryptMessage.decrypt", e.backtrace)
       end
@@ -157,9 +119,7 @@ module VBMS
             "-n", request_name]
     output, errors, status = Open3.capture3(*args)
 
-    if status != 0
-      fail ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors)
-    end
+    raise ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors) if status != 0
 
     output
   end
@@ -175,3 +135,4 @@ module VBMS
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
