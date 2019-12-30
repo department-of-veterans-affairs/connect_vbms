@@ -21,7 +21,7 @@ describe VBMS::Requests::GetDispositions do
     let(:doc) { parse_strict(fixture("responses/get_dispositions.xml")) }
     subject { request.handle_response(doc) }
 
-    it "should return an array of contentions" do
+    it "should return an array of dispositions" do
       expect(subject).to be_an(Array)
       expect(subject.count).to be 4
     end
