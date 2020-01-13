@@ -22,6 +22,9 @@ module VBMS
       # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/4708/
       "HTTPClient::KeepAliveDisconnected:",
 
+      # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/7710/
+      "HTTPClient::ReceiveTimeoutError",
+
       # https://sentry.ds.va.gov/department-of-veterans-affairs/efolder/issues/3170/
       "Unable to find SOAP operation",
 
