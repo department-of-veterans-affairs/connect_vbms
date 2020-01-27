@@ -52,10 +52,12 @@ describe VBMS::Requests::FindPagedDocumentSeriesReferences do
       expect(doc2[:restricted]).to eq true
       expect(doc2[:received_at]).to eq Date.parse("2014-04-30-04:00")
     end
+  end
 
+  describe "error handling" do
     it "handles XML errors gracefully" do
       request = described_class.new(file_number: "784449089")
-      xml = fixture("responses/find_document_series_reference_fault_response.xml")
+      xml = fixture("responses/find_paged_document_series_reference_fault_response.xml")
       doc = parse_strict(xml)
       expect { request.handle_response(doc) }.to_not raise_error
     end
