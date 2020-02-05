@@ -31,7 +31,8 @@ describe VBMS::Requests::EstablishClaim do
       date: 20.days.ago.to_date,
       suppress_acknowledgment_letter: false,
       limited_poa_code: "007",
-      limited_poa_access: true
+      limited_poa_access: true,
+      status_type_code: "RFD"
     }
   end
 
