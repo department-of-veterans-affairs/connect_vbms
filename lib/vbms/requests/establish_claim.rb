@@ -38,6 +38,7 @@ module VBMS
 
       # More information on what the fields mean, see:
       # https://github.com/department-of-veterans-affairs/dsva-vbms/issues/66#issuecomment-266098034
+      # rubocop:disable Metrics/AbcSize
       def soap_doc
         # Gender should only be included if it is differentiated
         differentiated_gender = @veteran_record[:sex] ? { "gender" => @veteran_record[:sex] } : {}
@@ -94,6 +95,7 @@ module VBMS
           end
         end
       end
+      # rubocop:enable Metrics/AbcSize
 
       def signed_elements
         [["/soapenv:Envelope/soapenv:Body",
