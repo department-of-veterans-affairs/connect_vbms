@@ -71,7 +71,7 @@ describe VBMS::Service::PagedDocuments do
 
     context "when the first page reports more pages than it contains" do
       let(:small_return_set) { true }
-      let(:total_docs) { 19 } # smaller than page size
+      let(:total_docs) { page_size - 1 }
 
       it "believes the next_offset over the returned document count" do
         r = subject.call(file_number: file_number)
