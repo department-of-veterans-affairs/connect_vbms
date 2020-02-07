@@ -19,12 +19,11 @@ module VBMS
         pages = 1
 
         # if we need to fetch more docs, iterate till we exhaust the pages
-        while total_docs > documents.length
+        while total_docs > documents.length && next_offset > 0
           next_page = client.send_request(next_request(file_number, next_offset))
           (documents << next_page.map { |section| section[:documents] }).flatten!
           next_offset = next_page.first[:paging][:@next_start_index].to_i
           pages += 1
-          break if next_offset <= 0 # reality check
         end
 
         { paging: pagination, pages: pages, documents: documents }
