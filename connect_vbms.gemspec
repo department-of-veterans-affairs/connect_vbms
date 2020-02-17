@@ -7,13 +7,13 @@ require "vbms/version"
 Gem::Specification.new do |spec|
   spec.name          = "connect_vbms"
   spec.version       = VBMS::VERSION
-  spec.authors       = ["Alex Gaynor", "Bill Mill", "Albert Wong"]
-  spec.email         = ["alex.gaynor@va.gov", "bill@adhocteam.us", "albert.wong@va.gov"]
+  spec.authors       = ["Caseflow"]
+  spec.email         = ["caseflowops@va.gov"]
 
   spec.platform      = Gem::Platform::RUBY
   spec.summary       = "Connect to VBMS with ease"
   spec.description   = "Connect to VBMS with ease"
-  spec.homepage      = "http://va.gov"
+  spec.homepage      = "https://github.com/department-of-veterans-affairs/connect_vbms"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.

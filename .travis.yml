@@ -1,13 +1,7 @@
 language: ruby
 
-branches:
-    only:
-        - master
 rvm:
   - 2.5.3
-
-jdk:
-  - oraclejdk14
 
 cache: bundler --without development
 

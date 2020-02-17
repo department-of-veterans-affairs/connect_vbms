@@ -1,22 +1,17 @@
 # connect_vbms
 
-Connect VBMS is a Ruby gem for communicating with version 1 of the eFolder Service API provided by Veteran Benefits Management System (VBMS) at the Department of Veteran Affairs. Although the source code is open source, access to VBMS is restricted only to authorized users.
+Connect VBMS is a Ruby gem for communicating with the API provided by Veteran Benefits Management System (VBMS) at the Department of Veteran Affairs. Although the source code is open source, access to VBMS is restricted only to authorized users.
 
 ![](https://travis-ci.org/department-of-veterans-affairs/connect_vbms.svg?branch=master)
 
 ## Prerequisites
 
-- Ruby 2.2 or above
-	- Bundler 1.10 or above (`gem install bundle`)
-- [Java JDK 1.7 or above](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-- [Python 2.6 or above](https://www.python.org/downloads/)
-	- Sphinx 1.3.1 or above (`pip install sphinx`)
-
-The library currently uses Java for some encryption functionality. When this is replaced, the integration tests will continue to use the Java encryption/decryption utilities as a reference to check against. Python is currently used to generate documentation.
+- Ruby 2.5 or above
+- Bundler 1.10 or above (`gem install bundle`)
 
 ## Tests
 
-For the first run of the tests, install the Ruby dependencies and prepare the Java files & test creds:
+For the first run of the tests, install the Ruby dependencies:
 
 ```
 > bundle install
@@ -32,12 +27,6 @@ This will run all the tests, [rubocop](http://batsov.com/rubocop/) to identify a
 Tests normally mock all web requests so tests can be run without needing any credentials for VBMS systems. To run the integration tests against a VBMS server, you must specify all the necessary `VBMS_CONNECT` environment variables. You can then execute tests with `CONNECT_VBMS_RUN_EXTERNAL_TESTS=1 bundle exec rake default` and it will not use local webmocks.
 
 Our development group also includes HTTPLog for viewing raw HTTP messages. To enable HTTPLog, use the `CONNECT_VBMS_HTTPLOG=1` environment variable.
-
-## Docs
-
-From the root directory, run:
-
-`rake docs`
 
 ## Contributing
 

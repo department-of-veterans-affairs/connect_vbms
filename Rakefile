@@ -16,16 +16,8 @@ namespace :tests do
   task prepare: %i[build fixtures]
 end
 
-task :build_java do
-  sh "make -C src build"
-end
-
 task :fixtures do
   generate_test_creds
-end
-
-task :docs do
-  sh "make -C docs html"
 end
 
 desc "Run RuboCop on the lib directory"
@@ -47,4 +39,3 @@ task :security do
   puts Rainbow("Passed. No obvious security vulnerabilities.").green
 end
 
-Rake::Task[:build].prerequisites << Rake::Task[:build_java]
