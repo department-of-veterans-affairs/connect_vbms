@@ -83,9 +83,9 @@ describe VBMS::Service::PagedDocuments do
     end
 
     context "when the first page contains no sections" do
-      it "raises a ClientError" do
+      it "raises a ZeroPagesError" do
         allow(client).to receive(:send_request).and_return []
-        expect { subject.call(file_number: file_number) }.to raise_error(VBMS::ClientError)
+        expect { subject.call(file_number: file_number) }.to raise_error(VBMS::ZeroPagesError)
       end
     end
   end

@@ -183,6 +183,9 @@ module VBMS
     end
   end
 
+  class ZeroPagesError < ClientError
+  end
+
   class BadClaim < HTTPError; end
   class BadPostalCode < HTTPError; end
   class BadSOAPMessage < HTTPError; end

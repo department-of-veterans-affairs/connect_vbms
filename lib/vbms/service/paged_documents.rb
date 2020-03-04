@@ -12,7 +12,7 @@ module VBMS
         first_page = client.send_request(req)
 
         # interpret a first page with no sections (and no doc count) as equivalent to zero pages.
-        raise ClientError.new("No sections found in first page") if first_page.empty?
+        raise ZeroPagesError.new("No sections found in first page") if first_page.empty?
 
         # response will always be an array. get pagination from the first section.
         (documents << first_page.map { |section| section[:documents] }).flatten!
