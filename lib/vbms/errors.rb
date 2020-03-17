@@ -168,6 +168,10 @@ module VBMS
       super(msg)
       @body = soap_response
     end
+
+    def to_s
+      "#{super} [#{body}]"
+    end
   end
 
   class EnvironmentError < ClientError
