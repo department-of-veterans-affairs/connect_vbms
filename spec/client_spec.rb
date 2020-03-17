@@ -196,7 +196,7 @@ describe VBMS::Client do
       it "should raise a SOAPError" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(VBMS::SOAPError)
-          expect(error.message).to eq("Unable to parse SOAP message")
+          expect(error.message).to match("Unable to parse SOAP message")
           expect(error.body).to eq(response_body)
         end
       end
@@ -241,7 +241,7 @@ describe VBMS::Client do
       it "should raise a SOAPError" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(VBMS::SOAPError)
-          expect(error.message).to eq("SOAP Fault returned")
+          expect(error.message).to match("SOAP Fault returned")
           expect(error.body).to eq(response_body)
         end
       end
@@ -259,7 +259,7 @@ describe VBMS::Client do
       it "should raise a SOAPError" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(VBMS::SOAPError)
-          expect(error.message).to eq("No SOAP body found in response")
+          expect(error.message).to match("No SOAP body found in response")
           expect(error.body).to eq(response_body)
         end
       end
@@ -277,7 +277,7 @@ describe VBMS::Client do
       it "should raise a SOAPError" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(VBMS::SOAPError)
-          expect(error.message).to eq("No SOAP envelope found in response")
+          expect(error.message).to match("No SOAP envelope found in response")
           expect(error.body).to eq(response_body)
         end
       end
