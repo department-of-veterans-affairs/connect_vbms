@@ -144,7 +144,9 @@ module VBMS
       "has invalid character" => "InvalidCharacterError",
 
       # https://github.com/department-of-veterans-affairs/caseflow/issues/11740
-      "ORACLE ERROR when attempting to store PTCPNT_ADDRS for the vet" => "VeteranAddressError"
+      "ORACLE ERROR when attempting to store PTCPNT_ADDRS for the vet" => "VeteranAddressError",
+
+      "Minimum data length for the Title within the contentionsToCreate was not met: Title must not be empty" => "EmptyTitle"
     }.freeze
 
     def self.from_http_error(code, body, request = nil)
@@ -223,4 +225,5 @@ module VBMS
   class BenefitClaimTypeError < HTTPError; end
   class XcpupError < HTTPError; end
   class InvalidCharacterError < HTTPError; end
+  class EmptyTitle < HTTPError; end
 end
