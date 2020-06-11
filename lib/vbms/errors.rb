@@ -147,7 +147,7 @@ module VBMS
       "ORACLE ERROR when attempting to store PTCPNT_ADDRS for the vet" => "VeteranAddressError",
 
       "Title must not be empty" => "EmptyTitle",
-      
+
       "Benefit Type must be CPD, Payee code must be 00, 10 - 29, 50, 60 or 70 - 78" => "InvalidBenefitTypePayeeCodeOrEPCode"
     }.freeze
 
