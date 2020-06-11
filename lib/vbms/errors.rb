@@ -146,7 +146,9 @@ module VBMS
       # https://github.com/department-of-veterans-affairs/caseflow/issues/11740
       "ORACLE ERROR when attempting to store PTCPNT_ADDRS for the vet" => "VeteranAddressError",
 
-      "Minimum data length for the Title within the contentionsToCreate was not met: Title must not be empty" => "EmptyTitle"
+      "Title must not be empty" => "EmptyTitle",
+      
+      "Benefit Type must be CPD, Payee code must be 00, 10 - 29, 50, 60 or 70 - 78" => "InvalidBenefitTypePayeeCodeOrEPCode"
     }.freeze
 
     def self.from_http_error(code, body, request = nil)
@@ -226,4 +228,5 @@ module VBMS
   class XcpupError < HTTPError; end
   class InvalidCharacterError < HTTPError; end
   class EmptyTitle < HTTPError; end
+  class InvalidBenefitTypePayeeCodeOrEPCode < HTTPError; end
 end
