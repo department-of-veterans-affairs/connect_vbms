@@ -146,9 +146,20 @@ module VBMS
       # https://github.com/department-of-veterans-affairs/caseflow/issues/11740
       "ORACLE ERROR when attempting to store PTCPNT_ADDRS for the vet" => "VeteranAddressError",
 
-      "Title must not be empty" => "EmptyTitle",
+      "Title must not be empty" => "EmptyContentionTitle",
 
-      "Benefit Type must be CPD, Payee code must be 00, 10 - 29, 50, 60 or 70 - 78" => "InvalidBenefitTypePayeeCodeOrEPCode"
+      "Benefit Type must be CPD, Payee code must be 00, 10 - 29, 50, 60 or 70 - 78" => "InvalidBenefitTypePayeeCodeOrEPCode",
+
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/13958
+      "Retrieving Contention list failed. System error" => "CannotDeleteContention",
+
+      "This is a Sensitive Record and you do not have high enough access to update it" => "InvalidClaimAccess",
+
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/12254
+      "Claim modifier is invalid for given Claim EP Code" => "InvalidClaimModifier",
+
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/12592
+      "Unable to establish claim: AddressLine1 has invalid character(s)" => "AddressInvalidCharacterError"
     }.freeze
 
     def self.from_http_error(code, body, request = nil)
@@ -229,4 +240,8 @@ module VBMS
   class InvalidCharacterError < HTTPError; end
   class EmptyTitle < HTTPError; end
   class InvalidBenefitTypePayeeCodeOrEPCode < HTTPError; end
+  class SystemError < HTTPError; end
+  class InvalidClaimModifier < HTTPError; end
+  class InvalidClaimAccess < HTTPError; end
+  class ContentionConnectedToRatingsIssue; end
 end
