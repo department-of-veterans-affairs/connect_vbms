@@ -238,10 +238,10 @@ module VBMS
   class BenefitClaimTypeError < HTTPError; end
   class XcpupError < HTTPError; end
   class InvalidCharacterError < HTTPError; end
-  class EmptyTitle < HTTPError; end
+  class EmptyContentionTitle < HTTPError; end
   class InvalidBenefitTypePayeeCodeOrEPCode < HTTPError; end
   class SystemError < HTTPError; end
-  class InvalidClaimModifier < HTTPError; end
   class InvalidClaimAccess < HTTPError; end
-  class ContentionConnectedToRatingsIssue; end
+  class InvalidClaimModifier < HTTPError; end
+  class AddressInvalidCharacterError < HTTPError; end
 end
