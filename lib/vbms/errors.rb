@@ -238,7 +238,7 @@ module VBMS
   class InvalidCharacterError < HTTPError; end
   class EmptyContentionTitle < HTTPError; end
   class InvalidBenefitTypePayeeCodeOrEPCode < HTTPError; end
-  class SystemError < HTTPError; end
+  class CannotRetrieveContention < HTTPError; end
   class InvalidClaimAccess < HTTPError; end
   class InvalidClaimModifier < HTTPError; end
 end
