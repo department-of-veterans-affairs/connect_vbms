@@ -141,7 +141,7 @@ module VBMS
       "XCPUPMAILADDR Service call failed" => "XcpupError",
 
       # https://github.com/department-of-veterans-affairs/caseflow/issues/12592
-      "has invalid character(s)" => "InvalidCharacterError",
+      "has invalid character" => "InvalidCharacterError",
 
       # https://github.com/department-of-veterans-affairs/caseflow/issues/11740
       "ORACLE ERROR when attempting to store PTCPNT_ADDRS for the vet" => "VeteranAddressError",
