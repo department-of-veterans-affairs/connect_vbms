@@ -141,7 +141,7 @@ module VBMS
       "XCPUPMAILADDR Service call failed" => "XcpupError",
 
       # https://github.com/department-of-veterans-affairs/caseflow/issues/12592
-      "has invalid character" => "InvalidCharacterError",
+      "has invalid character(s)" => "InvalidCharacterError",
 
       # https://github.com/department-of-veterans-affairs/caseflow/issues/11740
       "ORACLE ERROR when attempting to store PTCPNT_ADDRS for the vet" => "VeteranAddressError",
@@ -158,8 +158,6 @@ module VBMS
       # https://github.com/department-of-veterans-affairs/caseflow/issues/12254
       "Claim modifier is invalid for given Claim EP Code" => "InvalidClaimModifier",
 
-      # https://github.com/department-of-veterans-affairs/caseflow/issues/12592
-      "Unable to establish claim: AddressLine1 has invalid character(s)" => "AddressInvalidCharacterError"
     }.freeze
 
     def self.from_http_error(code, body, request = nil)
@@ -243,5 +241,4 @@ module VBMS
   class SystemError < HTTPError; end
   class InvalidClaimAccess < HTTPError; end
   class InvalidClaimModifier < HTTPError; end
-  class AddressInvalidCharacterError < HTTPError; end
 end
