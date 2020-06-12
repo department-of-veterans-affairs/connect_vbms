@@ -151,7 +151,7 @@ module VBMS
       "Benefit Type must be CPD, Payee code must be 00, 10 - 29, 50, 60 or 70 - 78" => "InvalidBenefitTypePayeeCodeOrEPCode",
 
       # https://github.com/department-of-veterans-affairs/caseflow/issues/13958
-      "Retrieving Contention list failed. System error" => "CannotDeleteContention",
+      "Retrieving Contention list failed. System error" => "CannotRetrieveContention",
 
       "This is a Sensitive Record and you do not have high enough access to update it" => "InvalidClaimAccess",
 
