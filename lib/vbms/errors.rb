@@ -156,7 +156,7 @@ module VBMS
       "This is a Sensitive Record and you do not have high enough access to update it" => "InvalidClaimAccess",
 
       # https://github.com/department-of-veterans-affairs/caseflow/issues/12254
-      "Claim modifier is invalid for given Claim EP Code" => "InvalidClaimModifier",
+      "Claim modifier is invalid for given Claim EP Code" => "InvalidClaimModifier"
 
     }.freeze
 
