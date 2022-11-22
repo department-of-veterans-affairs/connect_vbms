@@ -3,7 +3,7 @@
 module VBMS
     module Requests
         # This call returns a list of document version references matching the veteran and date range
-        class FindDocumentVersionReferenceByDateRange
+        class FindDocumentVersionReferenceByDateRange < FindDocumentVersionReference
             def initialize(file_number:, begin_date_range:, end_date_range:)
                 @file_number = file_number
                 @begin = begin_date_range
@@ -12,10 +12,6 @@ module VBMS
 
             def name
                 "findDocumentVersionReferenceByDateRange"
-            end
-
-            def endpoint_url(base_url)
-                "#{base_url}#{VBMS::ENDPOINTS[:efolder_svc_v1][:read]}"
             end
 
             def soap_doc
@@ -32,14 +28,6 @@ module VBMS
                         end
                     end                    
                 end  
-            end
-
-            def handle_response(doc)
-                doc.xpath(
-                  "//read:findDocumentVersionReferenceResponse/read:result", VBMS::XML_NAMESPACES
-                ).map do |el|
-                  construct_response(XMLHelper.convert_to_hash(el.to_xml)[:result])
-                end
             end
         end
     end
