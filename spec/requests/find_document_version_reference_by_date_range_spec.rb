@@ -18,16 +18,16 @@ describe VBMS::Requests::FindDocumentVersionReferenceByDateRange do
   describe "parsing the XML response" do
     before(:all) do
       request = VBMS::Requests::FindDocumentVersionReferenceByDateRange.new(
-        file_number: "784449089", begin_date_range: Time.new(2022, 10, 10), end_date_range: Time.now
+        file_number: "784449089", begin_date_range: Time.new(2017, 03, 23), end_date_range: Time.new(2017, 03, 29)
       )
-      xml = fixture("responses/find_document_version_reference_response.xml")
+      xml = fixture("responses/find_document_version_reference_by_date_range_response.xml")
       doc = parse_strict(xml)
       @vbms_docs = request.handle_response(doc)
     end
     subject { @vbms_docs }
     it "should return an array of documents" do
       expect(subject).to be_an(Array)
-      expect(subject.count).to be 124 # how many are in the sample file
+      expect(subject.count).to be 7 
     end
     it "should load contents correctly" do
       doc1 = subject.first

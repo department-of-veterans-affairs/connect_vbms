@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Header>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+      <xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="EK-5B2AB04BCC96A1F980151033697855331264">
+        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <wsse:SecurityTokenReference>
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=Scanning CA,OU=Scanning CA,O=Scanning CA,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>49</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+        <xenc:CipherData>
+          <xenc:CipherValue>xrSDCKW0/8a3FI8S8ScSTDt0E+5m1/NVghSuB5rhKd8cu59Iurf8npiJA3M/ewetSbN+WD+AqiqRa+4KnXDkIZDODxPakFx//fWyUwHF35s05isbMqx4fj5XP/ovxgTytvCZWaQjKuJ+F/ML6Ln/isSqz0XTpYOHBMzdSajxqjapnz5hZ968bn8DTGrrLN9+SWYnGDZUmz1NFBSS9ZooF1gjLZzbzSuM/X1k9aq+KtY9qiFUYjtg+F0kBL5DIWmdNqBbIh6RM909PJCm+KwiVyaG1CmMLust1qo+c6Jl7lIcKqrWcsJuthmtWsEQdyUig+62aXIj7hee8NYEDwtGaQ==</xenc:CipherValue>
+        </xenc:CipherData>
+        <xenc:ReferenceList>
+          <xenc:DataReference URI="#ED-31264"/>
+        </xenc:ReferenceList>
+      </xenc:EncryptedKey>
+      <wsu:Timestamp wsu:Id="TS-31261">
+        <wsu:Created>2017-11-10T18:02:58.525Z</wsu:Created>
+        <wsu:Expires>2017-11-10T18:07:58.525Z</wsu:Expires>
+      </wsu:Timestamp>
+      <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-31263">
+        <ds:SignedInfo>
+          <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+            <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="env"/>
+          </ds:CanonicalizationMethod>
+          <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+          <ds:Reference URI="#TS-31261">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="wsse env"/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>T6pGN4Fhyk1nfRPNwMKHay8UV0Q=</ds:DigestValue>
+          </ds:Reference>
+          <ds:Reference URI="#id-31262">
+            <ds:Transforms>
+              <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList=""/>
+              </ds:Transform>
+            </ds:Transforms>
+            <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+            <ds:DigestValue>NdtDvh6l3PGKFkchEEHn792WLI4=</ds:DigestValue>
+          </ds:Reference>
+        </ds:SignedInfo>
+        <ds:SignatureValue>AXmN3Op/VCC++sIo/8Rw47lvfx6GokZcdPm8ZYvpxFie+22r01MFnxPXw5neMD2N7Jngp9eU15eM
+F890YDYCLFKgxrapK6fhLMA5o5DP0S81N6jy575Exe9K2gBKhGycOLfh2Sqk2xlpjdV+660o+5ee
+7+L4NUZL1wVB2sIdMdMadnXq4POKcrcQkQqyhPyC0AK2bBpO5adFkEa1i05j6VKBZ0Xrccg7Si5l
+AElYqCie6tf0f+UyuqFfzClnN5//1C0ZaTuvi+VWquN+GRR5bkjjVnWeFKj3LY0qpbcgKNrC43mZ
+5PZSbiGWrauE1rCDHO+ifUe7oy8zihwjoHO9mA==</ds:SignatureValue>
+        <ds:KeyInfo Id="KI-5B2AB04BCC96A1F980151033697852731262">
+          <wsse:SecurityTokenReference wsu:Id="STR-5B2AB04BCC96A1F980151033697852731263">
+            <ds:X509Data>
+              <ds:X509IssuerSerial>
+                <ds:X509IssuerName>CN=AIDE CA2,OU=CA2,O=AIDE,L=Culpeper,ST=Virginia,C=US</ds:X509IssuerName>
+                <ds:X509SerialNumber>4</ds:X509SerialNumber>
+              </ds:X509IssuerSerial>
+            </ds:X509Data>
+          </wsse:SecurityTokenReference>
+        </ds:KeyInfo>
+      </ds:Signature>
+    </wsse:Security>
+  </env:Header>
+  <env:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-31262">
+    <findDocumentVersionReferenceResponse xmlns="http://service.efolder.vbms.vba.va.gov/eFolderReadService" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns2="http://vbms.vba.va.gov/cdm/document/v5" xmlns:ns3="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:ns5="http://service.efolder.vbms.vba.va.gov/eFolderReadService"><ns5:result documentSeriesRefId="{623D6B8A-D599-4E2D-947E-A2CA2955C4DD}" documentVersionRefId="{CB958142-F063-489D-80DC-6C8A7A5B4319}" mimeType="application/pdf" previousVersionId="{CB958142-F063-489D-80DC-6C8A7A5B4319}" subject="knee"><ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/><ns2:metadata key="subject"><ns2:value>knee</ns2:value></ns2:metadata><ns2:metadata key="systemSource"><ns2:value>BVAE</ns2:value></ns2:metadata><ns2:metadata key="restricted"><ns2:value>false</ns2:value></ns2:metadata><ns2:vaReceiveDate>2017-03-29</ns2:vaReceiveDate><ns2:vbmsUploadDate>2017-03-29</ns2:vbmsUploadDate><ns2:version major="2"/><ns2:source sourceName="VHA_CUI"/></ns5:result><ns5:result documentSeriesRefId="{DF87C28A-A538-4D77-ABAA-D3AC0AA24C91}" documentVersionRefId="{79D0C9AC-7D5E-4B76-ADC4-07D83B4E14EA}" mimeType="application/pdf" previousVersionId="{79D0C9AC-7D5E-4B76-ADC4-07D83B4E14EA}" subject="knee"><ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/><ns2:metadata key="subject"><ns2:value>knee</ns2:value></ns2:metadata><ns2:metadata key="systemSource"><ns2:value>BVAE</ns2:value></ns2:metadata><ns2:metadata key="restricted"><ns2:value>false</ns2:value></ns2:metadata><ns2:vaReceiveDate>2017-03-27</ns2:vaReceiveDate><ns2:vbmsUploadDate>2017-03-27</ns2:vbmsUploadDate><ns2:version major="2"/><ns2:source sourceName="VHA_CUI"/></ns5:result><ns5:result documentSeriesRefId="{DB9ECE4E-380E-4CC8-8F6B-B073F91842CE}" documentVersionRefId="{FDB00D9E-239E-4B9A-BAC7-3D9A50CCFE3B}" mimeType="application/pdf" previousVersionId="{FDB00D9E-239E-4B9A-BAC7-3D9A50CCFE3B}" subject="knee"><ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/><ns2:metadata key="subject"><ns2:value>knee</ns2:value></ns2:metadata><ns2:metadata key="systemSource"><ns2:value>BVAE</ns2:value></ns2:metadata><ns2:metadata key="restricted"><ns2:value>false</ns2:value></ns2:metadata><ns2:vaReceiveDate>2017-03-27</ns2:vaReceiveDate><ns2:vbmsUploadDate>2017-03-27</ns2:vbmsUploadDate><ns2:version major="2"/><ns2:source sourceName="VHA_CUI"/></ns5:result><ns5:result documentSeriesRefId="{9D2618EF-8F67-498F-8CAF-3BC01AD8A9E9}" documentVersionRefId="{992A4EAC-081A-4450-825F-A835B52D5ED1}" mimeType="application/pdf" previousVersionId="{992A4EAC-081A-4450-825F-A835B52D5ED1}" subject="knee"><ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/><ns2:metadata key="subject"><ns2:value>knee</ns2:value></ns2:metadata><ns2:metadata key="systemSource"><ns2:value>BVAE</ns2:value></ns2:metadata><ns2:metadata key="restricted"><ns2:value>false</ns2:value></ns2:metadata><ns2:vaReceiveDate>2017-03-23</ns2:vaReceiveDate><ns2:vbmsUploadDate>2017-03-23</ns2:vbmsUploadDate><ns2:version major="2"/><ns2:source sourceName="VHA_CUI"/></ns5:result><ns5:result documentSeriesRefId="{C073FB5A-0000-C81A-AB0D-9A04BA58C047}" documentVersionRefId="{73442167-0286-48FF-B37A-60976137C7BE}" mimeType="application/pdf" previousVersionId="{4C0C2414-8139-49A1-AC41-C9FCA904B02F}" subject="knee"><ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/><ns2:metadata key="VeteranFirstName"><ns2:value>Jane</ns2:value></ns2:metadata><ns2:metadata key="VeteranMiddleName"><ns2:value>Q</ns2:value></ns2:metadata><ns2:metadata key="VeteranLastName"><ns2:value>Citizen</ns2:value></ns2:metadata><ns2:metadata key="subject"><ns2:value>knee</ns2:value></ns2:metadata><ns2:metadata key="systemSource"><ns2:value>BVAE</ns2:value></ns2:metadata><ns2:metadata key="restricted"><ns2:value>false</ns2:value></ns2:metadata><ns2:vaReceiveDate>2017-03-23</ns2:vaReceiveDate><ns2:vbmsUploadDate>2017-03-23</ns2:vbmsUploadDate><ns2:version major="2"/><ns2:source sourceName="Connect VBMS test"/></ns5:result><ns5:result documentSeriesRefId="{4F0DB33E-802C-4B44-88FA-124DD64F3129}" documentVersionRefId="{AB4889F1-CEC6-4861-A941-34D57D0FC857}" mimeType="application/pdf" previousVersionId="{AB4889F1-CEC6-4861-A941-34D57D0FC857}" subject="knee"><ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/><ns2:metadata key="subject"><ns2:value>knee</ns2:value></ns2:metadata><ns2:metadata key="systemSource"><ns2:value>BVAE</ns2:value></ns2:metadata><ns2:metadata key="restricted"><ns2:value>false</ns2:value></ns2:metadata><ns2:vaReceiveDate>2017-03-23</ns2:vaReceiveDate><ns2:vbmsUploadDate>2017-03-23</ns2:vbmsUploadDate><ns2:version major="2"/><ns2:source sourceName="VHA_CUI"/></ns5:result><ns5:result documentSeriesRefId="{F070FB5A-0000-C31B-98F5-F0AAB3DF7EDC}" documentVersionRefId="{B0901290-3991-4E67-AADA-3B351D25A260}" mimeType="application/pdf" previousVersionId="{FC908179-195E-4C50-8296-3A3104FA0374}" subject="knee"><ns2:typeCategory categoryDescriptionText="Medical Records" categoryId="44" typeDescriptionText="C&amp;P Exam" typeId="356" typeLabelText="L214"/><ns2:metadata key="VeteranFirstName"><ns2:value>Jane</ns2:value></ns2:metadata><ns2:metadata key="VeteranMiddleName"><ns2:value>Q</ns2:value></ns2:metadata><ns2:metadata key="VeteranLastName"><ns2:value>Citizen</ns2:value></ns2:metadata><ns2:metadata key="subject"><ns2:value>knee</ns2:value></ns2:metadata><ns2:metadata key="systemSource"><ns2:value>BVAE</ns2:value></ns2:metadata><ns2:metadata key="restricted"><ns2:value>false</ns2:value></ns2:metadata><ns2:vaReceiveDate>2017-03-23</ns2:vaReceiveDate><ns2:vbmsUploadDate>2017-03-23</ns2:vbmsUploadDate><ns2:version major="2"/><ns2:source sourceName="Connect VBMS test"/></ns5:result></findDocumentVersionReferenceResponse>
+  </env:Body>
+</env:Envelope>

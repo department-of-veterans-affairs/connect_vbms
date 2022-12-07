@@ -6,8 +6,8 @@ module VBMS
     class FindDocumentVersionReferenceByDateRange < FindDocumentVersionReference
       def initialize(file_number:, begin_date_range:, end_date_range:)
         super(file_number)
-        @begin = begin_date_range
-        @end = end_date_range
+        @begin = begin_date_range.to_datetime
+        @end = end_date_range.to_datetime
       end
 
       def name
