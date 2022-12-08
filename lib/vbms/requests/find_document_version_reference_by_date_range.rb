@@ -17,7 +17,7 @@ module VBMS
       def soap_doc
         VBMS::Requests.soap do |xml|
           xml["read"].findDocumentVersionReference do
-            xml["read"].citeria do
+            xml["read"].criteria do
               xml["v5"].veteran(
                 "fileNumber" => @file_number
               )
