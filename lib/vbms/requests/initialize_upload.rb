@@ -5,6 +5,7 @@ module VBMS
     # Call this service with metadata to receive a token used in the second call, uploadDocument
     class InitializeUpload < BaseRequest
       def initialize(content_hash:, filename:, file_number:, va_receive_date:, doc_type:, source:, subject:, new_mail:)
+        super()
         @content_hash = content_hash
         @filename = filename
         @file_number = file_number

@@ -105,9 +105,9 @@ module SoapScum
       def generate_block_cipher
         case @cipher_algorithm
         when CryptoAlgorithms::AES128
-          OpenSSL::Cipher::AES128.new(:CBC)
+          OpenSSL::Cipher.new("aes-128-cbc")
         when CryptoAlgorithms::AES256
-          OpenSSL::Cipher::AES256.new(:CBC)
+          OpenSSL::Cipher.new("aes-256-cbc")
         else
           raise "Unknown Cipher: #{@cipher_algorithm}"
         end

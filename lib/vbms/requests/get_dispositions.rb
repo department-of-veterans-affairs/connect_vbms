@@ -8,6 +8,7 @@ module VBMS
       }.freeze
 
       def initialize(claim_id:)
+        super()
         @claim_id = claim_id
       end
 

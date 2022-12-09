@@ -7,6 +7,7 @@ module VBMS
       attr_accessor :mtom_attachment
 
       def initialize(document_id)
+        super()
         @document_id = document_id
       end
 

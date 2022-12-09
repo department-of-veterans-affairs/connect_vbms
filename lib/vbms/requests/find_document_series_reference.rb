@@ -6,6 +6,7 @@ module VBMS
     # for documents that match search criteria.
     class FindDocumentSeriesReference < BaseRequest
       def initialize(file_number)
+        super()
         @file_number = file_number
       end
 

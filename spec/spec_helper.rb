@@ -49,7 +49,7 @@ end
 FILEDIR = File.dirname(File.absolute_path(__FILE__))
 DO_WSSE = File.join(FILEDIR, "../src/do_wsse.sh")
 
-# Note: these should not be replaced with calls to the similar functions in VBMS, since
+# NOTE: these should not be replaced with calls to the similar functions in VBMS, since
 # I want them to continue to call the Java WSSE utility even when encryption/decryption in
 # gem is done in Ruby, so we can check as against Ruby methods
 def encrypted_xml_file(response_path, keyfile, request_name)
@@ -61,7 +61,7 @@ def encrypted_xml_file(response_path, keyfile, request_name)
           "-n", request_name]
   output, errors, status = Open3.capture3(*args)
 
-  raise VBMS::ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors) if status != 0
+  raise VBMS::ExecutionError.new("#{DO_WSSE} EncryptSOAPDocument", errors) if status != 0
 
   output
 end
@@ -81,7 +81,7 @@ end
 def java_decrypt_file(infile,
                       keyfile,
                       keypass,
-                      ignore_timestamp = false)
+                      ignore_timestamp: false)
   args = [DO_WSSE,
           "-i", infile,
           "-k", keyfile,
@@ -92,10 +92,10 @@ def java_decrypt_file(infile,
     output, errors, status = Open3.capture3(*args)
   rescue TypeError
     # sometimes one of the Open3 return values is a nil and it complains about coercion
-    raise VBMS::ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
+    raise VBMS::ExecutionError.new("#{DO_WSSE + args.join(' ')}: DecryptMessage", errors) if status != 0
   end
 
-  raise VBMS::ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
+  raise VBMS::ExecutionError.new("#{DO_WSSE} DecryptMessage", errors) if status != 0
 
   output
 end
@@ -103,7 +103,7 @@ end
 def java_decrypt_xml(xml,
                      keyfile,
                      keypass,
-                     ignore_timestamp = false)
+                     ignore_timestamp: false)
 
   Tempfile.open("tmp") do |t|
     t.write(xml)

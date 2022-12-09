@@ -20,6 +20,7 @@ module VBMS
       # Contentions should be an array of objects representing the contention descriptions and special issues
       # [{description: "contention description", special_issues: [{ code: "SSR", narrative: "Same Station Review" }]}]
       def initialize(veteran_file_number:, claim_id:, contentions:, claim_date:, v5: false, send_userid: false)
+        super()
         @veteran_file_number = veteran_file_number
         @claim_id = claim_id
         @contentions = contentions

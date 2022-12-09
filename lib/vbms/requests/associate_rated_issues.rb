@@ -10,6 +10,7 @@ module VBMS
       # This all assumes that rated_issue_contention_map is a hash in the form of:
       # { issue_id: contention_id, issue_id2: contention_id2 }
       def initialize(claim_id:, rated_issue_contention_map:)
+        super()
         @claim_id = claim_id
         @rated_issue_contention_map = rated_issue_contention_map
       end
