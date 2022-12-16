@@ -18,6 +18,7 @@ module VBMS
       }.freeze
 
       def initialize(veteran_record, claim, v5: false, send_userid: false)
+        super()
         @veteran_record = veteran_record
         @claim = claim
         @v5 = v5

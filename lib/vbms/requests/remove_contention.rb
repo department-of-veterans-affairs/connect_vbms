@@ -18,6 +18,7 @@ module VBMS
       }.freeze
 
       def initialize(contention:, v5: false, send_userid: false)
+        super()
         @contention = contention
         @v5 = v5
         @send_userid = send_userid

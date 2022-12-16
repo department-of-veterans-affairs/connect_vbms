@@ -58,7 +58,7 @@ module VBMS
                            keyfile,
                            keypass,
                            logfile,
-                           ignore_timestamp = false)
+                           ignore_timestamp: false)
     args = [DO_WSSE,
             "-i", infile,
             "-k", keyfile,
@@ -69,10 +69,10 @@ module VBMS
       output, errors, status = Open3.capture3(*args)
     rescue TypeError
       # sometimes one of the Open3 return values is a nil and it complains about coercion
-      raise ExecutionError.new(DO_WSSE + args.join(" ") + ": DecryptMessage", errors) if status != 0
+      raise ExecutionError.new("#{DO_WSSE + args.join(' ')}: DecryptMessage", errors) if status != 0
     end
 
-    raise ExecutionError.new(DO_WSSE + " DecryptMessage", errors) if status != 0
+    raise ExecutionError.new("#{DO_WSSE} DecryptMessage", errors) if status != 0
 
     output
   end
@@ -81,7 +81,7 @@ module VBMS
                                keyfile,
                                keypass,
                                logfile,
-                               ignore_timestamp = false)
+                               ignore_timestamp: false)
     if RUBY_PLATFORM == "java" && in_xml.length < 10.megabytes
       begin
         Java::DecryptMessage.decrypt(
@@ -102,12 +102,11 @@ module VBMS
 
   def self.decrypt_message_xml_ruby(encrypted_xml, client_key, _keypass)
     encrypted_doc = Xmlenc::EncryptedDocument.new(encrypted_xml)
-    decrypted_doc = encrypted_doc.decrypt(client_key)
 
     # TODO(awong): Signature verification.
     # TODO(awong): Timestamp validation.
 
-    decrypted_doc
+    encrypted_doc.decrypt(client_key)
   end
 
   def self.encrypted_soap_document(infile, keyfile, keypass, request_name)
@@ -119,7 +118,7 @@ module VBMS
             "-n", request_name]
     output, errors, status = Open3.capture3(*args)
 
-    raise ExecutionError.new(DO_WSSE + " EncryptSOAPDocument", errors) if status != 0
+    raise ExecutionError.new("#{DO_WSSE} EncryptSOAPDocument", errors) if status != 0
 
     output
   end

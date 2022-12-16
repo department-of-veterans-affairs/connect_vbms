@@ -6,6 +6,7 @@ module VBMS
     # call initializeUpload with metadata to receive a token used in the second call, uploadDocument
     class UploadDocument < BaseRequest
       def initialize(upload_token:, filepath:)
+        super()
         @upload_token = upload_token
         @filepath = filepath
       end

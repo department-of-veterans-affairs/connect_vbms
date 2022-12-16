@@ -47,7 +47,7 @@ describe SoapScum::WSSecurity do
     end
 
     it "is verifyable and decryptable by Java WSSecurity library" do
-      decrypted_doc = java_decrypt_xml(result, fixture_path("test_server.jks"), keypass, true)
+      decrypted_doc = java_decrypt_xml(result, fixture_path("test_server.jks"), keypass, ignore_timestamp: true)
       decrypted_doc = Nokogiri::XML(decrypted_doc)
 
       expect(decrypted_doc.xpath("//v5:fileNumber").text).to eq("784449089")

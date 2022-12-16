@@ -6,6 +6,7 @@ module VBMS
     # for documents that match search criteria.
     class FindPagedDocumentSeriesReferences < BaseRequest
       def initialize(file_number:, page_size: 3000, offset: 0)
+        super()
         @file_number = file_number
         @page_size = page_size
         @offset = offset
