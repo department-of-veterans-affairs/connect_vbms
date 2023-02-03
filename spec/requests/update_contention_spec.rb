@@ -42,7 +42,6 @@ describe VBMS::Requests::UpdateContention do
 
     it "generates valid SOAP" do
       xml = subject.soap_doc.to_xml
-      puts xml
       xsd = Nokogiri::XML::Schema(fixture("soap.xsd"))
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
@@ -75,6 +74,7 @@ describe VBMS::Requests::UpdateContention do
 
       it "generates valid SOAP" do
         xml = subject.to_xml
+        puts xml
         xsd = Nokogiri::XML::Schema(fixture("soap.xsd"))
         expect(xsd.errors).to eq []
         errors = xsd.validate(parse_strict(xml))
