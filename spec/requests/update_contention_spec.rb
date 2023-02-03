@@ -18,7 +18,17 @@ describe VBMS::Requests::UpdateContention do
       secondary_to_contention_id: "1938",
       text: "Service connection for Back, derangement is granted with an evaluation of 30 percent effective June 1, 2018.",
       type_code: "NEW",
-      working_contention: "unknown"
+      working_contention: "unknown",
+      special_issues: [
+        {
+          code: "1",
+          narrative: "narrative"
+        },
+        {
+          code: "2",
+          narrative: "narrative2"
+        }
+      ]
     }
   end
 
@@ -33,6 +43,7 @@ describe VBMS::Requests::UpdateContention do
 
     it "generates valid SOAP" do
       xml = subject.soap_doc.to_xml
+      puts xml
       xsd = Nokogiri::XML::Schema(fixture("soap.xsd"))
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
