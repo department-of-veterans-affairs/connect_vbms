@@ -3,22 +3,20 @@
 describe VBMS::Requests::UpdateContention do
   let(:contention_hash) do
     {
-      submit_date: Date.new(2018, 8, 6),
-      start_date: Date.new(2018, 8, 6),
+      id: "303089",
       actionable_item: "false",
       awaiting_response: "unknown",
       claim_id: "600132141",
       classification_cd: nil,
-      contention_category: nil,
       file_number: "984562385",
       level_status_code: nil,
-      id: "303089",
       medical: "false",
       participant_contention: "unknown",
       secondary_to_contention_id: "1938",
       text: "Service connection for Back, derangement is granted with an evaluation of 30 percent effective June 1, 2018.",
       type_code: "NEW",
       working_contention: "unknown",
+      submit_date: Date.new(2018, 8, 6),
       special_issues: [
         {
           code: "1",
@@ -28,7 +26,8 @@ describe VBMS::Requests::UpdateContention do
           code: "2",
           narrative: "narrative2"
         }
-      ]
+      ],
+      start_date: Date.new(2018, 8, 6)
     }
   end
 
