@@ -5,7 +5,7 @@ module VBMS
     class Contention < OpenStruct
       def self.create_from_xml(xml, key: :list_of_contentions)
         data = XMLHelper.convert_to_hash(xml.to_xml)[key]
-
+                
         new(
           id: data[:@id],
           text: Nokogiri::HTML.fragment(data[:@title]).text,
@@ -22,8 +22,15 @@ module VBMS
           participant_contention: data[:@partcipant_contention],
           secondary_to_contention_id: data[:@secondary_to_contention_id],
           type_code: data[:@type_code],
-          working_contention: data[:@working_contention]
+          working_contention: data[:@working_contention],
+          title: data[:@title],
+          disposition: data[:@disposition],
+          special_issues: create_issues(data[:issue])
         )
+      end
+
+      def self.create_issues(issues) 
+        Array(issues).map{|issue| VBMS::Responses::Issue.create(issue)}
       end
     end
   end
