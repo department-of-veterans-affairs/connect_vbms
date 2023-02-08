@@ -20,11 +20,19 @@ describe VBMS::Requests::UpdateContention do
       special_issues: [
         {
           code: "1",
-          narrative: "narrative"
+          narrative: "narrative",
+          inferred: "false",
+          id: "1234",
+          contention_id: "4321",
+          specific_rating: "specific rating"
         },
         {
           code: "2",
-          narrative: "narrative2"
+          narrative: "narrative2",
+          inferred: "false",
+          id: "1234",
+          contention_id: "4321",
+          specific_rating: "specific rating"
         }
       ],
       start_date: Date.new(2018, 8, 6)
@@ -43,6 +51,7 @@ describe VBMS::Requests::UpdateContention do
     it "generates valid SOAP" do
       xml = subject.soap_doc.to_xml
       xsd = Nokogiri::XML::Schema(fixture("soap.xsd"))
+      puts xsd
       expect(xsd.errors).to eq []
       errors = xsd.validate(parse_strict(xml))
       expect(errors).to eq []
@@ -74,7 +83,6 @@ describe VBMS::Requests::UpdateContention do
 
       it "generates valid SOAP" do
         xml = subject.to_xml
-        puts xml
         xsd = Nokogiri::XML::Schema(fixture("soap.xsd"))
         expect(xsd.errors).to eq []
         errors = xsd.validate(parse_strict(xml))
