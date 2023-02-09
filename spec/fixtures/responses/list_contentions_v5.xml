@@ -120,11 +120,30 @@ yZEY5pV595A8q4nIax4q6h5XL6NP4B5M/TQwNdhxCQQM7B7Q/wS+ulOwrmPNyDVoOybXOcxt10xR
         </ns0:appealList>
         <ns0:origSrc>origSrc</ns0:origSrc>
       </ns4:listOfContentions>
-      <ns4:listOfContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" 
-          id="290356" medical="false" partcipantContention="unknown" secondaryToContentionID="7792" title="Contention DS example" typeCode="NEW" workingContention="unknown">
+      <ns4:listOfContentions 
+          actionableItem="false" 
+          awaitingResponse="unknown" 
+          claimId="600118427" 
+          fileNumber="241573462" 
+          id="290356" 
+          medical="false" 
+          partcipantContention="unknown" 
+          secondaryToContentionID="7792" 
+          title="Contention DS example" 
+          typeCode="NEW" 
+          workingContention="unknown"
+        >
         <ns0:source sourceName="VBMS_CMS"/>
         <ns0:submitDate>2017-11-20-05:00</ns0:submitDate>
         <ns0:startDate>2017-11-22-05:00</ns0:startDate>
+        <ns0:issue
+            id="12345"
+            contentionId="290355"
+            inferred="false"
+            narrative="narrative"
+            typeCd="CD123">
+          <ns0:specificRating>specificRating</ns0:specificRating>
+        </ns0:issue>
       </ns4:listOfContentions>
       <ns4:listOfContentions actionableItem="false" awaitingResponse="unknown" claimId="600118427" fileNumber="241573462" id="290357" medical="false" partcipantContention="unknown" secondaryToContentionID="7792" title="Contention DS example" typeCode="NEW" workingContention="unknown">
         <ns0:source sourceName="VBMS_CMS"/>

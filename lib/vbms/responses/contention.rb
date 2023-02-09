@@ -29,8 +29,8 @@ module VBMS
         )
       end
 
-      def self.create_issues(issues) 
-        Array(issues).map{|issue| VBMS::Responses::Issue.create(issue)}
+      def self.create_issues(*issues) 
+        issues.compact.flatten.map{|issue| VBMS::Responses::Issue.create(issue)}
       end
     end
   end
