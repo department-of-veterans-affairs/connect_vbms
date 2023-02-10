@@ -68,7 +68,11 @@ module VBMS
                   id: special_issue[:id],
                   contentionId: special_issue[:contention_id],
                   specificRating: special_issue[:specific_rating]
-                )
+                ) do
+                  special_issue[:specific_rating]&.each do |specific_rating|
+                    xml["cmd"].specificRating(specific_rating)
+                  end
+                end
               end
 
               xml["cdm"].startDate @contention[:start_date]
