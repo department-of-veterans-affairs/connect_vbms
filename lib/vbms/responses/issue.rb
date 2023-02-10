@@ -10,8 +10,7 @@ module VBMS
             contention_id: data[:@contention_id],
             inferred: data[:@inferred],
             narrative: data[:@narrative],
-            code: data[:@type_cd],
-            specific_rating: data[:specific_rating]
+            code: data[:@type_cd]
           )
         end
       end
