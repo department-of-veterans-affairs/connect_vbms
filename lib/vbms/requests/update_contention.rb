@@ -66,12 +66,9 @@ module VBMS
                   narrative: special_issue[:narrative],
                   inferred: special_issue[:inferred],
                   id: special_issue[:id],
-                  contentionId: special_issue[:contention_id],
-                  specificRating: special_issue[:specific_rating]
+                  contentionId: special_issue[:contention_id]
                 ) do
-                  special_issue[:specific_rating]&.each do |specific_rating|
-                    xml["cmd"].specificRating(specific_rating)
-                  end
+                   xml["cdm"].specificRating(special_issue[:specific_rating])
                 end
               end
 

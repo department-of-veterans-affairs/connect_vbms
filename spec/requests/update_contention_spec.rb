@@ -87,6 +87,20 @@ describe VBMS::Requests::UpdateContention do
         expect(xsd.errors).to eq []
         errors = xsd.validate(parse_strict(xml))
         expect(errors).to eq []
+
+        doc = Nokogiri::XML(xml)
+        contention = doc.at_xpath("//claimV5:updateContention/claimV5:contentionToBeUpdated", VBMS::XML_NAMESPACES)
+
+        expect(contention["id"]).to eq(contention_hash[:id])
+        expect(contention["claimId"]).to eq(contention_hash[:claim_id])
+        expect(contention["fileNumber"]).to eq(contention_hash[:file_number])
+        
+        issues = contention.xpath("//cdm:issue")
+        expect(issues.length).to eq(contention_hash[:special_issues].length)
+
+        issue = issues.first
+        specific_rating = issue.at_xpath("//cdm:specificRating")
+        expect(specific_rating.text).to eq(contention_hash[:special_issues][0][:specific_rating])
       end
     end
 
