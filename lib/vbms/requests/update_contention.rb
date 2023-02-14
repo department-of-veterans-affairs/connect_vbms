@@ -64,8 +64,12 @@ module VBMS
                 xml["cdm"].issue(
                   typeCd: special_issue[:code],
                   narrative: special_issue[:narrative],
-                  inferred: "false"
-                )
+                  inferred: special_issue[:inferred],
+                  id: special_issue[:id],
+                  contentionId: special_issue[:contention_id]
+                ) do
+                   xml["cdm"].specificRating(special_issue[:specific_rating])
+                end
               end
 
               xml["cdm"].startDate @contention[:start_date]

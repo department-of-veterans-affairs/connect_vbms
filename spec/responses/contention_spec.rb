@@ -17,6 +17,82 @@ describe VBMS::Responses::Contention do
     end
   end
 
+  describe "create from xml v5 with multiple special issues" do
+    let(:xml_string) { File.open(fixture_path("responses/list_contentions_v5.xml")).read }
+    let(:xml) { Nokogiri::XML(xml_string) }
+    let(:doc) do
+      xml.at_xpath("//claimV5:listContentionsResponse/claimV5:listOfContentions", VBMS::XML_NAMESPACES)
+    end
+
+    subject { VBMS::Responses::Contention.create_from_xml(doc) }
+
+    it "has 2 special issues" do
+      expect(subject.id).to eq("290355")
+      expect(subject.actionable_item).to eq("false")
+      expect(subject.contention_category).to eq("unknown")
+      expect(subject.claim_id).to eq("600118427")
+      expect(subject.file_number).to eq("241573462")
+      expect(subject.medical).to eq("false")
+      expect(subject.participant_contention).to eq("unknown")
+      expect(subject.secondary_to_contention_id).to eq("7792")
+      expect(subject.title).to eq("Contention DS example")
+      expect(subject.type_code).to eq("NEW")
+      expect(subject.working_contention).to eq("unknown")
+      expect(subject.classification_cd).to eq("1234")
+      expect(subject.level_status_code).to eq("P")
+      expect(subject.disposition).to eq("disposition")
+      expect(subject.special_issues.length).to eq(2)
+    end
+  end
+
+  describe "create from xml v5 with one special issues" do
+    let(:xml_string) { File.open(fixture_path("responses/list_contentions_v5.xml")).read }
+    let(:xml) { Nokogiri::XML(xml_string) }
+    let(:doc) do
+      xml.xpath("//claimV5:listContentionsResponse/claimV5:listOfContentions", VBMS::XML_NAMESPACES)[1]
+    end
+
+    subject { VBMS::Responses::Contention.create_from_xml(doc) }
+
+    it "has one special issues" do
+      expect(subject.id).to eq("290356")
+      expect(subject.actionable_item).to eq("false")
+      expect(subject.claim_id).to eq("600118427")
+      expect(subject.file_number).to eq("241573462")
+      expect(subject.medical).to eq("false")
+      expect(subject.participant_contention).to eq("unknown")
+      expect(subject.secondary_to_contention_id).to eq("7792")
+      expect(subject.title).to eq("Contention DS example")
+      expect(subject.type_code).to eq("NEW")
+      expect(subject.working_contention).to eq("unknown")
+      expect(subject.special_issues.length).to eq(1)
+    end
+  end
+
+  describe "create from xml v5 with no special issues" do
+    let(:xml_string) { File.open(fixture_path("responses/list_contentions_v5.xml")).read }
+    let(:xml) { Nokogiri::XML(xml_string) }
+    let(:doc) do
+      xml.xpath("//claimV5:listContentionsResponse/claimV5:listOfContentions", VBMS::XML_NAMESPACES)[2]
+    end
+
+    subject { VBMS::Responses::Contention.create_from_xml(doc) }
+
+    it "has no special issues" do
+      expect(subject.id).to eq("290357")
+      expect(subject.actionable_item).to eq("false")
+      expect(subject.claim_id).to eq("600118427")
+      expect(subject.file_number).to eq("241573462")
+      expect(subject.medical).to eq("false")
+      expect(subject.participant_contention).to eq("unknown")
+      expect(subject.secondary_to_contention_id).to eq("7792")
+      expect(subject.title).to eq("Contention DS example")
+      expect(subject.type_code).to eq("NEW")
+      expect(subject.working_contention).to eq("unknown")
+      expect(subject.special_issues.length).to eq(0)
+    end
+  end
+
   describe "serialization" do
     let(:attrs) do
       {

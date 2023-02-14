@@ -24,6 +24,7 @@ require "vbms/requests"
 require "vbms/responses/claim"
 require "vbms/responses/contention"
 require "vbms/responses/disposition"
+require "vbms/responses/issue"
 
 require "vbms/requests/base_request"
 require "vbms/requests/add_ext_security_header"
