@@ -27,7 +27,7 @@ module VBMS
       def soap_doc
         document = VBMS::Requests.soap do |xml|
           xml["update"].initializeUpdate do
-            xml.documentVersionReferenceId @
+            xml.documentVersionReferenceId @document_version_reference_id
             xml.contentHash @content_hash
             xml.vaReceiveDate va_receive_date
             xml.versionMetadata(key: "subject") do
