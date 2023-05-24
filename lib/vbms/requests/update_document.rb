@@ -23,9 +23,9 @@ module VBMS
         # TODO: convert to using MTOM
         content = Base64.encode64(File.read(@filepath))
         document = VBMS::Requests.soap do |xml|
-          xml["update"].updateDocument do
+          xml["upload"].updateDocument do
             xml.content content
-            xml.uploadToken @upload_token
+            xml.updateDocumentToken @upload_token
           end
         end
 

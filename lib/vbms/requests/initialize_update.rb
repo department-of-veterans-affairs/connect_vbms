@@ -26,13 +26,10 @@ module VBMS
 
       def soap_doc
         document = VBMS::Requests.soap do |xml|
-          xml["update"].initializeUpdate do
+          xml["upload"].initializeUpdate do
             xml.documentVersionReferenceId @document_version_reference_id
             xml.contentHash @content_hash
             xml.vaReceiveDate va_receive_date
-            xml.versionMetadata(key: "subject") do
-              xml["v5"].value @subject
-            end
           end
         end
 
@@ -49,7 +46,7 @@ module VBMS
       def handle_response(doc)
         el = doc.at_xpath("//upload:initializeUpdateResponse", VBMS::XML_NAMESPACES).to_xml
 
-        OpenStruct.new(upload_token: XMLHelper.convert_to_hash(el)[:initialize_update_response][:upload_token])
+        OpenStruct.new(updated_document_token: XMLHelper.convert_to_hash(el)[:initialize_update_response][:upload_token])
       end
     end
   end
