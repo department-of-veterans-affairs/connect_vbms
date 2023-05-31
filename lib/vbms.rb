@@ -45,6 +45,8 @@ require "vbms/requests/find_document_version_reference_by_date_range"
 require "vbms/requests/get_document_content"
 require "vbms/requests/initialize_upload"
 require "vbms/requests/upload_document"
+require "vbms/requests/initialize_update"
+require "vbms/requests/update_document"
 require "vbms/requests/list_type_category"
 
 require "vbms/helpers/xml_helper"
