@@ -32,8 +32,6 @@ describe VBMS::Requests::InitializeUpdate do
     subject { @response }
 
     it "returns upload token" do
-      byebug
-
       expect(subject[:updated_document_token]).to eq "{1587FC2D-63FA-40EA-8E59-D99FF790395B}"
     end
   end
