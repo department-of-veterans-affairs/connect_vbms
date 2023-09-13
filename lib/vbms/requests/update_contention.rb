@@ -68,7 +68,7 @@ module VBMS
                   id: special_issue[:id],
                   contentionId: special_issue[:contention_id]
                 ) do
-                   xml["cdm"].specificRating(special_issue[:specific_rating])
+                  xml["cdm"].specificRating(special_issue[:specific_rating])
                 end
               end
 
