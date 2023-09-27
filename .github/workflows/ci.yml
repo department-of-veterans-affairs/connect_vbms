@@ -26,8 +26,8 @@ jobs:
       - name: Run tests
         run: bundle exec rake spec
 
-      - name: Run security check
+      - name: Run security checks
         run: bundle exec rake tests:security
 
-      - name: Run security check
+      - name: Run linter
         run: bundle exec rake rubocop
