@@ -27,7 +27,7 @@ jobs:
         run: bundle exec rake tests:prepare
 
       - name: Run tests
-        run: bundle exec rake spec --tty
+        run: bundle exec rake spec
 
       - name: Run security checks
         run: bundle exec rake security
