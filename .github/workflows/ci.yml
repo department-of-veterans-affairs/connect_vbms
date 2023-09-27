@@ -1,0 +1,33 @@
+name: Specs, linting, and security checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Build dependencies
+        run: bundle exec rake tests:prepare
+
+      - name: Run tests
+        run: bundle exec rake spec
+
+      - name: Run security check
+        run: bundle exec rake tests:security
+
+      - name: Run security check
+        run: bundle exec rake rubocop
