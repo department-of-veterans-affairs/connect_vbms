@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  rspec_rubocop_audit:
+  rspec_rubocop_bundle-audit:
     runs-on: ubuntu-latest
 
     steps:
