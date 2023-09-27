@@ -9,6 +9,9 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  FORCE_COLOR: "1"
+
 jobs:
   rspec_rubocop_bundle-audit:
     runs-on: ubuntu-latest
@@ -24,7 +27,7 @@ jobs:
         run: bundle exec rake tests:prepare
 
       - name: Run tests
-        run: bundle exec rake spec
+        run: bundle exec rake spec --tty
 
       - name: Run security checks
         run: bundle exec rake security
