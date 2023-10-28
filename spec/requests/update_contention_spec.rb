@@ -94,7 +94,7 @@ describe VBMS::Requests::UpdateContention do
         expect(contention["id"]).to eq(contention_hash[:id])
         expect(contention["claimId"]).to eq(contention_hash[:claim_id])
         expect(contention["fileNumber"]).to eq(contention_hash[:file_number])
-        
+
         issues = contention.xpath("//cdm:issue")
         expect(issues.length).to eq(contention_hash[:special_issues].length)
 

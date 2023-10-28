@@ -10,7 +10,7 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "src")
 require "vbms"
 require "nokogiri"
 require "rspec/matchers"
-require "equivalent-xml"
+# require "equivalent-xml"
 require "pry"
 require "httplog" if ENV["CONNECT_VBMS_HTTPLOG"] && ENV["CONNECT_VBMS_HTTPLOG"] == 1
 require "byebug" if RUBY_PLATFORM != "java"
