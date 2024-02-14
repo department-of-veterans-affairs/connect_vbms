@@ -4,7 +4,7 @@ Connect VBMS is a Ruby gem for communicating with the eFolder Service API provid
 
 ![](https://travis-ci.org/department-of-veterans-affairs/connect_vbms.svg?branch=master)
 
-## Prerequisites
+## Prerequisitess
 
 - Ruby 2.2 or above
 	- Bundler 1.10 or above (`gem install bundle`)
